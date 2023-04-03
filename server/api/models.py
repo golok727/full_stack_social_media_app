@@ -33,6 +33,7 @@ class Post(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
+        
         new_image = self.compress_image(self.image)
         self.image = new_image
         super().save(*args, *kwargs)
@@ -44,7 +45,6 @@ class Post(models.Model):
         img.save(comp_io, "jpeg", quality=75)
         new_image = File(comp_io, image.name)
         return new_image
-
 
 
     class Meta: 
