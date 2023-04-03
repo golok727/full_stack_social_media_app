@@ -5,6 +5,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from .models import Post
 from .serializers import PostSerializer
+from django.contrib.auth.models import User
 
 @api_view(["GET"])
 def getRoutes(request): 
@@ -39,11 +40,11 @@ def getPosts(request):
         data = request.data
 
         title = data.get("title")
-        description = data.get("title")
+        description = data.get("description")
         image = data.get("image")
 
         #TODO change user to request user
-        new_post = Post.objects.create(title=title, description=description )
+        new_post = Post.objects.create(title=title, description=description, image=image, user=User.objects.get(id=1) )
         serializer = PostSerializer(new_post)
 
         return Response({"msg": "Post Created", "data": serializer.data})
