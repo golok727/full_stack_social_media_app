@@ -6,5 +6,5 @@ urlpatterns = [
     path("", views.getRoutes),
     path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_pair_view"),
-
+    path("posts/", views.getPosts, name="get_posts")
 ]

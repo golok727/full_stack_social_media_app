@@ -1,4 +1,5 @@
-GET http://localhost:8000/api/ HTTP/1.1
+GET http://localhost:8000/api/posts/ HTTP/1.1
+
 
 
 
