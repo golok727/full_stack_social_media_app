@@ -11,16 +11,23 @@ class UserSerializer(ModelSerializer):
 class PostSerializer(ModelSerializer):
     likes_count = SerializerMethodField()
     is_liked = SerializerMethodField()
+    is_mine = SerializerMethodField()
+
     user = UserSerializer(read_only=True)
     user_id = SlugRelatedField(queryset=User.objects.all, slug_field="user", write_only=True)
-
+    
     class Meta: 
         model = Post
         fields = '__all__'
 
     def get_likes_count(self, obj):
         return obj.likes.count()
+
     def get_is_liked(self , obj):
+        req_user_id = self.context.get("request").user.id
+        return obj.likes.filter(id=req_user_id).exists()
+    
+    def get_is_mine(self, obj):
         return obj.user == self.context.get("request").user
 
 
