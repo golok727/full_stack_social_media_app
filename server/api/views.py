@@ -47,7 +47,7 @@ def getPosts(request):
 
         #TODO change user to request user
         new_post = Post.objects.create(title=title, description=description, image=image, user=User.objects.get(id=1) )
-        serializer = PostSerializer(new_post)
+        serializer = PostSerializer(new_post, context={"request": request})
 
         return Response({"msg": "Post Created", "data": serializer.data})
 

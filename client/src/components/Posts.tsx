@@ -16,7 +16,12 @@ const Posts = () => {
 		const fetchPosts = async () => {
 			try {
 				const BASE_URL = "http://127.0.0.1:8000/api/posts/";
-				const res = await axios.get(BASE_URL, {});
+				const res = await axios.get(BASE_URL, {
+					headers: {
+						Authorization:
+							"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgwNjA1MzE4LCJpYXQiOjE2ODA2MDE3MTgsImp0aSI6IjYwNjBlN2MyNTFiZDQxOTJhZDkwNjg2ZGYyNzU5ZjNmIiwiaWQiOjEsInVzZXJuYW1lIjoibmFyYSIsImlzX3N1cGVydXNlciI6dHJ1ZX0.3nc_YMK9yDNN-UuTJz6UhPnCPp0fDBGhqr-8HSTToPg",
+					},
+				});
 				const data = res.data;
 				setPosts(() => data);
 			} catch (error) {
@@ -52,7 +57,7 @@ const Posts = () => {
 									width: "100%",
 									objectFit: "cover",
 								}}
-								src={API_BASE + post.image}
+								src={post.image}
 								alt=""
 							/>
 						</div>

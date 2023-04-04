@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind utilities;
 @tailwind components;
+
+@layer base {
+	body {
+		@apply bg-gradient-to-tr from-slate-900 to-slate-950 min-h-screen;
+	}
+}
