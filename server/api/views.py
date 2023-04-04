@@ -1,6 +1,7 @@
 
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, parser_classes
+from rest_framework.decorators import api_view, parser_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from .models import Post
@@ -19,12 +20,13 @@ def getRoutes(request):
 
 @api_view(['GET', 'POST'])
 @parser_classes((MultiPartParser, FormParser))
+@permission_classes([IsAuthenticated])
 def getPosts(request):
 
      
     if request.method == "GET":
         posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
+        serializer = PostSerializer(posts, many=True, context={"request": request})
 
         return Response(serializer.data)
 

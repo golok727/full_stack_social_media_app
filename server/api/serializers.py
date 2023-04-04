@@ -10,6 +10,7 @@ class UserSerializer(ModelSerializer):
 
 class PostSerializer(ModelSerializer):
     likes_count = SerializerMethodField()
+    is_liked = SerializerMethodField()
     user = UserSerializer(read_only=True)
     user_id = SlugRelatedField(queryset=User.objects.all, slug_field="user", write_only=True)
 
@@ -19,7 +20,8 @@ class PostSerializer(ModelSerializer):
 
     def get_likes_count(self, obj):
         return obj.likes.count()
-
+    def get_is_liked(self , obj):
+        return obj.user == self.context.get("request").user
 
 
 
