@@ -8,6 +8,81 @@ from .models import Post
 from .serializers import PostSerializer
 from django.contrib.auth.models import User
 
+
+from datetime import datetime, timedelta
+from django.conf import settings
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken, BlacklistedToken, OutstandingToken
+
+
+
+@api_view(["POST"])
+def loginUser(request):
+    username = request.data.get("username", None)
+    password = request.data.get("password", None)
+
+    try:
+
+        user = authenticate(request, username=username, password=password)
+
+        if(user is not None):
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+            response = Response({"access": access_token}, status=status.HTTP_200_OK) 
+
+            response.set_cookie(key="refresh_token",value=refresh_token, expires= settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
+
+            return response
+            
+
+        else: 
+            return Response({"message": "Invalid Credentials or User not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except:
+      print('An exception occurred')
+      return Response({"error": "Something Went Wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["POST"])
+def logoutUser(request):
+    response = Response({'message': 'Logout successful'})
+    refresh_token = request.COOKIES.get('refresh_token')
+    if refresh_token:
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        
+
+    response.delete_cookie('refresh_token')
+
+    return response
+
+@api_view(["POST"])
+def refreshTokens(request):
+    refresh_token = request.COOKIES.get("refresh_token")
+    if(refresh_token):
+        try:
+            BlacklistedToken.check(refresh_token)
+            refresh_token = RefreshToken(refresh_token)
+            access_token = str(refresh_token.access_token)
+            response =  Response({"access": access_token})
+            return response
+
+        except TokenError:
+            response = Response({"error": "Refresh Token Not found"}, status=status.HTTP_400_BAD_REQUEST)
+            response.delete_cookie('refresh_token')    
+            return 
+        except Exception as e:
+            return Response({'message': str(e)})
+          
+    else:
+        
+        Response({"error": "Refresh token not found"}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+
+
 @api_view(["GET"])
 def getRoutes(request): 
     routes = [
