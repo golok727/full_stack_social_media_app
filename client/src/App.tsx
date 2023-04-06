@@ -6,12 +6,13 @@ import Login from "./components/Login";
 import PostsPage from "./pages/PostsPage";
 import PrivateRoute from "./utils/PrivateRoutes";
 import Profile from "./pages/Profile";
+import useAuth from "./hooks/useAuth";
 const App = () => {
-	let isAuthenticated = false;
+	const { auth } = useAuth();
 	return (
 		<div className="App">
 			<BrowserRouter>
-				{isAuthenticated && <Navbar />}
+				{auth.user && <Navbar />}
 				<Routes>
 					<Route path="" element={<PrivateRoute />}>
 						<Route path="" element={<Posts />} />

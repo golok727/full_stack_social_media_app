@@ -1,6 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-
+import { useLocation, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import axios from "../api/axios";
 interface Post {
 	id: number;
 	title: string;
@@ -8,36 +9,50 @@ interface Post {
 	image: string;
 	likes: number[];
 }
-const API_BASE = "http://127.0.0.1:8000";
 
 const Posts = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
+	// const axiosPrivate = useAxiosPrivate();
+	const navigate = useNavigate();
+	const location = useLocation();
+	const { auth } = useAuth();
+
 	useEffect(() => {
+		let isMounted = true;
+		const controller = new AbortController();
+
 		const fetchPosts = async () => {
 			try {
-				const BASE_URL = "http://127.0.0.1:8000/api/posts/";
-				const res = await axios.get(BASE_URL, {
+				const res = await axios.get("http://127.0.0.1:8000/api/posts", {
 					headers: {
-						Authorization:
-							"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgwNjA1MzE4LCJpYXQiOjE2ODA2MDE3MTgsImp0aSI6IjYwNjBlN2MyNTFiZDQxOTJhZDkwNjg2ZGYyNzU5ZjNmIiwiaWQiOjEsInVzZXJuYW1lIjoibmFyYSIsImlzX3N1cGVydXNlciI6dHJ1ZX0.3nc_YMK9yDNN-UuTJz6UhPnCPp0fDBGhqr-8HSTToPg",
+						Authorization: `Bearer ${auth.accessToken}`,
+						"Content-Type": "application/json",
 					},
 				});
-				const data = res.data;
-				setPosts(() => data);
+				console.log(res.data);
+				isMounted && setPosts(res.data);
 			} catch (error) {
+				console.log("posts fetch err");
+
 				console.error(error);
+				navigate("/login", { state: { from: location }, replace: true });
 			}
 		};
 		fetchPosts();
+
+		return () => {
+			isMounted = false;
+			controller.abort();
+		};
 	}, []);
 
 	return (
 		<div>
 			{posts.length === 0 ? (
-				<span>No posts yet</span>
+				<span className="text-white">No posts yet</span>
 			) : (
 				posts.map((post, id) => (
-					<div key={id}>
+					<div className="text-white" key={id}>
 						<h3 className="font-bold">{post?.title}</h3>
 
 						<p>{post?.description}</p>

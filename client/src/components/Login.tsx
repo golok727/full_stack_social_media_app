@@ -1,27 +1,77 @@
-import { Link } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import useAuth from "../hooks/useAuth";
+import axios from "../api/axios";
+import { AxiosError, isAxiosError } from "axios";
 const Login = () => {
+	const { setAuth } = useAuth();
+
+	const navigate = useNavigate();
+	const currLocation = useLocation();
+	const from = currLocation.state?.from?.pathname || "/";
+
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [err, setErr] = useState("Error");
 
-	const userNameRef = useRef<HTMLInputElement>();
+	const userNameRef = useRef<HTMLInputElement>(null);
+	const errRef = useRef<HTMLParagraphElement>(null);
+
 	useEffect(() => {
 		if (userNameRef.current) {
 			userNameRef.current.focus();
 		}
 	}, []);
 
+	useEffect(() => {
+		setErr("");
+	}, [username, password]);
+
+	const handleSubmit = async (e: FormEvent) => {
+		e.preventDefault();
+		try {
+			const res = await axios.post("/api/auth/login/", { username, password });
+			const accessToken = res.data?.access;
+			const user = res.data?.user;
+			setAuth({ accessToken, user });
+			setUsername("");
+			setPassword("");
+
+			navigate(from, { replace: true });
+		} catch (error: any | AxiosError) {
+			console.log(err);
+			if (isAxiosError(err)) {
+				if (!err.response) {
+					setErr("No Server Response");
+				} else if (err.response?.status === 400) {
+					setErr("Username or Password is incorrect");
+				} else {
+					setErr("Unauthorized");
+				}
+			} else {
+				setErr("Something Went Wrong");
+			}
+
+			if (errRef.current) errRef.current.focus();
+		}
+	};
+
 	return (
-		<div className="min-h-screen text-white flex justify-center items-center ">
+		<section className="min-h-screen text-white flex justify-center items-center ">
 			<div className="  bg-gray-950 bg-opacity-40 rounded px-7 py-4 border-gray-800 border-[1px]">
 				<h1 className="font-bold text-xl mb-5 text-center">
 					Welcome Back :&#41;
 				</h1>
+				<p
+					ref={errRef}
+					className="text-center text-red-500 font-bold tracking-tight text-sm"
+				>
+					{err}
+				</p>
 
 				{/* Form */}
 
-				<form className="flex flex-col gap-6">
+				<form className="flex flex-col gap-6" onSubmit={handleSubmit}>
 					{/* Username */}
 					<div className="flex gap-2 flex-col">
 						<label
@@ -34,7 +84,7 @@ const Login = () => {
 							className="bg-transparent border-[1px] border-gray-700 px-3 py-2 rounded text-white placeholder-slate-500"
 							type="text"
 							placeholder="Username"
-							ref={userNameRef as React.MutableRefObject<HTMLInputElement>}
+							ref={userNameRef}
 							value={username}
 							onChange={(e) => setUsername(e.currentTarget.value)}
 							id="username"
@@ -91,7 +141,7 @@ const Login = () => {
 					</span>
 				</div>
 			</div>
-		</div>
+		</section>
 	);
 };
 

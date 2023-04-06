@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from .models import Post
-from .serializers import PostSerializer
+from .serializers import PostSerializer, UserSerializer
 from django.contrib.auth.models import User
 
 
@@ -30,7 +30,8 @@ def loginUser(request):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
-            response = Response({"access": access_token}, status=status.HTTP_200_OK) 
+            user_serializer = UserSerializer(user)
+            response = Response({"access": access_token, "user": user_serializer.data}, status=status.HTTP_200_OK) 
 
             response.set_cookie(key="refresh_token",value=refresh_token, expires= settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
 
@@ -60,20 +61,23 @@ def logoutUser(request):
 @api_view(["POST"])
 def refreshTokens(request):
     refresh_token = request.COOKIES.get("refresh_token")
+    print(refresh_token)
     if(refresh_token):
         try:
-            BlacklistedToken.check(refresh_token)
+            # BlacklistedToken.check_blacklist(refresh_token)
             refresh_token = RefreshToken(refresh_token)
             access_token = str(refresh_token.access_token)
             response =  Response({"access": access_token})
+
             return response
 
         except TokenError:
-            response = Response({"error": "Refresh Token Not found"}, status=status.HTTP_400_BAD_REQUEST)
+            response = Response({"error": "Refresh Token is BlackListed"}, status=status.HTTP_400_BAD_REQUEST)
             response.delete_cookie('refresh_token')    
             return 
-        except Exception as e:
-            return Response({'message': str(e)})
+
+        # except Exception as e:
+        #     return Response({'message': str(e)})
           
     else:
         
@@ -97,8 +101,6 @@ def getRoutes(request):
 @parser_classes((MultiPartParser, FormParser))
 @permission_classes([IsAuthenticated])
 def getPosts(request):
-
-     
     if request.method == "GET":
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True, context={"request": request})
