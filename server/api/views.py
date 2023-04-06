@@ -33,7 +33,7 @@ def loginUser(request):
             user_serializer = UserSerializer(user)
             response = Response({"access": access_token, "user": user_serializer.data}, status=status.HTTP_200_OK) 
 
-            response.set_cookie(key="refresh_token",value=refresh_token, expires= settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
+            response.set_cookie(key="refresh_token",value=refresh_token, expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'], secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"], samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],    httponly = settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'])
 
             return response
             
@@ -60,7 +60,10 @@ def logoutUser(request):
 
 @api_view(["POST"])
 def refreshTokens(request):
+    print("start")
+
     refresh_token = request.COOKIES.get("refresh_token")
+
     print(refresh_token)
     if(refresh_token):
         try:
@@ -74,14 +77,14 @@ def refreshTokens(request):
         except TokenError:
             response = Response({"error": "Refresh Token is BlackListed"}, status=status.HTTP_400_BAD_REQUEST)
             response.delete_cookie('refresh_token')    
-            return 
+            return response
 
         # except Exception as e:
         #     return Response({'message': str(e)})
           
     else:
         
-        Response({"error": "Refresh token not found"}, status=status.HTTP_403_FORBIDDEN)
+       return Response({"error": "Refresh token not found"}, status=status.HTTP_403_FORBIDDEN)
 
 
 

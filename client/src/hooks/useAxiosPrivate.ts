@@ -19,10 +19,16 @@ const useAxiosPrivate = () => {
 		);
 
 		const resIntercept = axiosPrivate.interceptors.response.use(
-			(response) => response,
+			(res) => res,
 			async (err) => {
-				console.log("Err", err);
-
+				const prevRequest = err?.config;
+				console.log(err.response.status);
+				if (err?.response?.status === 401 && !prevRequest?.sent) {
+					prevRequest.sent = true;
+					const newAccessToken = await refreshFn();
+					prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+					return axiosPrivate(prevRequest);
+				}
 				return Promise.reject(err);
 			}
 		);

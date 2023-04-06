@@ -50,6 +50,7 @@ const Login = () => {
 				}
 			} else {
 				setErr("Something Went Wrong");
+				console.log(err);
 			}
 
 			if (errRef.current) errRef.current.focus();

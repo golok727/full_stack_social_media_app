@@ -1,13 +1,11 @@
-import axios from "../api/axios";
+import { axiosPrivate } from "../api/axios";
 import useAuth from "./useAuth";
 
 const useRefreshToken = () => {
 	const { setAuth } = useAuth();
 
 	const refresh = async () => {
-		const res = await axios.post("/auth/token/refresh/", {
-			withCredentials: true,
-		});
+		const res = await axiosPrivate.post("/api/auth/token/refresh/");
 
 		setAuth((prev) => {
 			console.log(prev);

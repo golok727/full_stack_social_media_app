@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+
 interface Post {
 	id: number;
 	title: string;
@@ -12,7 +14,7 @@ interface Post {
 
 const Posts = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
-	// const axiosPrivate = useAxiosPrivate();
+	const axiosPrivate = useAxiosPrivate();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { auth } = useAuth();
@@ -23,12 +25,20 @@ const Posts = () => {
 
 		const fetchPosts = async () => {
 			try {
-				const res = await axios.get("http://127.0.0.1:8000/api/posts", {
+				// const res = await axios.get("http://127.0.0.1:8000/api/posts", {
+				// 	headers: {
+				// 		Authorization: `Bearer ${auth.accessToken}`,
+				// 		"Content-Type": "application/json",
+				// 	},
+				// });
+
+				const res = await axiosPrivate.get("/api/posts/", {
 					headers: {
 						Authorization: `Bearer ${auth.accessToken}`,
 						"Content-Type": "application/json",
 					},
 				});
+
 				console.log(res.data);
 				isMounted && setPosts(res.data);
 			} catch (error) {
