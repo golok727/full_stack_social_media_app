@@ -59,11 +59,9 @@ def logoutUser(request):
 
 @api_view(["POST"])
 def refreshTokens(request):
-    print("start")
 
     refresh_token = request.COOKIES.get("refresh_token")
 
-    print(refresh_token)
     if(refresh_token):
         try:
             # BlacklistedToken.check_blacklist(refresh_token)
@@ -74,6 +72,7 @@ def refreshTokens(request):
             return response
 
         except TokenError:
+            print("Bad")
             response = Response({"error": "Refresh Token is BlackListed"}, status=status.HTTP_400_BAD_REQUEST)
             response.delete_cookie('refresh_token')    
             return response

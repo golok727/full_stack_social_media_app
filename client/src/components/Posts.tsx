@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-// import axios, { axiosPrivate as ap } from "../api/axios";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useRefreshToken from "../hooks/useRefreshToken";
 interface Post {
@@ -17,7 +16,8 @@ const Posts = () => {
 	const axiosPrivate = useAxiosPrivate();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { auth } = useAuth();
+	const { auth, logout } = useAuth();
+
 	const refresh = useRefreshToken();
 	useEffect(() => {
 		let isMounted = true;
@@ -25,36 +25,21 @@ const Posts = () => {
 
 		const fetchPosts = async () => {
 			try {
-				// const res = await axios.get("http://127.0.0.1:8000/api/posts", {
-				// 	headers: {
-				// 		Authorization: `Bearer ${auth.accessToken}`,
-				// 		"Content-Type": "application/json",
-				// 	},
-				// });
 				const res = await axiosPrivate.get("/api/posts/", {
 					signal: controller.signal,
 				});
 
-				// const res = await ap.get("/api/posts/", {
-				// 	signal: controller.signal,
-				// 	withCredentials: true,
-				// 	headers: { Authorization: `Bearer ${auth.accessToken}` },
-				// });
-
 				console.log(res.data);
 				isMounted && setPosts(res.data);
 			} catch (error) {
-				console.log("posts fetch err");
-
-				console.error(error);
-				navigate("/login", { state: { from: location }, replace: true });
+				logout();
 			}
 		};
-		fetchPosts();
 
+		fetchPosts();
 		return () => {
 			isMounted = false;
-			controller.abort();
+			// controller.abort();
 		};
 	}, []);
 

@@ -1,4 +1,6 @@
 import React, { createContext, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export interface User {
 	date_joined: Date;
@@ -18,6 +20,7 @@ interface Auth {
 
 interface AuthenticationContext {
 	auth: Auth;
+	logout: (location?: Location) => Promise<void>;
 	setAuth: React.Dispatch<React.SetStateAction<Auth>>;
 }
 export const AuthContext = createContext<AuthenticationContext>(null!);
@@ -27,10 +30,27 @@ interface Props {
 }
 
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-	const [auth, setAuth] = useState<Auth>({ user: null, accessToken: "" });
+	const navigate = useNavigate();
+
+	const [auth, setAuth] = useState<Auth>({
+		user: null,
+		accessToken: "",
+	});
+
+	const logout = async (location?: Location) => {
+		setAuth((prev) => ({ ...prev, accessToken: "", user: null }));
+		const res = await axios.post("/api/auth/logout/", {
+			withCredentials: true,
+		});
+		if (location) {
+			navigate("/login", { state: { from: location }, replace: true });
+			return;
+		}
+		navigate("/");
+	};
 
 	return (
-		<AuthContext.Provider value={{ auth, setAuth }}>
+		<AuthContext.Provider value={{ auth, setAuth, logout }}>
 			{children}
 		</AuthContext.Provider>
 	);

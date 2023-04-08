@@ -1,5 +1,6 @@
+import { defineConfig } from "vite";
 import { useEffect } from "react";
-import { axiosPrivate } from "../api/axios";
+import axios, { axiosPrivate } from "../api/axios";
 import useRefreshToken from "./useRefreshToken";
 import useAuth from "./useAuth";
 
@@ -8,34 +9,43 @@ const useAxiosPrivate = () => {
 	const { auth } = useAuth();
 
 	useEffect(() => {
-		const reqIntercept = axiosPrivate.interceptors.request.use(
+		console.log("Run");
+		const requestInterceptor = axiosPrivate.interceptors.request.use(
 			(config) => {
 				if (!config.headers["Authorization"]) {
-					config.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
+					config.headers["Authorization"] = `Bearer ${auth.accessToken}`;
 				}
 				return config;
 			},
 			(err) => Promise.reject(err)
 		);
 
-		const resIntercept = axiosPrivate.interceptors.response.use(
+		const responseInterceptor = axiosPrivate.interceptors.response.use(
 			(res) => res,
 			async (err) => {
-				const prevRequest = err?.config;
+				const prevReq = err?.config;
+				console.log(prevReq?.headers);
 
-				if (err?.response?.status === 401 && !prevRequest?.sent) {
-					prevRequest.sent = true;
-					const newAccessToken = await refreshFn();
-					prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-					return axiosPrivate(prevRequest);
+				if (err?.response?.status === 401 && !prevReq?.sent) {
+					console.log("Res Err");
+					prevReq.sent = true;
+					try {
+						const newAccess = await refreshFn();
+						console.log(auth);
+						prevReq.headers["Authorization"] = `Bearer ${newAccess}`;
+						return axiosPrivate(prevReq);
+					} catch (error) {
+						return Promise.reject(err);
+					}
 				}
 				return Promise.reject(err);
 			}
 		);
 
 		return () => {
-			axiosPrivate.interceptors.request.eject(reqIntercept);
-			axiosPrivate.interceptors.response.eject(resIntercept);
+			console.log("clean");
+			axiosPrivate.interceptors.request.eject(requestInterceptor);
+			axiosPrivate.interceptors.response.eject(responseInterceptor);
 		};
 	}, [auth, refreshFn]);
 

@@ -11,18 +11,16 @@ const App = () => {
 	const { auth } = useAuth();
 	return (
 		<div className="App">
-			<BrowserRouter>
-				{auth.user && <Navbar />}
-				<Routes>
-					<Route path="" element={<PrivateRoute />}>
-						<Route path="" element={<Posts />} />
-						<Route path="/create" element={<CreatePost />} />
-						<Route path="/posts" element={<PostsPage />} />
-						<Route path="/profile" element={<Profile />} />
-					</Route>
-					<Route path="/login" element={<Login />} />
-				</Routes>
-			</BrowserRouter>
+			{auth.user && <Navbar />}
+			<Routes>
+				<Route path="" element={<PrivateRoute />}>
+					<Route path="" element={<Posts />} />
+					<Route path="/create" element={<CreatePost />} />
+					<Route path="/posts" element={<PostsPage />} />
+					<Route path="/profile" element={<Profile />} />
+				</Route>
+				<Route path="/login" element={<Login />} />
+			</Routes>
 		</div>
 	);
 };
