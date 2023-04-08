@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-$y@(r_ffpbkbeg$kg_i!c$7-7(=8e#mo43qbn)=m-&xez$_lq*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -92,7 +92,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_SECURE': False,    # Whether the auth cookies should be secure (https:// only).
     'AUTH_COOKIE_HTTP_ONLY' : True, # Http only cookie flag.It's not fetch by javascript.
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
-    'AUTH_COOKIE_SAMESITE': None,  
+    'AUTH_COOKIE_SAMESITE': "Lax",  
 }
 
 REST_FRAMEWORK = {
@@ -113,17 +113,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
 
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
 
-    "http://localhost:1573",
-    "http://127.0.0.1:1573",
-]
+#     "http://localhost:1573",
+#     "http://127.0.0.1:1573",
+# ]
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'
 
 ROOT_URLCONF = 'server.urls'
 

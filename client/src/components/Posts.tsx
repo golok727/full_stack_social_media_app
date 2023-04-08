@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import axios from "../api/axios";
+// import axios, { axiosPrivate as ap } from "../api/axios";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-
+import useRefreshToken from "../hooks/useRefreshToken";
 interface Post {
 	id: number;
 	title: string;
@@ -18,7 +18,7 @@ const Posts = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { auth } = useAuth();
-
+	const refresh = useRefreshToken();
 	useEffect(() => {
 		let isMounted = true;
 		const controller = new AbortController();
@@ -31,13 +31,15 @@ const Posts = () => {
 				// 		"Content-Type": "application/json",
 				// 	},
 				// });
-
 				const res = await axiosPrivate.get("/api/posts/", {
-					headers: {
-						Authorization: `Bearer ${auth.accessToken}`,
-						"Content-Type": "application/json",
-					},
+					signal: controller.signal,
 				});
+
+				// const res = await ap.get("/api/posts/", {
+				// 	signal: controller.signal,
+				// 	withCredentials: true,
+				// 	headers: { Authorization: `Bearer ${auth.accessToken}` },
+				// });
 
 				console.log(res.data);
 				isMounted && setPosts(res.data);
@@ -58,6 +60,9 @@ const Posts = () => {
 
 	return (
 		<div>
+			<button className="text-white" onClick={() => refresh()}>
+				Refresh
+			</button>
 			{posts.length === 0 ? (
 				<span className="text-white">No posts yet</span>
 			) : (

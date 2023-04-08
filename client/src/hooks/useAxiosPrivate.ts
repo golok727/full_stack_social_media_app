@@ -22,7 +22,7 @@ const useAxiosPrivate = () => {
 			(res) => res,
 			async (err) => {
 				const prevRequest = err?.config;
-				console.log(err.response.status);
+
 				if (err?.response?.status === 401 && !prevRequest?.sent) {
 					prevRequest.sent = true;
 					const newAccessToken = await refreshFn();

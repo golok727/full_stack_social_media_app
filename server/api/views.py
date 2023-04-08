@@ -21,7 +21,6 @@ from rest_framework_simplejwt.tokens import RefreshToken, BlacklistedToken, Outs
 def loginUser(request):
     username = request.data.get("username", None)
     password = request.data.get("password", None)
-
     try:
 
         user = authenticate(request, username=username, password=password)
@@ -33,7 +32,7 @@ def loginUser(request):
             user_serializer = UserSerializer(user)
             response = Response({"access": access_token, "user": user_serializer.data}, status=status.HTTP_200_OK) 
 
-            response.set_cookie(key="refresh_token",value=refresh_token, expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'], secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"], samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],    httponly = settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'])
+            response.set_cookie(key="refresh_token", value=refresh_token, expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],  samesite = 'Lax', httponly = True)
 
             return response
             
