@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import useRefreshToken from "../hooks/useRefreshToken";
+import PostsPlaceHolder from "./PostsPlaceHolder";
+import Post from "./Post";
 interface Post {
 	id: number;
 	title: string;
@@ -17,7 +18,6 @@ const Posts = () => {
 	const location = useLocation();
 	const { auth, logout } = useAuth();
 
-	const refresh = useRefreshToken();
 	useEffect(() => {
 		let isMounted = true;
 		const controller = new AbortController();
@@ -27,7 +27,7 @@ const Posts = () => {
 				const res = await axiosPrivate.get("/api/posts/", {
 					signal: controller.signal,
 				});
-
+				//
 				isMounted && setPosts(res.data);
 			} catch (error: any) {
 				if (error?.response?.status === 401) {
@@ -47,9 +47,13 @@ const Posts = () => {
 	}, []);
 
 	return (
-		<div>
+		<div className="">
+			<Post />
 			{posts.length === 0 ? (
-				<span className="text-white">No posts yet</span>
+				<div>
+					<PostsPlaceHolder />
+					<span className="text-white">No posts yet</span>
+				</div>
 			) : (
 				posts.map((post, id) => (
 					<div className="text-white" key={id}>

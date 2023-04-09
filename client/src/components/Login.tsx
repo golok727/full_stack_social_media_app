@@ -130,7 +130,9 @@ const Login = () => {
 							value={isLoading ? "Loading..." : "Login"}
 							className={`${
 								isLoading ? "bg-green-800" : "bg-green-600"
-							} cursor-pointer px-3 py-2 rounded font-bold hover:bg-green-700`}
+							} cursor-pointer px-3 py-2 rounded font-bold hover:bg-green-700 ${
+								isLoading && "cursor-wait"
+							}`}
 							aria-label="submit"
 							disabled={isLoading ? true : false}
 						/>
