@@ -48,9 +48,6 @@ const Posts = () => {
 
 	return (
 		<div>
-			<button className="text-white" onClick={() => refresh()}>
-				Refresh
-			</button>
 			{posts.length === 0 ? (
 				<span className="text-white">No posts yet</span>
 			) : (
