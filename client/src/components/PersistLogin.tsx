@@ -2,6 +2,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import useRefreshToken from "../hooks/useRefreshToken";
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
+import Loading from "./Loading";
 
 const PersistLogin = () => {
 	const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +25,7 @@ const PersistLogin = () => {
 	return (
 		<>
 			{isLoading ? (
-				<p className="text-white">Loading.....</p>
+				<Loading />
 			) : !isLoading && !auth.accessToken && !auth.user ? (
 				<Navigate to="/login" />
 			) : (

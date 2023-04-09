@@ -9,7 +9,7 @@ const Login = () => {
 	const navigate = useNavigate();
 	const currLocation = useLocation();
 	const from = currLocation.state?.from?.pathname || "/";
-
+	const [isLoading, setIsLoading] = useState(false);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [err, setErr] = useState("Error");
@@ -29,13 +29,13 @@ const Login = () => {
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
+		setIsLoading(true);
+		console.log("Login");
 		try {
 			const res = await axios.post("/api/auth/login/", { username, password });
 			const accessToken = res.data?.access;
 			const user = res.data?.user;
 			setAuth({ accessToken, user });
-			setUsername("");
-			setPassword("");
 
 			navigate(from, { replace: true });
 		} catch (error: any | AxiosError) {
@@ -54,6 +54,10 @@ const Login = () => {
 			}
 
 			if (errRef.current) errRef.current.focus();
+		} finally {
+			setIsLoading(false);
+			setUsername("");
+			setPassword("");
 		}
 	};
 
@@ -123,9 +127,12 @@ const Login = () => {
 					<div className="self-center">
 						<input
 							type="submit"
-							value="Login"
-							className="bg-green-600 cursor-pointer px-3 py-2 rounded font-bold "
+							value={isLoading ? "Loading..." : "Login"}
+							className={`${
+								isLoading ? "bg-green-800" : "bg-green-600"
+							} cursor-pointer px-3 py-2 rounded font-bold hover:bg-green-700`}
 							aria-label="submit"
+							disabled={isLoading ? true : false}
 						/>
 					</div>
 				</form>

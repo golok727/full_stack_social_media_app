@@ -13,7 +13,7 @@ const Navbar = () => {
 			</div>
 			<div>
 				<button
-					className="bg-red-600 px-3 py-2 rounded text-white text-sm font-bold text-center"
+					className="bg-red-600 px-3 py-2 rounded text-white text-sm font-bold text-center hover:bg-red-700"
 					onClick={() => logout()}
 				>
 					<svg
