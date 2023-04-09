@@ -14,7 +14,6 @@ interface Post {
 const Posts = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
 	const axiosPrivate = useAxiosPrivate();
-	const navigate = useNavigate();
 	const location = useLocation();
 	const { auth, logout } = useAuth();
 
@@ -29,17 +28,21 @@ const Posts = () => {
 					signal: controller.signal,
 				});
 
-				console.log(res.data);
 				isMounted && setPosts(res.data);
-			} catch (error) {
-				logout();
+			} catch (error: any) {
+				if (error?.response?.status === 401) {
+					logout(location);
+					return;
+				}
+
+				console.log(error);
 			}
 		};
 
 		fetchPosts();
 		return () => {
 			isMounted = false;
-			// controller.abort();
+			controller.abort();
 		};
 	}, []);
 

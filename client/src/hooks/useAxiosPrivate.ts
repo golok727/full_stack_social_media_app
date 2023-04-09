@@ -9,7 +9,6 @@ const useAxiosPrivate = () => {
 	const { auth } = useAuth();
 
 	useEffect(() => {
-		console.log("Run");
 		const requestInterceptor = axiosPrivate.interceptors.request.use(
 			(config) => {
 				if (!config.headers["Authorization"]) {
@@ -24,14 +23,12 @@ const useAxiosPrivate = () => {
 			(res) => res,
 			async (err) => {
 				const prevReq = err?.config;
-				console.log(prevReq?.headers);
 
 				if (err?.response?.status === 401 && !prevReq?.sent) {
-					console.log("Res Err");
 					prevReq.sent = true;
 					try {
 						const newAccess = await refreshFn();
-						console.log(auth);
+
 						prevReq.headers["Authorization"] = `Bearer ${newAccess}`;
 						return axiosPrivate(prevReq);
 					} catch (error) {
@@ -43,7 +40,6 @@ const useAxiosPrivate = () => {
 		);
 
 		return () => {
-			console.log("clean");
 			axiosPrivate.interceptors.request.eject(requestInterceptor);
 			axiosPrivate.interceptors.response.eject(responseInterceptor);
 		};

@@ -1,6 +1,6 @@
 import React, { createContext, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Location } from "react-router-dom";
 
 export interface User {
 	date_joined: Date;

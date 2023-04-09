@@ -6,8 +6,6 @@ const useRefreshToken = () => {
 	const { setAuth } = useAuth();
 
 	const refresh = async () => {
-		console.log("Refresh");
-
 		const res = await axios.post("/api/auth/token/refresh/", {
 			withCredentials: true,
 		});
