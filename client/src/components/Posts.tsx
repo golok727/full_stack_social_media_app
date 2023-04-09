@@ -4,16 +4,10 @@ import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import PostsPlaceHolder from "./PostsPlaceHolder";
 import Post from "./Post";
-interface Post {
-	id: number;
-	title: string;
-	description: string;
-	image: string;
-	likes: number[];
-}
+import { PostType } from "../utils/types";
 
 const Posts = () => {
-	const [posts, setPosts] = useState<Post[]>([]);
+	const [posts, setPosts] = useState<PostType[]>([]);
 	const axiosPrivate = useAxiosPrivate();
 	const location = useLocation();
 	const { auth, logout } = useAuth();
@@ -28,6 +22,7 @@ const Posts = () => {
 					signal: controller.signal,
 				});
 				//
+				console.log(res.data);
 				isMounted && setPosts(res.data);
 			} catch (error: any) {
 				if (error?.response?.status === 401) {
@@ -47,49 +42,51 @@ const Posts = () => {
 	}, []);
 
 	return (
-		<div className="">
-			<Post />
-			{posts.length === 0 ? (
-				<div>
-					<PostsPlaceHolder />
-					<span className="text-white">No posts yet</span>
-				</div>
-			) : (
-				posts.map((post, id) => (
-					<div className="text-white" key={id}>
-						<h3 className="font-bold">{post?.title}</h3>
-
-						<p>{post?.description}</p>
-
-						<div
-							className="rounded-md"
-							style={{
-								width: "300px",
-								overflow: "hidden",
-								height: "auto",
-							}}
-						>
-							<img
-								style={{
-									// aspectRatio: "",
-
-									width: "100%",
-									objectFit: "cover",
-								}}
-								src={post.image}
-								alt=""
-							/>
-						</div>
-
-						<div>
-							Likes: <span className="font-bold"> {post.likes.length} </span>
-						</div>
-						<br />
+		<div className="container mx-auto max-w-6xl pt-20 pb-10">
+			<div className="flex flex-col items-center gap-4">
+				{posts.length === 0 ? (
+					<div>
+						<PostsPlaceHolder />
+						<span className="text-white">No posts yet</span>
 					</div>
-				))
-			)}
+				) : (
+					posts.map((post, id) => <Post post={post} key={id} />)
+				)}
+			</div>
 		</div>
 	);
 };
 
 export default Posts;
+
+// <div className="text-white" key={id}>
+// <h3 className="font-bold">{post?.title}</h3>
+
+// <p>{post?.description}</p>
+
+// <div
+// 	className="rounded-md"
+// 	style={{
+// 		width: "300px",
+// 		overflow: "hidden",
+// 		height: "auto",
+// 	}}
+// >
+// 	<img
+// 		style={{
+// 			// aspectRatio: "",
+
+// 			width: "100%",
+// 			objectFit: "cover",
+// 		}}
+// 		src={post.image}
+// 		alt=""
+// 		loading="lazy"
+// 	/>
+// </div>
+
+// <div>
+// 	Likes: <span className="font-bold"> {post.likes.length} </span>
+// </div>
+// <br />
+// </div>

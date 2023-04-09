@@ -4,7 +4,7 @@ import useAuth from "../hooks/useAuth";
 const Navbar = () => {
 	const { logout } = useAuth();
 	return (
-		<div className="text-white flex gap-3 items-center justify-between px-4 py-3">
+		<div className="text-white flex gap-3 items-center justify-between px-5 py-3 border-b-[1px] border-slate-800 fixed w-full bg-neutral-900 shadow-2xl">
 			<div className="flex gap-3">
 				<Link to="/">Home</Link>
 				<Link to="/create">Create</Link>
