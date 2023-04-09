@@ -22,7 +22,6 @@ const Posts = () => {
 					signal: controller.signal,
 				});
 				//
-				console.log(res.data);
 				isMounted && setPosts(res.data);
 			} catch (error: any) {
 				if (error?.response?.status === 401) {
