@@ -1,0 +1,1 @@
+- [ ] OSError: cannot write mode RGBA as JPEG Fix this Error

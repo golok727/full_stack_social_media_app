@@ -2,11 +2,11 @@ import React from "react";
 
 const PostsPlaceHolder = () => {
 	return (
-		<div>
+		<div className="container mx-auto max-w-3xl">
 			{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((_, i) => (
 				<div key={i}>
 					<div
-						className="max-w-xs rounded-lg mb-6 bg-white shadow-lg dark:bg-neutral-700"
+						className="w-[400px] rounded-lg mb-6 bg-white shadow-lg dark:bg-neutral-700"
 						aria-hidden="true"
 					>
 						{/* <img

@@ -1,13 +1,14 @@
 import axios from "axios";
 import { FormEvent, useState } from "react";
+import useAuth from "../hooks/useAuth";
 const CreatePost = () => {
 	const [image, setImage] = useState<File | null>(null!);
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
+	const { auth } = useAuth();
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-
 		let formData = new FormData();
 		if (image && title && description) {
 			formData.append("image", image, image.name);
@@ -21,8 +22,7 @@ const CreatePost = () => {
 					headers: {
 						"Content-Type": "multipart/form-data",
 
-						Authorization:
-							"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgwNjA1MzE4LCJpYXQiOjE2ODA2MDE3MTgsImp0aSI6IjYwNjBlN2MyNTFiZDQxOTJhZDkwNjg2ZGYyNzU5ZjNmIiwiaWQiOjEsInVzZXJuYW1lIjoibmFyYSIsImlzX3N1cGVydXNlciI6dHJ1ZX0.3nc_YMK9yDNN-UuTJz6UhPnCPp0fDBGhqr-8HSTToPg",
+						Authorization: `Bearer ${auth.accessToken}`,
 					},
 				});
 				const data = res.data;
@@ -34,7 +34,7 @@ const CreatePost = () => {
 	};
 
 	return (
-		<div className="App">
+		<div className="pt-20">
 			<form onSubmit={handleSubmit}>
 				<p>
 					<input
@@ -66,7 +66,7 @@ const CreatePost = () => {
 						required
 					/>
 				</p>
-				<input type="submit" />
+				<input className="text-white" type="submit" />
 			</form>
 		</div>
 	);

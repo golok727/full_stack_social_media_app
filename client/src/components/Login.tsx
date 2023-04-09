@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import axios from "../api/axios";
+import axios, { Axios } from "axios";
 import { AxiosError, isAxiosError } from "axios";
 const Login = () => {
 	const { setAuth } = useAuth();
@@ -12,7 +12,7 @@ const Login = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const [err, setErr] = useState("Error");
+	const [err, setErr] = useState("");
 
 	const userNameRef = useRef<HTMLInputElement>(null);
 	const errRef = useRef<HTMLParagraphElement>(null);
@@ -30,34 +30,27 @@ const Login = () => {
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		setIsLoading(true);
-		console.log("Login");
 		try {
 			const res = await axios.post("/api/auth/login/", { username, password });
 			const accessToken = res.data?.access;
 			const user = res.data?.user;
 			setAuth({ accessToken, user });
 
+			setUsername("");
+			setPassword("");
 			navigate(from, { replace: true });
 		} catch (error: any | AxiosError) {
-			console.log(err);
-			if (isAxiosError(err)) {
-				if (!err.response) {
-					setErr("No Server Response");
-				} else if (err.response?.status === 400) {
-					setErr("Username or Password is incorrect");
-				} else {
-					setErr("Unauthorized");
-				}
+			if (error.response?.status === 500) {
+				setErr("No Server Response");
+			} else if (error.response?.status === 400) {
+				setErr("Username or Password is incorrect");
 			} else {
-				setErr("Something Went Wrong");
-				console.log(err);
+				setErr("Something Went Wrong!!");
 			}
 
 			if (errRef.current) errRef.current.focus();
 		} finally {
 			setIsLoading(false);
-			setUsername("");
-			setPassword("");
 		}
 	};
 
@@ -69,7 +62,7 @@ const Login = () => {
 				</h1>
 				<p
 					ref={errRef}
-					className="text-center text-red-500 font-bold tracking-tight text-sm"
+					className="text-center text-red-500 font-bold tracking-tight text-sm pb-4"
 				>
 					{err}
 				</p>
