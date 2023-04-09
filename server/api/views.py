@@ -1,4 +1,4 @@
-
+import jwt
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -9,11 +9,12 @@ from .serializers import PostSerializer, UserSerializer
 from django.contrib.auth.models import User
 
 
-from datetime import datetime, timedelta
+
 from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken, BlacklistedToken, OutstandingToken
+
 
 
 
@@ -30,6 +31,7 @@ def loginUser(request):
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
             user_serializer = UserSerializer(user)
+
             response = Response({"access": access_token, "user": user_serializer.data}, status=status.HTTP_200_OK) 
 
             response.set_cookie(key="refresh_token", value=refresh_token, expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],  samesite = 'Lax', httponly = True)
@@ -67,7 +69,11 @@ def refreshTokens(request):
             # BlacklistedToken.check_blacklist(refresh_token)
             refresh_token = RefreshToken(refresh_token)
             access_token = str(refresh_token.access_token)
-            response =  Response({"access": access_token})
+            user_decode = jwt.decode(access_token, settings.SECRET_KEY, algorithms=["HS256"])
+            user_obj = User.objects.get(id=user_decode["id"])
+            user = UserSerializer(user_obj).data 
+
+            response =  Response({"access": access_token, "user": user})
 
             return response
 

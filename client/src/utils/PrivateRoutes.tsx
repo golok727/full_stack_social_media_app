@@ -5,7 +5,7 @@ import useAuth from "../hooks/useAuth";
 const PrivateRoutes: React.FC = () => {
 	const { auth } = useAuth();
 
-	return auth.user ? <Outlet /> : <Navigate to="/login" />;
+	return auth.accessToken ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoutes;

@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 			navigate("/login", { state: { from: location }, replace: true });
 			return;
 		}
-		navigate("/");
+		navigate("/login");
 	};
 
 	return (

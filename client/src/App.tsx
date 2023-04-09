@@ -7,14 +7,15 @@ import PostsPage from "./pages/PostsPage";
 import PrivateRoute from "./utils/PrivateRoutes";
 import Profile from "./pages/Profile";
 import useAuth from "./hooks/useAuth";
+import PersistLogin from "./components/PersistLogin";
 const App = () => {
 	const { auth } = useAuth();
 	return (
 		<div className="App">
 			{auth.user && <Navbar />}
 			<Routes>
-				<Route path="" element={<PrivateRoute />}>
-					<Route path="" element={<Posts />} />
+				<Route path="/" element={<PersistLogin />}>
+					<Route path="/" element={<Posts />} />
 					<Route path="/create" element={<CreatePost />} />
 					<Route path="/posts" element={<PostsPage />} />
 					<Route path="/profile" element={<Profile />} />
