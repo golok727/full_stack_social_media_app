@@ -32,6 +32,7 @@ const truncateString = (s: string): string => {
 const splitNewLines = (str: string): string[] => str.split(/\r?\n/);
 
 const Post: React.FC<Props> = ({ post }) => {
+	const [imageLoadError, setImageLoadError] = useState(false);
 	const splitDescription = splitNewLines(post.description);
 	const [truncateDesc, setTruncateDesc] = useState(
 		splitDescription.length > 1 || post.description.length > 70
@@ -87,7 +88,7 @@ const Post: React.FC<Props> = ({ post }) => {
 						maxWidth: "400px",
 						overflow: "hidden",
 						height: "auto",
-						minHeight: "400px",
+						...(imageLoadError ? { minHeight: "400px" } : {}),
 					}}
 				>
 					<img
@@ -96,6 +97,8 @@ const Post: React.FC<Props> = ({ post }) => {
 							width: "100%",
 							objectFit: "cover",
 						}}
+						onLoad={() => setImageLoadError(false)}
+						onError={() => setImageLoadError(true)}
 						src={post.image}
 						alt={`Loading image: ${post.title}`}
 						loading="lazy"

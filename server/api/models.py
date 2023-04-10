@@ -29,43 +29,30 @@ def compress_image( image):
     new_image = File(im_io, name=image.name)
     return new_image
 
-
-class Tag(models.Model):
-    name = models.CharField(max_length=50)
-    def __str__(self): 
-        return self.name
-
 class Post(models.Model):
     title= models.CharField(max_length=100, blank=True, null=True)
     description= models.TextField(blank=True, null=True)
     image  = models.ImageField(upload_to=path_rename, blank=True, null=True)
-    user = models.ForeignKey(User, blank=True, null=True,  on_delete=models.CASCADE)
-    likes = models.ManyToManyField(User, blank=True, related_name="likes")
+    user = models.ForeignKey(User, blank=True, null=True,  on_delete=models.CASCADE, related_name='posts')
+    likes = models.ManyToManyField(User, blank=True, related_name="liked_posts",  related_query_name='liked_post',)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    tags = models.ManyToManyField(Tag, blank=True)
     def __str__(self): 
         return self.title
     
 
 
     def save(self,*args, **kwargs):
-        tag_names = set(tag.strip("#") for tag in self.description.split() if tag.startswith("#")) 
-
-        new_image = compress_image(self.image)
-        self.image = new_image
-        super(Post, self).save(*args, **kwargs)
-
-        for tag_name in tag_names:
-            tag, created = Tag.objects.get_or_create(name=tag_name)
-            self.tags.add(tag)  
-
+        if not self.pk:
+            new_image = compress_image(self.image)
+            self.image = new_image
         super(Post, self).save(*args, **kwargs)
 
 
     class Meta: 
         ordering =  ["-created"]
-
+        verbose_name = 'Post'
+        verbose_name_plural = 'Posts'
 
 
 

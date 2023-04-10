@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, parser_classes, permission_class
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .models import Post, Tag
+from .models import Post
 from .serializers import PostSerializer, UserSerializer
 from django.contrib.auth.models import User
 
@@ -128,16 +128,11 @@ def getPosts(request):
         title = data.get("title")
         description = data.get("description")
         image = data.get("image")
-        
-        tag_names = set(tag.strip("#") for tag in description.split() if tag.startswith("#"))
+
         
         #TODO change user to request user
         new_post = Post.objects.create(title=title, description=description, image=image, user=request.user)
-        for tag_name in tag_names:
-            tag, created = Tag.objects.get_or_create(name=tag_name)
-            new_post.tags.add(tag)
 
-        new_post.save()
         serializer = PostSerializer(new_post, context={"request": request})
 
         return Response({"msg": "Post Created", "data": serializer.data})
