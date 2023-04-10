@@ -23,6 +23,7 @@ const Posts = () => {
 				});
 				//
 				isMounted && setPosts(res.data);
+				console.log(res.data);
 			} catch (error: any) {
 				if (error?.response?.status === 401) {
 					logout(location);
