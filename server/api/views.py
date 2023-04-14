@@ -1,7 +1,10 @@
 import jwt
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, parser_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.views.decorators.csrf import csrf_protect
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from .models import Post
@@ -19,33 +22,63 @@ from rest_framework_simplejwt.tokens import RefreshToken, BlacklistedToken, Outs
 
 
 @api_view(["POST"])
+def registerUser(request):
+
+    username = request.data.get("username")
+    email = request.data.get("email")
+    password = request.data.get("password")
+
+    if not username or not email or not password:
+        return Response({"msg": "Please provide all required fields {username, password, email}"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    if User.objects.filter(username=username).exists():
+        return Response({"msg": "Username already exists"}, status=status.HTTP_409_CONFLICT)
+
+    if User.objects.filter(email=email).exists():
+        return Response({"msg": "Email already exists"}, status=status.HTTP_409_CONFLICT)
+    
+    # Create user in database
+    try:
+        user = User.objects.create_user(username=username, email=email, password=password)
+        
+        return Response({"msg": "User created", "user": UserSerializer(user).data}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({"msg": f"Error creating user: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def loginUser(request):
     username = request.data.get("username", None)
     password = request.data.get("password", None)
-    try:
 
-        user = authenticate(request, username=username, password=password)
+    if username is None or password is None:
+        return Response({"message": "Both username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if(user is not None):
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-            refresh_token = str(refresh)
-            user_serializer = UserSerializer(user)
+    user = authenticate(request, username=username, password=password)
 
-            response = Response({"access": access_token, "user": user_serializer.data}, status=status.HTTP_200_OK) 
+    if user is None:
+        return Response({"message": "Invalid username or password."}, status=status.HTTP_401_UNAUTHORIZED)
 
-            response.set_cookie(key="refresh_token", value=refresh_token, expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],  samesite = 'Lax', httponly = True)
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
 
-            return response
-            
+    user_serializer = UserSerializer(user)
+    response_data = {"access": access_token, "user": user_serializer.data}
+    response = Response(response_data, status=status.HTTP_200_OK)
 
-        else: 
-            return Response({"message": "Invalid Credentials or User not found"}, status=status.HTTP_400_BAD_REQUEST)
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+        samesite="Lax",
+        httponly=True
+    )
 
-    except:
-      print('An exception occurred')
-      return Response({"error": "Something Went Wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    return response
 @api_view(["POST"])
 def logoutUser(request):
     response = Response({'message': 'Logout successful'})

@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import useAuth from "./hooks/useAuth";
 import PersistLogin from "./components/PersistLogin";
 import NotFound from "./pages/NotFound";
+import SignUp from "./pages/SignUp";
 const App = () => {
 	const { auth } = useAuth();
 	return (
@@ -23,6 +24,7 @@ const App = () => {
 				</Route>
 				<Route path="/404" element={<NotFound />} />
 				<Route path="/login" element={<Login />} />
+				<Route path="/signup" element={<SignUp />} />
 			</Routes>
 		</div>
 	);

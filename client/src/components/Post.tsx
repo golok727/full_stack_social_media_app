@@ -106,7 +106,7 @@ const Post: React.FC<Props> = ({ post }) => {
 				</div>
 			</section>
 
-			<footer className="py-1">
+			<footer className="py-3">
 				<header className="flex justify-between mb-3">
 					<div className="flex gap-3 items-center">
 						<Heart
