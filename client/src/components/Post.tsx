@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { PostType } from "../utils/types";
 import { Link } from "react-router-dom";
 import Heart from "../icons/Heart";
@@ -6,7 +6,8 @@ import CommentIcon from "../icons/CommentIcon";
 import ShareIcon from "../icons/ShareIcon";
 import SaveIcon from "../icons/SaveIcon";
 import SmileIcon from "../icons/Smile";
-
+import axios from "axios";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 interface Props {
 	post: PostType;
 }
@@ -37,6 +38,19 @@ const Post: React.FC<Props> = ({ post }) => {
 	const [truncateDesc, setTruncateDesc] = useState(
 		splitDescription.length > 1 || post.description.length > 70
 	);
+	const axiosPrivate = useAxiosPrivate();
+	const [isLiked, setIsLiked] = useState(post.is_liked);
+	const handleLike = async () => {
+		setIsLiked((prev) => !prev);
+		if (post.is_liked && post.likes_count > 0) post.likes_count--;
+		else post.likes_count++;
+
+		try {
+			const res = await axiosPrivate.post(`/api/posts/like/${post.id}`);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
 		<div className="text-white border-[1px] border-slate-600 px-3 py-2 rounded ">
@@ -109,10 +123,7 @@ const Post: React.FC<Props> = ({ post }) => {
 			<footer className="py-3">
 				<header className="flex justify-between mb-3">
 					<div className="flex gap-3 items-center">
-						<Heart
-							isActive={post.is_liked}
-							onClick={() => console.log("Like")}
-						/>
+						<Heart isActive={isLiked} onClick={() => handleLike()} />
 						<CommentIcon />
 						<ShareIcon />
 					</div>

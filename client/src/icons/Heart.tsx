@@ -1,6 +1,6 @@
 import React from "react";
 
-interface Props extends React.SVGProps<SVGSVGElement> {
+interface Props extends React.HTMLAttributes<SVGElement> {
 	isActive?: boolean;
 }
 

@@ -137,6 +137,27 @@ def getRoutes(request):
     ]
     return Response(routes)
 
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def likePostView(request, pk):
+    try:
+        post = Post.objects.get(pk=pk)
+        user = request.user
+
+        if user in post.likes.all():
+            post.likes.remove(user)
+            return Response({"msg": "0"}, status=status.HTTP_200_OK)
+        else:
+            post.likes.add(user)
+            return Response({"msg" : "1"}, status=status.HTTP_200_OK)
+
+    except Post.DoesNotExist:
+        return Response({'msg': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
 @api_view(['GET', 'POST'])
 @parser_classes((MultiPartParser, FormParser))
 @permission_classes([IsAuthenticated])
