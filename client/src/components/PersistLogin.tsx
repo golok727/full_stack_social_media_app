@@ -8,14 +8,17 @@ const PersistLogin = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const refresh = useRefreshToken();
 	const { auth } = useAuth();
-
+	const [serverError, setServerError] = useState(false);
 	useEffect(() => {
 		let isMounted = true;
 		const verifyRefreshToken = async () => {
 			try {
 				await refresh();
-			} catch (error) {
-				console.log(error);
+			} catch (error: any) {
+				if (error?.response?.status === 500) {
+					setServerError(true);
+					console.log("serverError");
+				}
 			} finally {
 				isMounted && setIsLoading(false);
 			}
@@ -33,7 +36,14 @@ const PersistLogin = () => {
 			{isLoading ? (
 				<Loading />
 			) : !isLoading && !auth.accessToken && !auth.user ? (
-				<Navigate to="/login" />
+				serverError ? (
+					<div className="text-white">
+						Server Error{" "}
+						<button onClick={() => window.location.reload()}>Reload</button>
+					</div>
+				) : (
+					<Navigate to="/login" />
+				)
 			) : (
 				<Outlet />
 			)}

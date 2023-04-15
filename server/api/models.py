@@ -3,33 +3,12 @@ from django.contrib.auth.models import User
 import os 
 from uuid import uuid4
 from PIL import Image
-# from io import BytesIO
-# from django.core.files import File
+
 from django.utils.deconstruct import deconstructible
-#  From Stack Overflow
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-
- 
-# def path_rename(instance, filename):
-#     upload_to = 'post_images'
-#     ext = filename.split('.')[-1]
-#     if instance.pk:
-#         filename = '{}.{}'.format(instance.pk, ext)
-#     else:
-#         # set filename as random string
-#         filename = '{}.{}'.format(uuid4().hex, ext)
-#     # return the whole path to the file
-#     return os.path.join(upload_to, filename)
-
-# def compress_image( image):
-#     img = Image.open(image)
-#     img.thumbnail((1080,1080))
-#     im_io = BytesIO()
-    
-#     img.save(im_io, "jpeg", quality=70, optimize=True)
-#     new_image = File(im_io, name=image.name)
-#     return new_image
-
+# make the path for the new file and rename it with uuid
 @deconstructible
 class PathAndRename:
     def __init__(self, sub_path):
@@ -40,9 +19,7 @@ class PathAndRename:
         filename = f"{uuid4().hex}.{ext}"
         return os.path.join(self.path, filename)
 
-
-
-
+#  Post Model
 class Post(models.Model):
     title= models.CharField(max_length=100, blank=True, null=True)
     description= models.TextField(blank=True, null=True)
@@ -63,13 +40,6 @@ class Post(models.Model):
                 img.thumbnail((1080,1080), resample=Image.BICUBIC)
                 img.save(self.image.path, optimize=True, quality=75)
 
-
-    # def save(self,*args, **kwargs):
-    #     if not self.pk:
-    #         new_image = compress_image(self.image)
-    #         self.image = new_image
-    #     super(Post, self).save(*args, **kwargs)
-
     class Meta: 
         ordering =  ["-created"]
         verbose_name = 'Post'
@@ -77,5 +47,45 @@ class Post(models.Model):
 
     
 
+# UserProfile Model 
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=30, blank=True, null=True)
+    birth_date = models.DateField(null=True, blank=True)
+    profile_image = models.ImageField(upload_to=PathAndRename("profile_images"), blank=True, null=True)
+    followers = models.ManyToManyField(User, related_name='following', blank=True)
 
 
+    def __str__(self):
+        return self.user.username
+
+    def get_followers_count(self):
+        return self.followers.count()
+
+    def get_following_count(self):
+        return self.following.count()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.profile_image:
+            with Image.open(self.profile_image.path) as img:
+                if img.width > 500 or img.height > 500:
+                    img.thumbnail((500, 500), resample=Image.BICUBIC)
+                    img.save(self.profile_image.path, optimize=True, quality=85)
+
+
+    class Meta:
+        ordering = ['-id']
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.userprofile.save()

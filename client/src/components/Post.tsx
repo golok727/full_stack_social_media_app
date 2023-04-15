@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { PostType } from "../utils/types";
+
 import { Link } from "react-router-dom";
 import Heart from "../icons/Heart";
 import CommentIcon from "../icons/CommentIcon";
 import ShareIcon from "../icons/ShareIcon";
 import SaveIcon from "../icons/SaveIcon";
 import SmileIcon from "../icons/Smile";
-import axios from "axios";
+
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 interface Props {
 	post: PostType;
@@ -41,7 +41,7 @@ const Post: React.FC<Props> = ({ post }) => {
 	const axiosPrivate = useAxiosPrivate();
 	const [isLiked, setIsLiked] = useState(post.is_liked);
 	const handleLike = async () => {
-		setIsLiked((prev) => !prev);
+		setIsLiked((prev: boolean) => !prev);
 		if (post.is_liked && post.likes_count > 0) post.likes_count--;
 		else post.likes_count++;
 
@@ -57,11 +57,17 @@ const Post: React.FC<Props> = ({ post }) => {
 			<header className="flex py-3 border-b-slate-600 border-b-2 mb-4 justify-between items-center">
 				<div className="flex items-center gap-2">
 					<div className="avatar cursor-pointer">
-						<div
-							className={`w-7 h-7 bg-orange-600 rounded-full text-white font-bold text-xs grid place-items-center select-none border-blue-200 border-[1px]`}
-						>
-							{post.user.username.charAt(0).toUpperCase()}
-						</div>
+						{post.user.userprofile.profile_image ? (
+							<div className="w-8 h-8 rounded-full overflow-hidden border-[2px] border-red-600">
+								<img
+									className="object-contain"
+									src={post.user.userprofile.profile_image}
+									alt=""
+								/>
+							</div>
+						) : (
+							<LetterAvatar username={post.user.username} />
+						)}
 					</div>
 					{/* Username */}
 					<h3
@@ -235,3 +241,13 @@ function CommentForm() {
 }
 
 export default Post;
+
+function LetterAvatar({ username }: { username: string }) {
+	return (
+		<div
+			className={`w-8 h-8 bg-orange-600 rounded-full text-white font-bold text-xs grid place-items-center select-none border-blue-200 border-[1px]`}
+		>
+			{username.charAt(0).toUpperCase()}
+		</div>
+	);
+}

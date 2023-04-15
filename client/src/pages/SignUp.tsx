@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Eye from "../icons/Eye";
 import axios from "axios";
 
-const USER_REGEX = /^([a-zA-Z0-9_]{4,30})$/;
+const USER_REGEX = /^([a-z0-9_]{4,30})$/;
 const PASSWORD_REGEX =
 	/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])(?=.{8,})[a-zA-Z0-9!@#$%^&*()_+]+$/;
 
@@ -94,7 +94,7 @@ const SignUp = () => {
 
 			if (error?.response?.status === 409) {
 				setErrMsg(
-					error?.response?.data?.msg || "Username or EmailId already exist!"
+					error?.response?.data?.msg || "Username or Email already exist!"
 				);
 			} else {
 				setErrMsg("Something Went wrong please try again");
@@ -140,7 +140,9 @@ const SignUp = () => {
 							<input
 								ref={userNameRef}
 								value={username}
-								onChange={(e) => setUsername(e.currentTarget.value)}
+								onChange={(e) =>
+									setUsername(e.currentTarget.value.toLowerCase())
+								}
 								className={`bg-transparent border-[1px] border-gray-700 transition-all duration-1000 px-3 py-2 rounded text-white placeholder-slate-500 ${
 									!validUserName &&
 									userFocus &&

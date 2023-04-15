@@ -8,7 +8,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from .models import Post
-from .serializers import PostSerializer, UserSerializer
+from .serializers import PostSerializer, UserSerializer, UserProfileSerializer
 from django.contrib.auth.models import User
 
 
@@ -16,9 +16,21 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.tokens import RefreshToken, BlacklistedToken, OutstandingToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
+
+@api_view(["GET"])
+def getUserProfile(request, username):
+  
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"message": f"User '{username}' not found"}, status=404)
+    profile = user.userprofile
+    print(profile)
+    serializer = UserProfileSerializer(profile, many=False, context={"request": request})
+    return Response(serializer.data)
 
 
 @api_view(["POST"])
@@ -38,7 +50,7 @@ def registerUser(request):
     if User.objects.filter(email=email).exists():
         return Response({"msg": "Email already exists"}, status=status.HTTP_409_CONFLICT)
     
-    # Create user in database
+
     try:
         user = User.objects.create_user(username=username, email=email, password=password)
         

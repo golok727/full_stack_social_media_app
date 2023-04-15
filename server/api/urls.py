@@ -11,6 +11,10 @@ urlpatterns = [
     path("auth/logout/", views.logoutUser, name="logout_view"),
     path("auth/token/refresh/", views.refreshTokens, name="token_refresh"),
     path("posts/", views.getPosts, name="get_posts"),
-    path("posts/like/<str:pk>", views.likePostView, name="like_post")
+    path("posts/like/<str:pk>", views.likePostView, name="like_post"),
+
+    path("users/profile/<str:username>", views.getUserProfile, name="user_profile")
+
+    
 ]
 

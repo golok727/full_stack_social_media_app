@@ -4,7 +4,6 @@ import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import PostsPlaceHolder from "./PostsPlaceHolder";
 import Post from "./Post";
-import { PostType } from "../utils/types";
 
 const Posts = () => {
 	const [posts, setPosts] = useState<PostType[]>([]);
