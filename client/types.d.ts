@@ -10,6 +10,7 @@ interface PostType {
 	title: string;
 	updated: Date;
 	user: User;
+	is_following: boolean;
 }
 
 interface User {

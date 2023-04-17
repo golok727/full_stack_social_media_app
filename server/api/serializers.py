@@ -65,15 +65,23 @@ class PostSerializer(ModelSerializer):
     likes_count = SerializerMethodField()
     is_liked = SerializerMethodField()
     is_mine = SerializerMethodField()
-
+    is_following = SerializerMethodField()
     user = UserSerializer(read_only=True)
     user_id = SlugRelatedField(queryset=User.objects.all, slug_field="user", write_only=True)
-    
+
     
     class Meta: 
         model = Post
         fields = '__all__'
 
+    def get_is_following(self, obj):
+        request = self.context.get('request')
+        user = request.user if request else None
+        if user:
+            following = user.userprofile.following.all()
+            return following.filter(id=obj.user.id).exists()
+        return False
+            
 
     def get_likes_count(self, obj):
         return obj.likes.count()
@@ -84,6 +92,8 @@ class PostSerializer(ModelSerializer):
     
     def get_is_mine(self, obj):
         return obj.user == self.context.get("request").user
+
+       
 
 
 

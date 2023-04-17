@@ -31,15 +31,49 @@ def getUserProfile(request, username):
     serializer = UserProfileSerializer(profile, many=False, context={"request": request})
     return Response(serializer.data)
 
-
+# Follow a User
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def followUser(request, userid): 
-    return Response({})
+  
+    try:
+        user_to_follow = User.objects.get(id=userid)
+    except User.DoesNotExist:
+        return Response({"error": "User does not exist."}, status=status.HTTP_404_NOT_FOUND)
+    
+
+    if request.user == user_to_follow:
+        return Response({"error": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    if request.user.userprofile.following.filter(id=userid).exists():
+        return Response({"error": "You are already following this user."}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    request.user.userprofile.following.add(user_to_follow)
+    return Response({"success": "You are now following {}.".format(user_to_follow.username)})
+
+
+# Unfollow a user
+
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def unFollowUser(request, userid): 
-    return Response({})
+    try:
+        user_to_unfollow = User.objects.get(id=userid)
+    except User.DoesNotExist:
+        return Response({"error": "User does not exist."}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.user == user_to_unfollow:
+        return Response({"error": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not request.user.userprofile.following.filter(id=userid).exists():
+        return Response({"error": "You are not following this user."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    request.user.userprofile.following.remove(user_to_unfollow)
+    return Response({"success": "You have unfollowed {}.".format(user_to_unfollow.username)})
 
 
 
@@ -191,7 +225,7 @@ def likePostView(request, pk):
 
 
 
-
+# Get all posts
 @api_view(['GET', 'POST'])
 @parser_classes((MultiPartParser, FormParser))
 @permission_classes([IsAuthenticated])
@@ -200,6 +234,8 @@ def getPosts(request):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True, context={"request": request})
 
+        # user_profile_fields = User._meta.get_fields()
+        
         return Response(serializer.data)
 
     if request.method == "POST": 

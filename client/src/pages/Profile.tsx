@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import FollowButton from "../components/FollowButton";
+import { numberFormatter } from "../utils/utils";
 
 const Profile = () => {
 	const { username } = useParams();
 	const { auth } = useAuth();
 	const [userProfile, setUserProfile] = useState<UserProfile | null>(null!);
+
 	const [isLoading, setIsLoading] = useState(true);
 	const axiosPrivate = useAxiosPrivate();
 
@@ -71,7 +74,11 @@ const Profile = () => {
 										</Link>
 									) : (
 										// Following Button
-										<FollowButton is_following={userProfile.is_following} />
+										<FollowButton
+											setUserProfile={setUserProfile}
+											is_following={userProfile.is_following}
+											userId={userProfile.user.id}
+										/>
 									)}
 								</header>
 
@@ -81,7 +88,7 @@ const Profile = () => {
 										{/* Posts Count */}
 										<span className="text-sm">
 											<span className="font-bold text-base mr-1">
-												{userProfile.posts_count}
+												{numberFormatter(userProfile.posts_count)}
 											</span>
 											{userProfile.posts_count > 0 ? "Post" : "Posts"}
 										</span>
@@ -89,7 +96,7 @@ const Profile = () => {
 										{/* Followers Count */}
 										<span className="text-sm">
 											<span className="font-bold text-base mr-1">
-												{userProfile.followers_count}
+												{numberFormatter(userProfile.followers_count)}
 											</span>
 											{userProfile.followers_count > 0
 												? "Followers"
@@ -99,7 +106,7 @@ const Profile = () => {
 										{/* Following Count */}
 										<span className="text-sm">
 											<span className="font-bold text-base mr-1">
-												{userProfile.following_count}
+												{numberFormatter(userProfile.following_count)}
 											</span>
 											Following
 										</span>
@@ -137,20 +144,5 @@ function AvatarMaker({
 		>
 			<span className="text-6xl">{username?.charAt(0).toUpperCase()}</span>
 		</div>
-	);
-}
-
-export function FollowButton({ is_following }: { is_following: boolean }) {
-	return (
-		<button
-			className={` ${
-				is_following
-					? "bg-gray-200 hover:bg-gray-300 text-black font-normal"
-					: "bg-blue-600 hover:bg-blue-800 text-white"
-			} rounded px-3 py-1  font-bold text-sm`}
-			onClick={() => console.log("Follow")}
-		>
-			{is_following ? <span>Following</span> : <span>Follow</span>}
-		</button>
 	);
 }

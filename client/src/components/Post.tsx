@@ -8,23 +8,11 @@ import SaveIcon from "../icons/SaveIcon";
 import SmileIcon from "../icons/Smile";
 
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import FollowButton from "./FollowButton";
+import { formatDate, numberFormatter } from "../utils/utils";
 interface Props {
 	post: PostType;
 }
-
-const numberFormatter = (n: number): string => {
-	const formatter = new Intl.NumberFormat("en", { notation: "compact" });
-	return formatter.format(n);
-};
-
-const formatDate = (str: Date | string): string => {
-	const formatter = new Intl.DateTimeFormat("en", {
-		month: "long",
-		day: "2-digit",
-	});
-
-	return formatter.format(new Date(str)).toUpperCase();
-};
 
 const splitNewLines = (str: string): string[] => str.split(/\r?\n/);
 
@@ -76,6 +64,12 @@ const Post: React.FC<Props> = ({ post }) => {
 							<span className="">{post.user.username}</span>
 						</Link>
 					</h3>
+					{!post.is_mine && !post.is_following && (
+						<FollowButton
+							is_following={post.is_following}
+							userId={post.user.id}
+						/>
+					)}
 				</div>
 
 				<div>
