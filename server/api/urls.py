@@ -13,7 +13,9 @@ urlpatterns = [
     path("posts/", views.getPosts, name="get_posts"),
     path("posts/like/<str:pk>", views.likePostView, name="like_post"),
 
-    path("users/profile/<str:username>", views.getUserProfile, name="user_profile")
+    path("users/profile/<str:username>", views.getUserProfile, name="user_profile"),
+    path("users/follow/<str:userid>", views.followUser, name="follow_user"),
+    path("users/unfollow/<str:userid>", views.unFollowUser, name="unfollow_user"),
 
     
 ]

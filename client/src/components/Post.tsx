@@ -26,10 +26,6 @@ const formatDate = (str: Date | string): string => {
 	return formatter.format(new Date(str)).toUpperCase();
 };
 
-const truncateString = (s: string): string => {
-	return s.substring(0, 75) + " ...";
-};
-
 const splitNewLines = (str: string): string[] => str.split(/\r?\n/);
 
 const Post: React.FC<Props> = ({ post }) => {
@@ -41,15 +37,15 @@ const Post: React.FC<Props> = ({ post }) => {
 	const axiosPrivate = useAxiosPrivate();
 	const [isLiked, setIsLiked] = useState(post.is_liked);
 	const handleLike = async () => {
-		setIsLiked((prev: boolean) => !prev);
-		if (post.is_liked && post.likes_count > 0) post.likes_count--;
-		else post.likes_count++;
-
 		try {
 			const res = await axiosPrivate.post(`/api/posts/like/${post.id}`);
 		} catch (error) {
 			console.log(error);
 		}
+
+		setIsLiked((prev: boolean) => !prev);
+		if (isLiked && post.likes_count > 0) post.likes_count--;
+		else post.likes_count++;
 	};
 
 	return (

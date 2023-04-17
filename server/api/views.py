@@ -2,21 +2,21 @@ import jwt
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from .models import Post
 from .serializers import PostSerializer, UserSerializer, UserProfileSerializer
 from django.contrib.auth.models import User
 
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 
 
 from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
+
 
 
 
@@ -28,9 +28,19 @@ def getUserProfile(request, username):
     except User.DoesNotExist:
         return Response({"message": f"User '{username}' not found"}, status=404)
     profile = user.userprofile
-    print(profile)
     serializer = UserProfileSerializer(profile, many=False, context={"request": request})
     return Response(serializer.data)
+
+
+@api_view(["POST"])
+def followUser(request, userid): 
+    return Response({})
+
+
+@api_view(["POST"])
+def unFollowUser(request, userid): 
+    return Response({})
+
 
 
 @api_view(["POST"])
@@ -60,6 +70,7 @@ def registerUser(request):
 
 
 
+@csrf_exempt
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def loginUser(request):
@@ -89,8 +100,17 @@ def loginUser(request):
         samesite="Lax",
         httponly=True
     )
-
+    # set CSRF token in response headers
+    csrf_token = get_token(request)
+    response.set_cookie(
+        key="csrftoken",
+        value=csrf_token,
+        httponly=False,
+        expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+    )
     return response
+
+# Logout a user
 @api_view(["POST"])
 def logoutUser(request):
     response = Response({'message': 'Logout successful'})
@@ -101,9 +121,11 @@ def logoutUser(request):
         
 
     response.delete_cookie('refresh_token')
+    response.delete_cookie("csrftoken")
 
     return response
 
+@ensure_csrf_cookie
 @api_view(["POST"])
 def refreshTokens(request):
 

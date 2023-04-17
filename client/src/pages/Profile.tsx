@@ -71,20 +71,7 @@ const Profile = () => {
 										</Link>
 									) : (
 										// Following Button
-										<button
-											className={` ${
-												userProfile.is_following
-													? "bg-gray-200 hover:bg-gray-300 text-black font-normal"
-													: "bg-blue-600 hover:bg-blue-800 text-white"
-											} rounded px-3 py-1  font-bold text-sm`}
-											onClick={() => console.log("Follow")}
-										>
-											{userProfile.is_following ? (
-												<span>Following</span>
-											) : (
-												<span>Follow</span>
-											)}
-										</button>
+										<FollowButton is_following={userProfile.is_following} />
 									)}
 								</header>
 
@@ -150,5 +137,20 @@ function AvatarMaker({
 		>
 			<span className="text-6xl">{username?.charAt(0).toUpperCase()}</span>
 		</div>
+	);
+}
+
+export function FollowButton({ is_following }: { is_following: boolean }) {
+	return (
+		<button
+			className={` ${
+				is_following
+					? "bg-gray-200 hover:bg-gray-300 text-black font-normal"
+					: "bg-blue-600 hover:bg-blue-800 text-white"
+			} rounded px-3 py-1  font-bold text-sm`}
+			onClick={() => console.log("Follow")}
+		>
+			{is_following ? <span>Following</span> : <span>Follow</span>}
+		</button>
 	);
 }

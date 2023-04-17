@@ -55,7 +55,7 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=30, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
     profile_image = models.ImageField(upload_to=PathAndRename("profile_images"), blank=True, null=True)
-    followers = models.ManyToManyField(User, related_name='following', blank=True)
+    following = models.ManyToManyField(User, related_name='following', blank=True)
 
 
     def __str__(self):
