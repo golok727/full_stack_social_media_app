@@ -166,7 +166,7 @@ const Profile = () => {
 export default Profile;
 
 type BioRendererProps = { bio: string[] };
-function BioRenderer({ bio }: BioRendererProps) {
+export function BioRenderer({ bio }: BioRendererProps) {
 	return (
 		<>
 			{bio.map((line, idx) => (

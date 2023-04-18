@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { Link } from "react-router-dom";
 import Heart from "../icons/Heart";
@@ -10,15 +10,22 @@ import SmileIcon from "../icons/Smile";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FollowButton from "./FollowButton";
 import { formatDate, numberFormatter } from "../utils/utils";
+import { BioRenderer } from "../pages/Profile";
 interface Props {
 	post: PostType;
 }
 
-const splitNewLines = (str: string): string[] => str.split(/\r?\n/);
+const splitNewLines = (str: string): string[] => {
+	console.log("RUN MEMO");
+	return str.split(/\r?\n/);
+};
 
 const Post: React.FC<Props> = ({ post }) => {
 	const [imageLoadError, setImageLoadError] = useState(false);
-	const splitDescription = splitNewLines(post.description);
+	const splitDescription = useMemo(
+		() => splitNewLines(post.description),
+		[post.description]
+	);
 	const [truncateDesc, setTruncateDesc] = useState(
 		splitDescription.length > 1 || post.description.length > 70
 	);
@@ -150,13 +157,7 @@ const Post: React.FC<Props> = ({ post }) => {
 						</p>
 
 						<div className="py-2 text-[.8rem]">
-							{truncateDesc
-								? "..."
-								: splitDescription.map((line, idx) => (
-										<span key={idx} className="block">
-											{line}
-										</span>
-								  ))}
+							{truncateDesc ? "..." : <BioRenderer bio={splitDescription} />}
 						</div>
 					</div>
 					{truncateDesc && (
