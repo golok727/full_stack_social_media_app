@@ -1,5 +1,7 @@
 # Prior
 
+- [ ] view post on click
+  - [ ] Add a post /p/:id route to implement this
 - [ ] Add Confirmation before un following an account
 - [ ] Posts Context for better post management
 
