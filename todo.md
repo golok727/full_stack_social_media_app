@@ -1,2 +1,2 @@
-- [ ] OSError: cannot write mode RGBA as JPEG Fix this Error
+- [x] OSError: cannot write mode RGBA as JPEG Fix this Error
 - [x] Make /post route use request.user 
