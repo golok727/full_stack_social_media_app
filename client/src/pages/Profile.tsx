@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FollowButton from "../components/FollowButton";
 import { numberFormatter } from "../utils/utils";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import SpinnerLoader from "../components/SpinnerLoader";
+import PostsByUser from "../components/PostsByUser";
 
 const Profile = () => {
 	const { username } = useParams();
@@ -35,9 +38,12 @@ const Profile = () => {
 				});
 				console.log(res.data);
 				setUserProfile((prev) => ({ ...prev, ...res.data }));
+				if (userProfile?.user.username) {
+					useDocumentTitle(`${userProfile.user.username} | Photon`);
+				}
 			} catch (error: any) {
 				if (error?.response?.status === 404) {
-					setUserProfile((prev) => null);
+					setUserProfile(() => null);
 				}
 			} finally {
 				setIsLoading(false);
@@ -54,7 +60,7 @@ const Profile = () => {
 		<div className="pt-20  text-white  container mx-auto max-w-4xl">
 			{!isLoading ? (
 				userProfile ? (
-					<div className="flex flex-col items-center gap-3 py-3 px-2">
+					<div className="flex flex-col items-center gap-3 py-3 px-2 ">
 						{/* Header */}
 						<header className="flex justify-around items-center gap-10 border-b-[1px] border-gray-700 w-[40em] max-w-full py-5">
 							{/*Left  */}
@@ -143,12 +149,15 @@ const Profile = () => {
 						</header>
 						{/* All Posts By Section */}
 						Posts
+						{userProfile && !isLoading && username && (
+							<PostsByUser username={username} />
+						)}
 					</div>
 				) : (
 					<Navigate to={"/404"} />
 				)
 			) : (
-				<span>Loading...</span>
+				<SpinnerLoader />
 			)}
 		</div>
 	);

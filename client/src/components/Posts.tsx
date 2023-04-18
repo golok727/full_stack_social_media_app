@@ -4,6 +4,7 @@ import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import PostsPlaceHolder from "./PostsPlaceHolder";
 import Post from "./Post";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const Posts = () => {
 	const [posts, setPosts] = useState<PostType[]>([]);
@@ -12,6 +13,8 @@ const Posts = () => {
 	const { auth, logout } = useAuth();
 
 	useEffect(() => {
+		useDocumentTitle("Photon");
+		console.log("Mount");
 		let isMounted = true;
 		const controller = new AbortController();
 
@@ -45,6 +48,7 @@ const Posts = () => {
 			<div className="flex flex-col items-center gap-4">
 				{posts.length === 0 ? (
 					<div>
+						{/* Placeholder for posts before fetching the data */}
 						<PostsPlaceHolder />
 						<span className="text-white">No posts yet</span>
 					</div>
