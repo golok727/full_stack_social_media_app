@@ -194,6 +194,7 @@ def refreshTokens(request):
 
 
 
+# Post Controllers
 
 @api_view(["GET"])
 def getRoutes(request): 
@@ -266,3 +267,29 @@ def getPosts(request):
 
 
 
+# Get All Posts by a user 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def getPostsByUser(request, username):
+    try:
+        user = User.objects.get(username=username)
+        posts = Post.objects.filter(user=user)
+
+        return Response({"posts": PostSerializer(posts, many=True, context={"request": request}).data})
+    except User.DoesNotExist:
+        return Response({"msg": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# Get All Posts by a user 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def getPostById(request, postId):
+    try:
+        post = Post.objects.get(id=postId)
+        return Response(PostSerializer(post, context={"request": request}).data)
+    except Post.DoesNotExist:
+        return Response({"msg": "Post does not exist"} , status=status.HTTP_404_NOT_FOUND)
+
+    

@@ -8,11 +8,12 @@
 - [ ] Add Rate Limiting
 - [ ] test following unfollowing and like dislike
 - [ ] optimize the backend code (remove some unnecessary stuff)
--
 
 # Features
 
+- [ ] Add Profile Type to each user profile
 - [ ] Add profile image editing
+- [ ] Add Verified users badge
 
 <br/>
 <br/>

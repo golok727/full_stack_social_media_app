@@ -17,11 +17,20 @@ class UserProfileSummarySerializer(ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ["id", "followers_count", "profile_image"]
+
 class UserSerializer(ModelSerializer):
     userprofile = UserProfileSummarySerializer()
+    full_name = SerializerMethodField()
     class Meta: 
         model = User
-        fields = ["id" ,"username", "last_login", "first_name", "last_name", "email", "date_joined", "is_superuser", "userprofile"]
+        fields = ["id", "full_name" ,"username", "last_login", "first_name", "last_name", "email", "date_joined", "is_superuser", "userprofile"]
+    
+    def get_full_name(self, obj):
+        if obj.first_name and obj.last_name:
+            return f"{obj.first_name} {obj.last_name}"
+        if obj.first_name:
+            return obj.first_name
+        return ""
 
 
 

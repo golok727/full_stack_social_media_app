@@ -2,9 +2,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import axios, { Axios } from "axios";
-import { AxiosError, isAxiosError } from "axios";
+import { AxiosError } from "axios";
 const Login = () => {
-	const { setAuth } = useAuth();
+	const { setAuth, auth } = useAuth();
 
 	const navigate = useNavigate();
 	const currLocation = useLocation();
