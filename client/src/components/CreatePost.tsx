@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { FormEvent, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -27,6 +26,7 @@ const CreatePost = () => {
 				});
 				const data = res.data;
 				console.log(data);
+				alert("Post created");
 			} catch (error) {
 				alert("Something went wrong");
 			}

@@ -42,7 +42,7 @@ const Login = () => {
 		} catch (error: any | AxiosError) {
 			if (error.response?.status === 500) {
 				setErr("No Server Response");
-			} else if (error.response?.status === 400) {
+			} else if (error.response?.status === 401) {
 				setErr("Username or Password is incorrect");
 			} else {
 				setErr("Something Went Wrong!!");

@@ -1,5 +1,9 @@
 # Prior
 
+- [ ] Changes in create post
+  - [ ] Add User Error Handle in inputs
+  - [ ] Add Response Error or Success handling
+  - [ ] Add Redirects
 - [ ] view post on click
   - [ ] Add a post /p/:id route to implement this
 - [ ] Add Confirmation before un following an account

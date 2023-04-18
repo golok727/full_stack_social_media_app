@@ -15,10 +15,7 @@ interface Props {
 	post: PostType;
 }
 
-const splitNewLines = (str: string): string[] => {
-	console.log("RUN MEMO");
-	return str.split(/\r?\n/);
-};
+const splitNewLines = (str: string): string[] => str.split(/\r?\n/);
 
 const Post: React.FC<Props> = ({ post }) => {
 	const [imageLoadError, setImageLoadError] = useState(false);
@@ -126,7 +123,11 @@ const Post: React.FC<Props> = ({ post }) => {
 			<footer className="py-3">
 				<header className="flex justify-between mb-3">
 					<div className="flex gap-3 items-center">
-						<Heart isActive={isLiked} onClick={() => handleLike()} />
+						<Heart
+							aria-label="Like"
+							isActive={isLiked}
+							onClick={() => handleLike()}
+						/>
 						<CommentIcon />
 						<ShareIcon />
 					</div>

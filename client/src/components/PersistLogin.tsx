@@ -38,7 +38,7 @@ const PersistLogin = () => {
 			) : !isLoading && !auth.accessToken && !auth.user ? (
 				serverError ? (
 					<div className="text-white">
-						Server Error{" "}
+						Server Time Out{" "}
 						<button onClick={() => window.location.reload()}>Reload</button>
 					</div>
 				) : (
