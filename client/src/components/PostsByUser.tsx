@@ -21,7 +21,7 @@ const PostsByUser: React.FC<Props> = ({ username }) => {
 		const fetchPostsByUser = async () => {
 			try {
 				const res = await axiosPrivate.get(`/api/posts/user/${username}`);
-				console.log(res.data.posts);
+
 				if (res.data.posts) {
 					setPostsByUser((prev) => [...prev, ...res.data.posts]);
 				}

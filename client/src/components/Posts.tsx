@@ -14,7 +14,6 @@ const Posts = () => {
 
 	useEffect(() => {
 		useDocumentTitle("Photon");
-		console.log("Mount");
 		let isMounted = true;
 		const controller = new AbortController();
 
@@ -23,9 +22,8 @@ const Posts = () => {
 				const res = await axiosPrivate.get("/api/posts/", {
 					signal: controller.signal,
 				});
-				//
 				isMounted && setPosts(res.data);
-				console.log(res.data);
+				// console.log(res.data);
 			} catch (error: any) {
 				if (error?.response?.status === 401) {
 					logout(location);

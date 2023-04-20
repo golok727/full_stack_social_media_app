@@ -1,13 +1,21 @@
 # Prior
 
 - [ ] Changes in create post
-  - [ ] Add User Error Handle in inputs
-  - [ ] Add Response Error or Success handling
+  - [x] Add User Error Handle in inputs
+  - [x] Add Response Error or Success handling
   - [ ] Add Redirects
+  - [ ] Add title and description length limits
 - [ ] view post on click
   - [ ] Add a post /p/:id route to implement this
 - [ ] Add Confirmation before un following an account
 - [ ] Posts Context for better post management
+
+# Bugs :&#40;
+
+- [ ] In Home post view if i follow an account then the follow button for next post is not going away...
+  ### Possible Fixes
+  ***
+  - Fix it with a post context update the all the post with the username following to true which should fix the issue
 
 # Backend
 

@@ -29,15 +29,15 @@ const Post: React.FC<Props> = ({ post }) => {
 	const axiosPrivate = useAxiosPrivate();
 	const [isLiked, setIsLiked] = useState(post.is_liked);
 	const handleLike = async () => {
-		try {
-			const res = await axiosPrivate.post(`/api/posts/like/${post.id}`);
-		} catch (error) {
-			console.log(error);
-		}
-
 		setIsLiked((prev: boolean) => !prev);
 		if (isLiked && post.likes_count > 0) post.likes_count--;
 		else post.likes_count++;
+
+		try {
+			await axiosPrivate.post(`/api/posts/like/${post.id}`);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (
@@ -154,6 +154,8 @@ const Post: React.FC<Props> = ({ post }) => {
 							<Link to={"/" + post.user.username}>
 								<span className="font-bold mr-2">{post.user.username}</span>
 							</Link>
+							{/* Make A separate comp to render title that also works with description */}
+
 							{post.title}
 						</p>
 

@@ -17,7 +17,6 @@ const Profile = () => {
 	const axiosPrivate = useAxiosPrivate();
 
 	const makeBio = useMemo(() => {
-		console.log("run");
 		if (userProfile?.bio) {
 			const bioSplit = userProfile.bio.split(/\r\n/);
 			return bioSplit;
@@ -36,10 +35,10 @@ const Profile = () => {
 				const res = await axiosPrivate.get(`/api/users/profile/${username}`, {
 					signal: controller.signal,
 				});
-				console.log(res.data);
-				setUserProfile((prev) => ({ ...prev, ...res.data }));
-				if (userProfile?.user.username) {
-					useDocumentTitle(`${userProfile.user.username} | Photon`);
+
+				isMounted && setUserProfile((prev) => ({ ...prev, ...res.data }));
+				if (res.data?.user?.username) {
+					useDocumentTitle(`${res.data?.user.username} | Photon`);
 				}
 			} catch (error: any) {
 				if (error?.response?.status === 404) {
@@ -49,7 +48,7 @@ const Profile = () => {
 				setIsLoading(false);
 			}
 		};
-		isMounted && username && fetchUserProfile();
+		username && fetchUserProfile();
 		return () => {
 			isMounted = false;
 			controller.abort();

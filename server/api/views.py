@@ -282,8 +282,7 @@ def getPostsByUser(request, username):
 
 
 
-# Get All Posts by a user 
-
+# Get Post  
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getPostById(request, postId):

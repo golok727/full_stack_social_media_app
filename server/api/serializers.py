@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, SlugRelatedField, SerializerMethodField
-from .models import Post, UserProfile
+from .models import Post, UserProfile, Comment
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -18,6 +18,7 @@ class UserProfileSummarySerializer(ModelSerializer):
         model = UserProfile
         fields = ["id", "followers_count", "profile_image"]
 
+# User Serializer
 class UserSerializer(ModelSerializer):
     userprofile = UserProfileSummarySerializer()
     full_name = SerializerMethodField()
@@ -69,7 +70,7 @@ class UserProfileSerializer(ModelSerializer):
 
 
 
-
+# Post Serializer
 class PostSerializer(ModelSerializer):
     likes_count = SerializerMethodField()
     is_liked = SerializerMethodField()
@@ -103,8 +104,14 @@ class PostSerializer(ModelSerializer):
         return obj.user == self.context.get("request").user
 
        
+# Comment serializer
+class CommentSerializer(ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'author', 'post', 'content', 'parent', 'reply_to', 'created_at']
 
 
+# Token Serializer
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
