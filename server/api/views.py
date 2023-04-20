@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view, parser_classes, permission_class
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .models import Post
-from .serializers import PostSerializer, UserSerializer, UserProfileSerializer
+from .models import Post, Comment
+from .serializers import PostSerializer, UserSerializer, UserProfileSerializer, CommentSerializer
 from django.contrib.auth.models import User
 
 from django.middleware.csrf import get_token
@@ -283,7 +283,7 @@ def getPostsByUser(request, username):
 
 
 # Get Post  
-@api_view(["GET"])
+@api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def getPostById(request, postId):
     try:
@@ -292,4 +292,38 @@ def getPostById(request, postId):
     except Post.DoesNotExist:
         return Response({"msg": "Post does not exist"} , status=status.HTTP_404_NOT_FOUND)
 
+# comments 
+
+@api_view(["GET", "POST"]) 
+@permission_classes([IsAuthenticated])
+def commentsView(request, postId):
+    try:
+
+        # Get All Comments in the post
+        if request.method == "GET":
+            return Response("Get")
+        
+
+        # Post req to route
+        if request.method == "POST":
+            post  = Post.objects.get(id=postId)
+            print(request.user)
+            print(request.data)
+            comment = Comment(post=post, author=request.user)
+          
+            serializer = CommentSerializer(comment, data=request.data)
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"msg": "Comment Added", "comment": serializer.data}, status=201)
+            # If serializer fails
+            else:
+                return Response(serializer.errors, status=400)        
+
+    # Check if post exits
+
+    except Post.DoesNotExist:
+        return Response({"msg": "Post does not exits"}, status=status.HTTP_400_BAD_REQUEST)
     
+
+        

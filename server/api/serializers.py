@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer, SlugRelatedField, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, SlugRelatedField, SerializerMethodField, StringRelatedField
+from rest_framework import serializers
 from .models import Post, UserProfile, Comment
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -106,10 +107,26 @@ class PostSerializer(ModelSerializer):
        
 # Comment serializer
 class CommentSerializer(ModelSerializer):
+    author = StringRelatedField()
+    post = StringRelatedField()
+
     class Meta:
         model = Comment
         fields = ['id', 'author', 'post', 'content', 'parent', 'reply_to', 'created_at']
 
+    def validate(self, data):
+        """
+        Check that parent and replying_to values are consistent
+        """
+        parent = data.get('parent')
+        replying_to = data.get('replying_to')
+
+        if parent and replying_to:
+            raise serializers.ValidationError(
+                'Cannot set both parent and replying_to values'
+            )
+
+        return data
 
 # Token Serializer
 
