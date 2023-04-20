@@ -16,8 +16,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
+from datetime import datetime, timedelta
 
 
 @api_view(["GET"])
@@ -126,11 +125,13 @@ def loginUser(request):
     user_serializer = UserSerializer(user)
     response_data = {"access": access_token, "user": user_serializer.data}
     response = Response(response_data, status=status.HTTP_200_OK)
-
+    expires = datetime.utcnow() + settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]
+    print(expires)
+    # print()
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
-        expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+        expires=expires,
         samesite="Lax",
         httponly=True
     )
@@ -140,7 +141,7 @@ def loginUser(request):
         key="csrftoken",
         value=csrf_token,
         httponly=False,
-        expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+        expires=expires,
     )
     return response
 
@@ -154,8 +155,8 @@ def logoutUser(request):
         token.blacklist()
         
 
-    response.delete_cookie('refresh_token')
     response.delete_cookie("csrftoken")
+    response.delete_cookie('refresh_token')
 
     return response
 
