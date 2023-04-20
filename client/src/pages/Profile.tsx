@@ -38,7 +38,7 @@ const Profile = () => {
 
 				isMounted && setUserProfile((prev) => ({ ...prev, ...res.data }));
 				if (res.data?.user?.username) {
-					useDocumentTitle(`${res.data?.user.username} | Photon`);
+					useDocumentTitle(`@${res.data?.user.username} | Photon`);
 				}
 			} catch (error: any) {
 				if (error?.response?.status === 404) {
@@ -193,7 +193,10 @@ function AvatarMaker({
 	username: string;
 }) {
 	return avatar ? (
-		<div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-[2px] border-red-600 ">
+		<div
+			style={{}}
+			className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-[2px] border-red-600 "
+		>
 			<img className="object-cover h-full w-full" src={avatar} alt="" />
 		</div>
 	) : (

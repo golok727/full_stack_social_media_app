@@ -20,7 +20,9 @@ const PostsByUser: React.FC<Props> = ({ username }) => {
 
 		const fetchPostsByUser = async () => {
 			try {
-				const res = await axiosPrivate.get(`/api/posts/user/${username}`);
+				const res = await axiosPrivate.get(`/api/posts/user/${username}`, {
+					signal: controller.signal,
+				});
 
 				if (res.data.posts) {
 					setPostsByUser((prev) => [...prev, ...res.data.posts]);
@@ -43,7 +45,9 @@ const PostsByUser: React.FC<Props> = ({ username }) => {
 	) : postsByUser && postsByUser.length > 0 ? (
 		<div className="flex justify-center flex-wrap gap-4 max-w-6xl">
 			{postsByUser.map((post, idx) => (
-				<MiniPost post={post} key={idx} />
+				<Link to={`/p/${post.id}`} key={idx}>
+					<MiniPost post={post} />
+				</Link>
 			))}
 		</div>
 	) : (

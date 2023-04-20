@@ -4,12 +4,14 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 import SpinnerLoader from "./SpinnerLoader";
 import { Link } from "react-router-dom";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const CreatePost = () => {
 	// Form States
 	const [image, setImage] = useState<File | null>(null!);
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
+	const [titleLength, setTitleLength] = useState(0);
 
 	// Hooks
 	const { auth } = useAuth();
@@ -32,6 +34,16 @@ const CreatePost = () => {
 			setErrorMsg("A Title is required");
 			return;
 		}
+
+		if (title.length > 100) {
+			setErrorMsg("A Title should be less than 100 characters");
+			return;
+		}
+		if (description.length > 5000) {
+			setErrorMsg("A description should be less than 5000 characters");
+			return;
+		}
+
 		if (!image) {
 			setErrorMsg("A Image is required");
 			return;
@@ -70,9 +82,13 @@ const CreatePost = () => {
 	};
 
 	useEffect(() => {
+		setTitleLength(() => title.length);
 		setErrorMsg("");
 	}, [title, image]);
 
+	useEffect(() => {
+		useDocumentTitle("Create | Photon");
+	}, []);
 	// handle Component UnMount
 
 	return (
@@ -88,7 +104,7 @@ const CreatePost = () => {
 				)}
 
 				{isSuccess && (
-					<div className="flex flex-col gap-3 items-center text-center font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to bg-pink-600 transition-all my-10">
+					<div className="flex flex-col gap-3 items-center text-center font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-pink-600 transition-all my-10">
 						<div className="border-[3px] w-fit p-3 rounded-full border-purple-700 ">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +133,7 @@ const CreatePost = () => {
 				{isLoading && (
 					<div className="text-white transition-all my-10">
 						<SpinnerLoader />
-						<span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to bg-pink-600">
+						<span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to to-pink-600">
 							{"Uploading " + uploadProgress + "%"}
 						</span>
 					</div>
@@ -125,16 +141,30 @@ const CreatePost = () => {
 
 				{!isSuccess && !isLoading && (
 					<div className="border-[1px] rounded border-gray-700 md:w-1/2 w-3/4 px-3 py-2 text-white ">
-						<div className="">
+						<div className="relative">
 							<input
 								type="text"
 								placeholder="Title"
 								id="title"
 								value={title}
-								onChange={(e) => setTitle(e.currentTarget.value)}
+								onChange={(e) => {
+									setTitle(e.currentTarget.value);
+								}}
 								required
 								className="w-full px-3 py-2 bg-transparent outline-none placeholder:text-slate-500 text-sm"
 							/>
+							{/* Title Length */}
+							{titleLength > 0 && (
+								<span
+									className={`absolute right-3 bottom-1 text-xs ${
+										titleLength > 100
+											? "text-red-500 font-bold -bottom-5"
+											: "text-violet-300 "
+									} transition-all duration-150`}
+								>
+									{titleLength}
+								</span>
+							)}
 						</div>
 						<span className="w-full h-[1px] bg-slate-700 block"></span>
 						<div className="">

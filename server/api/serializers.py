@@ -83,7 +83,8 @@ class PostSerializer(ModelSerializer):
     
     class Meta: 
         model = Post
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ["likes"]
 
     def get_is_following(self, obj):
         request = self.context.get('request')
@@ -109,17 +110,13 @@ class PostSerializer(ModelSerializer):
 class CommentSerializer(ModelSerializer):
     author = StringRelatedField()
     post = StringRelatedField()
-
     class Meta:
         model = Comment
         fields = ['id', 'author', 'post', 'content', 'parent', 'reply_to', 'created_at']
 
     def validate(self, data):
-        """
-        Check that parent and replying_to values are consistent
-        """
         parent = data.get('parent')
-        replying_to = data.get('replying_to')
+        replying_to = data.get('reply_to')
 
         if parent and replying_to:
             raise serializers.ValidationError(
@@ -127,6 +124,7 @@ class CommentSerializer(ModelSerializer):
             )
 
         return data
+
 
 # Token Serializer
 

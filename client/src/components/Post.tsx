@@ -11,6 +11,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FollowButton from "./FollowButton";
 import { formatDate, numberFormatter } from "../utils/utils";
 import { BioRenderer } from "../pages/Profile";
+import CommentForm from "./CommentFrom";
 interface Props {
 	post: PostType;
 }
@@ -175,9 +176,9 @@ const Post: React.FC<Props> = ({ post }) => {
 
 				{/* date time */}
 				<section className="text-gray-400 text-sm py-2">
-					<a href="#">
+					<Link to={`/p/${post.id}`}>
 						<span>View all Comments</span>
-					</a>
+					</Link>
 					<br />
 					<span className="text-[.6rem] font-bold">
 						{formatDate(post.created)}
@@ -192,47 +193,6 @@ const Post: React.FC<Props> = ({ post }) => {
 		</div>
 	);
 };
-
-function CommentForm() {
-	const [textAreaHeightValue, setTextAreaHeightValue] = useState("10");
-	const [limit, setLimit] = useState(false);
-
-	return (
-		<form className="flex gap-2 items-center ">
-			<div>
-				<SmileIcon />
-			</div>
-			<textarea
-				onInput={(e) => {
-					if (!e.currentTarget.value) {
-						setTextAreaHeightValue("auto");
-						return;
-					}
-					if (e.currentTarget.scrollHeight >= 100) {
-						setLimit(true);
-						setTextAreaHeightValue(`100px`);
-						return;
-					}
-					setTextAreaHeightValue("auto");
-					setTextAreaHeightValue(`${e.currentTarget.scrollHeight}px`);
-					console.log(e.currentTarget.scrollHeight);
-				}}
-				style={{
-					height: textAreaHeightValue,
-				}}
-				className={`flex-1 bg-transparent placeholder:text-sm placeholder:text-gray-400 text-sm resize-none ${
-					limit ? "overflow-y-auto" : "overflow-hidden"
-				} outline-none text-xs`}
-				placeholder="Add a comment"
-			/>
-			<input
-				type="submit"
-				className="font-bold text-blue-200 text-sm cursor-pointer"
-				value={"Post"}
-			/>
-		</form>
-	);
-}
 
 export default Post;
 

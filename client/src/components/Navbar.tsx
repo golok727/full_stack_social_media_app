@@ -5,16 +5,17 @@ const Navbar = () => {
 	const { logout, auth } = useAuth();
 	return (
 		<div className="text-white flex gap-3 items-center justify-between px-5 py-3 border-b-[1px] border-slate-800 fixed w-full bg-neutral-900 shadow-2xl">
-			<div className="flex gap-3">
-				<Link to="/">Home</Link>
-				<Link to="/create">Create</Link>
-				<Link to="/posts">Posts</Link>
-				<Link to={`/${auth.user?.username}`}>Profile</Link>
-			</div>
 			<div className="text-neutral-400 font-bold text hidden md:inline-flex">
-				{" "}
 				<span>Welcome {auth.user?.username} :&#41;</span>
 			</div>
+
+			<div className="flex gap-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-pink-600 font-bold">
+				<Link to="/">Home</Link>
+				<Link to="/create">Create</Link>
+				<Link to="/p">Posts</Link>
+				<Link to={`/${auth.user?.username}`}>Profile</Link>
+			</div>
+
 			<div>
 				<button
 					className="bg-red-600 px-3 py-2 rounded text-white text-sm font-bold text-center hover:bg-red-700"

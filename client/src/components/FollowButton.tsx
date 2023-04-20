@@ -69,8 +69,8 @@ const FollowButton: React.FC<Props> = ({
 			className={` ${
 				isFollowing
 					? "bg-gray-200 hover:bg-gray-300 text-black font-normal"
-					: "bg-gradient-to-r from-violet-800 to bg-pink-500 hover:bg-blue-800 text-white"
-			} rounded px-3 py-1  font-bold text-sm disabled:text-gray-500 disabled:bg-gray-700`}
+					: "bg-gradient-to-r from-violet-800 to to-pink-500 hover:bg-blue-800 text-white"
+			} rounded px-3 py-1  font-bold text-sm disabled:text-gray-200 disabled:bg-gray-700`}
 			onClick={handleFollow}
 			disabled={isLoading}
 		>

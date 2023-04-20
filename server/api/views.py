@@ -301,7 +301,15 @@ def commentsView(request, postId):
 
         # Get All Comments in the post
         if request.method == "GET":
-            return Response("Get")
+            try:
+                post = Post.objects.get(id=postId)
+                comments = Comment.objects.filter(post=post, parent=None)
+
+                return Response(CommentSerializer(comments, many=True, context={"request": request, 'user_profile': request.user.userprofile}).data)
+            except Post.DoesNotExist:
+                return Response({"msg": "Post Does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+
         
 
         # Post req to route
@@ -325,5 +333,10 @@ def commentsView(request, postId):
     except Post.DoesNotExist:
         return Response({"msg": "Post does not exits"}, status=status.HTTP_400_BAD_REQUEST)
     
-
-        
+@api_view(["GET"]) 
+@permission_classes([IsAuthenticated])
+def getCommentReplies(request, commentId):
+    comment = Comment.objects.get(id=commentId)
+    replies = Comment.objects.filter(parent=comment)
+    serializer = CommentSerializer(replies, many=True)
+    return Response(serializer.data)
