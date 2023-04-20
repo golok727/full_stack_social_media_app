@@ -1,8 +1,6 @@
 # Prior
 
 - [ ] Changes in create post
-  - [x] Add User Error Handle in inputs
-  - [x] Add Response Error or Success handling
   - [ ] Add Redirects
   - [ ] Add title and description length limits
 - [ ] view post on click
