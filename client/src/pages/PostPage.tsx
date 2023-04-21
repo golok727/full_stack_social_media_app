@@ -11,6 +11,45 @@ import SaveIcon from "../icons/SaveIcon";
 import { formatDate } from "../utils/utils";
 import CommentForm from "../components/CommentFrom";
 
+export type CommentReducerState = {
+	comments: CommentType[];
+	isLoading: boolean;
+	errMsg: string;
+};
+
+export enum CommentActionTypes {
+	SET_COMMENTS = "SET_COMMENTS",
+	COMMENTS_ERROR = "COMMENTS_ERROR",
+	ADD_COMMENT = "ADD_COMMENT",
+}
+
+type SetCommentsAction = {
+	type: CommentActionTypes.SET_COMMENTS;
+	payload: {
+		comments: CommentType[];
+		isLoading: boolean;
+	};
+};
+
+type AddCommentAction = {
+	type: CommentActionTypes.ADD_COMMENT;
+	payload: {
+		comment: CommentType;
+	};
+};
+
+type SetCommentsErrorAction = {
+	type: CommentActionTypes.COMMENTS_ERROR;
+	payload: {
+		errMsg: string;
+	};
+};
+
+export type CommentActions =
+	| SetCommentsAction
+	| SetCommentsErrorAction
+	| AddCommentAction;
+
 const CommentsReducer = (
 	state: CommentReducerState,
 	action: CommentActions

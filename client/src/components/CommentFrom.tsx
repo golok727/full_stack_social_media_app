@@ -1,5 +1,6 @@
 import React, { FormEvent, forwardRef, useState } from "react";
 import SmileIcon from "../icons/Smile";
+import { CommentActions } from "../pages/PostPage";
 
 interface Props {
 	postId: number;

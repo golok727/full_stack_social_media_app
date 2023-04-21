@@ -1,5 +1,10 @@
-import React, { useEffect, useReducer, useState } from "react";
-import { AvatarMakerSmall } from "../pages/PostPage";
+import React, { useEffect } from "react";
+import {
+	AvatarMakerSmall,
+	CommentActionTypes,
+	CommentActions,
+	CommentReducerState,
+} from "../pages/PostPage";
 import { Link } from "react-router-dom";
 import { BioRenderer } from "../pages/Profile";
 import Comment from "./Comment";
