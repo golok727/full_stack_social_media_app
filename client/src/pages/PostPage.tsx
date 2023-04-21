@@ -1,7 +1,7 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useAuth from "../hooks/useAuth";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import SpinnerLoader from "../components/SpinnerLoader";
 import CommentsRenderer from "../components/CommentsRenderer";
 import Heart from "../icons/Heart";
@@ -11,7 +11,43 @@ import SaveIcon from "../icons/SaveIcon";
 import { formatDate } from "../utils/utils";
 import CommentForm from "../components/CommentFrom";
 
+const CommentsReducer = (
+	state: CommentReducerState,
+	action: CommentActions
+): CommentReducerState => {
+	switch (action.type) {
+		case CommentActionTypes.SET_COMMENTS:
+			return {
+				...state,
+				comments: action.payload.comments,
+				isLoading: false,
+				errMsg: "Can't Get Comments",
+			};
+		case CommentActionTypes.COMMENTS_ERROR:
+			return {
+				...state,
+				comments: [],
+				isLoading: false,
+				errMsg: action.payload.errMsg,
+			};
+
+		case CommentActionTypes.ADD_COMMENT:
+			return {
+				...state,
+				comments: [...[action.payload.comment, ...state.comments]],
+			};
+		default:
+			return state;
+	}
+};
+
 const PostPage = () => {
+	const [commentsState, dispatch] = useReducer(CommentsReducer, {
+		comments: [],
+		isLoading: true,
+		errMsg: "",
+	} satisfies CommentReducerState);
+
 	const { postId } = useParams();
 	const axiosPrivate = useAxiosPrivate();
 	const { auth } = useAuth();
@@ -92,7 +128,11 @@ const PostPage = () => {
 
 							{/* Comments Renderer */}
 
-							<CommentsRenderer post={post} />
+							<CommentsRenderer
+								commentsState={commentsState}
+								dispatch={dispatch}
+								post={post}
+							/>
 
 							{/* Footer */}
 							<footer className="block py-2 px-3">
@@ -122,7 +162,11 @@ const PostPage = () => {
 								</div>
 
 								{/* Comment Form */}
-								<CommentForm ref={commentFormInputRef} postId={post.id} />
+								<CommentForm
+									dispatch={dispatch}
+									ref={commentFormInputRef}
+									postId={post.id}
+								/>
 							</footer>
 						</div>
 					</div>

@@ -3,6 +3,7 @@ import SmileIcon from "../icons/Smile";
 
 interface Props {
 	postId: number;
+	dispatch: React.Dispatch<CommentActions>;
 	commentId?: number;
 	parentCommentId?: number;
 }

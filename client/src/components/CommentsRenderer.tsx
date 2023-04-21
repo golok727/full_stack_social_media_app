@@ -7,83 +7,15 @@ import SpinnerLoader from "./SpinnerLoader";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 interface Props {
 	post: PostType;
+	commentsState: CommentReducerState;
+	dispatch: React.Dispatch<CommentActions>;
 }
 
-type ReducerState = {
-	comments: CommentType[];
-	isLoading: boolean;
-	errMsg: string;
-};
-
-export enum CommentActionTypes {
-	SET_COMMENTS = "SET_COMMENTS",
-	COMMENTS_ERROR = "COMMENTS_ERROR",
-	ADD_COMMENT = "ADD_COMMENT",
-}
-
-type SetCommentsAction = {
-	type: CommentActionTypes.SET_COMMENTS;
-	payload: {
-		comments: CommentType[];
-		isLoading: boolean;
-	};
-};
-
-type AddCommentAction = {
-	type: CommentActionTypes.ADD_COMMENT;
-	payload: {
-		comment: CommentType;
-	};
-};
-
-type SetCommentsErrorAction = {
-	type: CommentActionTypes.COMMENTS_ERROR;
-	payload: {
-		errMsg: string;
-	};
-};
-
-export type CommentActions =
-	| SetCommentsAction
-	| SetCommentsErrorAction
-	| AddCommentAction;
-
-const CommentsReducer = (
-	state: ReducerState,
-	action: CommentActions
-): ReducerState => {
-	switch (action.type) {
-		case CommentActionTypes.SET_COMMENTS:
-			return {
-				...state,
-				comments: action.payload.comments,
-				isLoading: false,
-				errMsg: "Can't Get Comments",
-			};
-		case CommentActionTypes.COMMENTS_ERROR:
-			return {
-				...state,
-				comments: [],
-				isLoading: false,
-				errMsg: action.payload.errMsg,
-			};
-
-		case CommentActionTypes.ADD_COMMENT:
-			return {
-				...state,
-				comments: [...[action.payload.comment, ...state.comments]],
-			};
-		default:
-			return state;
-	}
-};
-const CommentsRenderer: React.FC<Props> = ({ post }) => {
-	const [state, dispatch] = useReducer(CommentsReducer, {
-		comments: [],
-		isLoading: true,
-		errMsg: "",
-	} satisfies ReducerState);
-
+const CommentsRenderer: React.FC<Props> = ({
+	post,
+	dispatch,
+	commentsState,
+}) => {
 	const axiosPrivate = useAxiosPrivate();
 
 	useEffect(() => {
@@ -95,7 +27,6 @@ const CommentsRenderer: React.FC<Props> = ({ post }) => {
 				const res = await axiosPrivate.get(`/api/posts/${post.id}/comments`, {
 					signal: controller.signal,
 				});
-				console.log(res.data);
 
 				dispatch({
 					type: CommentActionTypes.SET_COMMENTS,
@@ -147,10 +78,10 @@ const CommentsRenderer: React.FC<Props> = ({ post }) => {
 			</header>
 
 			{/* Comments */}
-			{state.isLoading ? (
+			{commentsState.isLoading ? (
 				<SpinnerLoader />
-			) : state.comments && state.comments.length > 0 ? (
-				state.comments.map((comment: CommentType) => (
+			) : commentsState.comments && commentsState.comments.length > 0 ? (
+				commentsState.comments.map((comment: CommentType) => (
 					<Comment key={comment.id} comment={comment} />
 				))
 			) : (
