@@ -108,11 +108,12 @@ class PostSerializer(ModelSerializer):
        
 # Comment serializer
 class CommentSerializer(ModelSerializer):
-    author = StringRelatedField()
+    user = StringRelatedField()
     post = StringRelatedField()
+    user_profile = UserProfileSummarySerializer(source="user.userprofile",read_only=True)
     class Meta:
         model = Comment
-        fields = ['id', 'author', 'post', 'content', 'parent', 'reply_to', 'created_at']
+        fields = ['id', 'user_profile', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user']
 
     def validate(self, data):
         parent = data.get('parent')

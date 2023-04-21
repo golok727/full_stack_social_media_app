@@ -305,7 +305,7 @@ def commentsView(request, postId):
                 post = Post.objects.get(id=postId)
                 comments = Comment.objects.filter(post=post, parent=None)
 
-                return Response(CommentSerializer(comments, many=True, context={"request": request, 'user_profile': request.user.userprofile}).data)
+                return Response(CommentSerializer(comments, many=True, context={"request": request}).data)
             except Post.DoesNotExist:
                 return Response({"msg": "Post Does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -12,6 +12,16 @@ interface PostType {
 	user: User;
 	is_following: boolean;
 }
+interface UserprofileUser {
+	followers_count: number;
+	id: number;
+	profile_image: string;
+}
+interface UserProfileComment {
+	followers_count: number;
+	id: number;
+	profile_image: string;
+}
 
 interface User {
 	date_joined: Date;
@@ -23,14 +33,18 @@ interface User {
 	last_name: string | null;
 	username: string;
 	full_name: string;
-	userprofile: Partial<Userprofile>;
+	userprofile: UserProfileUser;
 }
 
-// interface Userprofile {
-// 	followers_count: number;
-// 	id: number;
-// 	profile_image: null | string;
-// }
+interface CommentType {
+	author: string;
+	content: string;
+	created_at: Date;
+	id: number;
+	parent: null | number;
+	post: string;
+	reply_to: null | number;
+}
 
 interface UserProfile {
 	bio: string | null;
@@ -44,4 +58,15 @@ interface UserProfile {
 	is_following: boolean;
 	is_mine: boolean;
 	posts_count: number;
+}
+
+interface CommentType {
+	content: string;
+	created_at: Date;
+	id: number;
+	parent: null;
+	post: string;
+	reply_to: null;
+	user: string;
+	user_profile: UserProfileComment;
 }

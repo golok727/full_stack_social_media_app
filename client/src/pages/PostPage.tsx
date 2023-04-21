@@ -1,7 +1,7 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useAuth from "../hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SpinnerLoader from "../components/SpinnerLoader";
 import CommentsRenderer from "../components/CommentsRenderer";
 import Heart from "../icons/Heart";
@@ -15,22 +15,23 @@ const PostPage = () => {
 	const { postId } = useParams();
 	const axiosPrivate = useAxiosPrivate();
 	const { auth } = useAuth();
+
 	const [post, setPost] = useState<PostType | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+
+	const commentFormInputRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
 		let isMounted = true;
 		const controller = new AbortController();
 
 		const fetchPostById = async () => {
-			console.log("Run");
 			try {
 				const res = await axiosPrivate.get(`/api/posts/${postId}`, {
 					signal: controller.signal,
 				});
 
 				setPost(() => res.data);
-				console.log(res.data);
 			} catch (error: any) {
 				console.log(error);
 				setPost(() => null);
@@ -100,7 +101,15 @@ const PostPage = () => {
 									<div className="py-1 flex justify-between ">
 										<div className="flex gap-2">
 											<Heart isActive={post.is_liked} />
-											<CommentIcon />
+
+											<CommentIcon
+												onClick={() => {
+													if (commentFormInputRef.current) {
+														commentFormInputRef.current.focus();
+													}
+												}}
+											/>
+
 											<ShareIcon />
 										</div>
 										<div>
@@ -113,7 +122,7 @@ const PostPage = () => {
 								</div>
 
 								{/* Comment Form */}
-								<CommentForm />
+								<CommentForm ref={commentFormInputRef} postId={post.id} />
 							</footer>
 						</div>
 					</div>
@@ -140,7 +149,7 @@ export function AvatarMakerSmall({
 }) {
 	return avatar ? (
 		<div
-			className={`w-10 h-10 rounded-full overflow-hidden  ${
+			className={`w-10 h-10 rounded-full overflow-hidden ${
 				border && "border-[2px] border-red-600"
 			} `}
 		>

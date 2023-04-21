@@ -1,27 +1,34 @@
-import React from "react";
 import { AvatarMakerSmall } from "../pages/PostPage";
 import { Link } from "react-router-dom";
-
+import { BioRenderer } from "../pages/Profile";
+import { useMemo } from "react";
 type Props = {
-	content: string;
-	avatar: string;
-	likes?: number;
-	username: string;
+	comment: CommentType;
 };
 
-const Comment = ({ content, avatar, username }: Props) => {
+const Comment = ({ comment }: Props) => {
 	const handleReplyToComment = (commentId: number) => {};
-
+	const commentContentSplit = useMemo(() => {
+		return comment.content.split(/\r?\n/);
+	}, [comment]);
 	return (
-		<div className="flex items-center gap-2 my-5">
+		<div className="flex gap-2 my-5">
 			<div>
-				<AvatarMakerSmall avatar={avatar} username={username} border={false} />
+				<AvatarMakerSmall
+					avatar={comment.user_profile.profile_image}
+					username={comment.user}
+					border={false}
+				/>
 			</div>
 			<div>
-				<Link to={"/" + username} className="font-bold hover:text-gray-400">
-					{username}
+				<Link to={"/" + comment.user} className="font-bold hover:text-gray-400">
+					{comment.user}
 				</Link>
-				<span className="block text-sm">{content + " "}</span>
+				{/* Parse the comments */}
+				<span className="block text-sm">
+					{" "}
+					<BioRenderer bio={commentContentSplit} />{" "}
+				</span>
 
 				<button
 					onClick={() => handleReplyToComment(1)}

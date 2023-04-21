@@ -129,7 +129,9 @@ const Post: React.FC<Props> = ({ post }) => {
 							isActive={isLiked}
 							onClick={() => handleLike()}
 						/>
-						<CommentIcon />
+						<Link to={`/p/${post.id}`}>
+							<CommentIcon />
+						</Link>
 						<ShareIcon />
 					</div>
 
@@ -187,7 +189,7 @@ const Post: React.FC<Props> = ({ post }) => {
 
 				{/* Add Comment */}
 				<section className="border-t-[1px] border-gray-700 pt-2 px-2">
-					<CommentForm />
+					<CommentForm postId={post.id} />
 				</section>
 			</footer>
 		</div>

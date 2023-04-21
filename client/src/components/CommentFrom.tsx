@@ -1,8 +1,16 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, forwardRef, useState } from "react";
 import SmileIcon from "../icons/Smile";
 
-interface Props {}
-const CommentForm: React.FC<Props> = () => {
+interface Props {
+	postId: number;
+	commentId?: number;
+	parentCommentId?: number;
+}
+
+const CommentForm: React.ForwardRefRenderFunction<
+	HTMLTextAreaElement,
+	Props
+> = ({}, ref) => {
 	const [textAreaHeightValue, setTextAreaHeightValue] = useState("10");
 	const [limit, setLimit] = useState(false);
 
@@ -16,6 +24,7 @@ const CommentForm: React.FC<Props> = () => {
 				<SmileIcon />
 			</div>
 			<textarea
+				ref={ref}
 				onInput={(e) => {
 					if (!e.currentTarget.value) {
 						setTextAreaHeightValue("auto");
@@ -47,4 +56,4 @@ const CommentForm: React.FC<Props> = () => {
 	);
 };
 
-export default CommentForm;
+export default forwardRef(CommentForm);
