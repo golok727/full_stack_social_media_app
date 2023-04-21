@@ -156,9 +156,11 @@ const CreatePost = () => {
 							{/* Title Length */}
 							{titleLength > 0 && (
 								<span
-									className={`absolute right-3 bottom-1 text-xs ${
+									className={`${
+										titleLength > 40 && "-bottom-7 md:bottom-1"
+									} absolute right-3 bottom-1 text-xs ${
 										titleLength > 100
-											? "text-red-500 font-bold -bottom-5"
+											? "text-red-500 font-bold -bottom-7"
 											: "text-violet-300 "
 									} transition-all duration-150`}
 								>

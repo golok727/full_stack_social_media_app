@@ -7,7 +7,9 @@ type Props = {
 };
 
 const Comment = ({ comment }: Props) => {
-	const handleReplyToComment = (commentId: number) => {};
+	const handleReplyToComment = (parentId: number) => {
+		console.log("Reply to " + parentId);
+	};
 	const commentContentSplit = useMemo(() => {
 		return comment.content.split(/\r?\n/);
 	}, [comment]);
@@ -31,7 +33,7 @@ const Comment = ({ comment }: Props) => {
 				</span>
 
 				<button
-					onClick={() => handleReplyToComment(1)}
+					onClick={() => handleReplyToComment(comment.id)}
 					className="text-xs text-gray-500 hover:text-gray-300"
 				>
 					Reply

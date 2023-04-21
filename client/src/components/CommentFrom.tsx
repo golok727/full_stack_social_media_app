@@ -10,10 +10,10 @@ interface Props {
 const CommentForm: React.ForwardRefRenderFunction<
 	HTMLTextAreaElement,
 	Props
-> = ({}, ref) => {
+> = ({ postId }, ref) => {
 	const [textAreaHeightValue, setTextAreaHeightValue] = useState("10");
 	const [limit, setLimit] = useState(false);
-
+	const [commentContent, setCommentContent] = useState("");
 	const addComment = (e: FormEvent) => {
 		e.preventDefault();
 	};
@@ -25,6 +25,7 @@ const CommentForm: React.ForwardRefRenderFunction<
 			</div>
 			<textarea
 				ref={ref}
+				onChange={(e) => setCommentContent(e.currentTarget.value)}
 				onInput={(e) => {
 					if (!e.currentTarget.value) {
 						setTextAreaHeightValue("auto");
@@ -49,7 +50,8 @@ const CommentForm: React.ForwardRefRenderFunction<
 			/>
 			<input
 				type="submit"
-				className="font-bold text-blue-200 text-sm cursor-pointer"
+				disabled={commentContent === ""}
+				className="font-bold text-blue-200 text-sm cursor-pointer disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200"
 				value={"Post"}
 			/>
 		</form>

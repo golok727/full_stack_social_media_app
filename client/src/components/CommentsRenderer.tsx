@@ -15,45 +15,63 @@ type ReducerState = {
 	errMsg: string;
 };
 
-enum ActionTypes {
+export enum CommentActionTypes {
 	SET_COMMENTS = "SET_COMMENTS",
 	COMMENTS_ERROR = "COMMENTS_ERROR",
+	ADD_COMMENT = "ADD_COMMENT",
 }
 
 type SetCommentsAction = {
-	type: ActionTypes.SET_COMMENTS;
+	type: CommentActionTypes.SET_COMMENTS;
 	payload: {
 		comments: CommentType[];
 		isLoading: boolean;
 	};
 };
+
+type AddCommentAction = {
+	type: CommentActionTypes.ADD_COMMENT;
+	payload: {
+		comment: CommentType;
+	};
+};
+
 type SetCommentsErrorAction = {
-	type: ActionTypes.COMMENTS_ERROR;
+	type: CommentActionTypes.COMMENTS_ERROR;
 	payload: {
 		errMsg: string;
 	};
 };
 
-type Actions = SetCommentsAction | SetCommentsErrorAction;
+export type CommentActions =
+	| SetCommentsAction
+	| SetCommentsErrorAction
+	| AddCommentAction;
 
 const CommentsReducer = (
 	state: ReducerState,
-	action: Actions
+	action: CommentActions
 ): ReducerState => {
 	switch (action.type) {
-		case ActionTypes.SET_COMMENTS:
+		case CommentActionTypes.SET_COMMENTS:
 			return {
 				...state,
 				comments: action.payload.comments,
 				isLoading: false,
 				errMsg: "Can't Get Comments",
 			};
-		case ActionTypes.COMMENTS_ERROR:
+		case CommentActionTypes.COMMENTS_ERROR:
 			return {
 				...state,
 				comments: [],
 				isLoading: false,
 				errMsg: action.payload.errMsg,
+			};
+
+		case CommentActionTypes.ADD_COMMENT:
+			return {
+				...state,
+				comments: [...[action.payload.comment, ...state.comments]],
 			};
 		default:
 			return state;
@@ -80,14 +98,14 @@ const CommentsRenderer: React.FC<Props> = ({ post }) => {
 				console.log(res.data);
 
 				dispatch({
-					type: ActionTypes.SET_COMMENTS,
+					type: CommentActionTypes.SET_COMMENTS,
 					payload: { comments: res.data, isLoading: false },
 				});
 			} catch (error) {
 				// Todo Error Remove
 				console.error(error);
 				dispatch({
-					type: ActionTypes.COMMENTS_ERROR,
+					type: CommentActionTypes.COMMENTS_ERROR,
 					payload: { errMsg: "Error fetching comments" },
 				});
 			}
@@ -132,7 +150,7 @@ const CommentsRenderer: React.FC<Props> = ({ post }) => {
 			{state.isLoading ? (
 				<SpinnerLoader />
 			) : state.comments && state.comments.length > 0 ? (
-				state.comments.map((comment: CommentType, idx: number) => (
+				state.comments.map((comment: CommentType) => (
 					<Comment key={comment.id} comment={comment} />
 				))
 			) : (
