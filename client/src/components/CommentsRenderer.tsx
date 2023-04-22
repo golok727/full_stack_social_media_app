@@ -16,7 +16,7 @@ interface Props {
 	commentsState: CommentReducerState;
 	dispatch: React.Dispatch<CommentActions>;
 }
-
+// Todo Refetch comments every 20s
 const CommentsRenderer: React.FC<Props> = ({
 	post,
 	dispatch,

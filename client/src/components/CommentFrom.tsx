@@ -2,7 +2,6 @@ import React, { FormEvent, forwardRef, useState } from "react";
 import SmileIcon from "../icons/Smile";
 import { CommentActionTypes, CommentActions } from "../pages/PostPage";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { comment } from "postcss";
 
 interface Props {
 	postId: number;
@@ -19,6 +18,7 @@ const CommentForm: React.ForwardRefRenderFunction<
 	const [limit, setLimit] = useState(false);
 	const [commentContent, setCommentContent] = useState("");
 	const axiosPrivate = useAxiosPrivate();
+
 	// Todo Add global error handling to show comment Error
 	const addComment = async (e: FormEvent) => {
 		e.preventDefault();

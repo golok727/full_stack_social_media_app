@@ -38,16 +38,6 @@ interface User {
 	userprofile: UserProfileUser;
 }
 
-interface CommentType {
-	author: string;
-	content: string;
-	created_at: Date;
-	id: number;
-	parent: null | number;
-	post: string;
-	reply_to: null | number;
-}
-
 interface UserProfile {
 	bio: string | null;
 	birth_date: string | null;
@@ -65,11 +55,14 @@ interface UserProfile {
 
 interface CommentType {
 	content: string;
+	replies_count: number;
 	created_at: Date;
 	id: number;
 	parent: null;
 	post: string;
-	reply_to: null;
+	reply_to: null | number;
 	user: string;
 	user_profile: UserProfileComment;
+	reply_to_username?: string;
+	user_id: number;
 }

@@ -1,10 +1,11 @@
 # Prior
 
+- [ ] Add Loading State in Comment Form
 - [ ] Changes in create post
-  - [ ] Add Redirects
-  - [ ] Add title and description length limits
-- [ ] view post on click
-  - [ ] Add a post /p/:id route to implement this
+  - [x] Add Redirects
+  - [x] Add title and description length limits
+- [x] view post on click
+  - [x] Add a post /p/:id route to implement this
 - [ ] Add Confirmation before un following an account
 - [ ] Posts Context for better post management
 
@@ -18,14 +19,14 @@
 # Backend
 
 - [ ] Add Rate Limiting
-- [ ] test following unfollowing and like dislike
+- [x] test following unfollowing and like dislike
 - [ ] optimize the backend code (remove some unnecessary stuff)
 
 # Features
 
 - [ ] Add Profile Type to each user profile
 - [ ] Add profile image editing
-- [ ] Add Verified users badge
+- [x] Add Verified users badge
 
 <br/>
 <br/>

@@ -313,6 +313,7 @@ def commentsView(request, postId):
         
 
         # Post req to route
+        
         if request.method == "POST":
             post  = Post.objects.get(id=postId)
             print(request.user)
@@ -333,10 +334,32 @@ def commentsView(request, postId):
     except Post.DoesNotExist:
         return Response({"msg": "Post does not exits"}, status=status.HTTP_400_BAD_REQUEST)
     
-@api_view(["GET"]) 
+# @api_view(["GET"]) 
+# @permission_classes([IsAuthenticated])
+# def getCommentReplies(request, commentId):
+#     comment = Comment.objects.get(id=commentId)
+#     replies = Comment.objects.filter(parent=comment)
+#     serializer = CommentSerializer(replies, many=True, context={"request": request})
+#     return Response(serializer.data)
+
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getCommentReplies(request, commentId):
     comment = Comment.objects.get(id=commentId)
     replies = Comment.objects.filter(parent=comment)
-    serializer = CommentSerializer(replies, many=True)
+    serializer = CommentSerializer(replies, many=True, context={"request": request})
+
+    # Collect all subchild comments recursively
+    def get_subchild_comments(comment_obj, comments_list):
+        subchild_comments = Comment.objects.filter(parent=comment_obj)
+        for subchild_comment in subchild_comments:
+            comments_list.append(subchild_comment)
+            get_subchild_comments(subchild_comment, comments_list)
+
+    all_comments = []
+    for reply in replies:
+        all_comments.append(reply)
+        get_subchild_comments(reply, all_comments)
+
+    serializer = CommentSerializer(all_comments, many=True, context={"request": request})
     return Response(serializer.data)

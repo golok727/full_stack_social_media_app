@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-
+from django.db.models import Count
 
 
 #  User Profile Summary to send with user Serializer
@@ -110,21 +110,22 @@ class PostSerializer(ModelSerializer):
 class CommentSerializer(ModelSerializer):
     user = StringRelatedField()
     post = StringRelatedField()
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
     user_profile = UserProfileSummarySerializer(source="user.userprofile",read_only=True)
+    replies_count = SerializerMethodField()
+    reply_to_username = serializers.StringRelatedField(source='reply_to.username', read_only=True)
     class Meta:
         model = Comment
-        fields = ['id', 'user_profile', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user']
+        fields = ['id', 'user_profile', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id"]
 
-    def validate(self, data):
-        parent = data.get('parent')
-        replying_to = data.get('reply_to')
+    def get_replies_count(self, obj):
+        return self.get_all_replies_count(obj)
 
-        if parent and replying_to:
-            raise serializers.ValidationError(
-                'Cannot set both parent and replying_to values'
-            )
-
-        return data
+    def get_all_replies_count(self, comment):
+        count = Comment.objects.filter(parent=comment).count()
+        for reply in Comment.objects.filter(parent=comment):
+            count += self.get_all_replies_count(reply)
+        return count    
 
 
 # Token Serializer
