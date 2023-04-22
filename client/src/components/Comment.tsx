@@ -6,9 +6,11 @@ import VerifiedIcon from "../icons/VerifiedIcon";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 type Props = {
 	comment: CommentType;
+	setReplyToId: React.Dispatch<React.SetStateAction<number | null>>;
+	setParentCommentId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-const Comment = ({ comment }: Props) => {
+const Comment = ({ comment, setParentCommentId, setReplyToId }: Props) => {
 	const [showReplies, setShowReplies] = useState(false);
 	const [replies, setReplies] = useState<CommentType[]>([]);
 	const axiosPrivate = useAxiosPrivate();
@@ -19,6 +21,9 @@ const Comment = ({ comment }: Props) => {
 		userId: number,
 		setReplies?: React.Dispatch<React.SetStateAction<CommentType[]>>
 	) => {
+		setReplyToId(userId);
+		setParentCommentId(parentId);
+
 		console.log("Reply to " + parentId + " User: " + userId);
 	};
 
@@ -88,7 +93,12 @@ const Comment = ({ comment }: Props) => {
 				{showReplies && replies && replies.length > 0 && (
 					<div className="">
 						{replies.map((reply, idx) => (
-							<Comment comment={reply} key={idx} />
+							<Comment
+								setParentCommentId={setParentCommentId}
+								setReplyToId={setReplyToId}
+								comment={reply}
+								key={idx}
+							/>
 						))}
 					</div>
 				)}

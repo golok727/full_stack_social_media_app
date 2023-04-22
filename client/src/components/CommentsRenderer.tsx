@@ -15,12 +15,16 @@ interface Props {
 	post: PostType;
 	commentsState: CommentReducerState;
 	dispatch: React.Dispatch<CommentActions>;
+	setReplyToId: React.Dispatch<React.SetStateAction<number | null>>;
+	setParentCommentId: React.Dispatch<React.SetStateAction<number | null>>;
 }
 // Todo Refetch comments every 20s
 const CommentsRenderer: React.FC<Props> = ({
 	post,
 	dispatch,
 	commentsState,
+	setReplyToId,
+	setParentCommentId,
 }) => {
 	const axiosPrivate = useAxiosPrivate();
 
@@ -90,7 +94,12 @@ const CommentsRenderer: React.FC<Props> = ({
 				<SpinnerLoader />
 			) : commentsState.comments && commentsState.comments.length > 0 ? (
 				commentsState.comments.map((comment: CommentType) => (
-					<Comment key={comment.id} comment={comment} />
+					<Comment
+						setParentCommentId={setParentCommentId}
+						setReplyToId={setReplyToId}
+						key={comment.id}
+						comment={comment}
+					/>
 				))
 			) : (
 				<span className="block w-full text-center py-10 text-sm text-gray-400">

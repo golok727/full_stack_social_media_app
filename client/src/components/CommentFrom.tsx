@@ -7,8 +7,8 @@ interface Props {
 	postId: number;
 	dispatch?: React.Dispatch<CommentActions>;
 	commentId?: number;
-	parent?: number;
-	reply_to?: number;
+	parent: number | null;
+	reply_to: number | null;
 }
 
 const CommentForm: React.ForwardRefRenderFunction<
@@ -19,12 +19,14 @@ const CommentForm: React.ForwardRefRenderFunction<
 	const [limit, setLimit] = useState(false);
 	const [commentContent, setCommentContent] = useState("");
 	const axiosPrivate = useAxiosPrivate();
+	const [isLoading, setIsLoading] = useState(false);
 
 	// Todo Add global error handling to show comment Error
 	const addComment = async (e: FormEvent) => {
 		e.preventDefault();
 
 		try {
+			setIsLoading(true);
 			const reqData = {
 				content: commentContent,
 				...(reply_to && { reply_to }),
@@ -49,6 +51,8 @@ const CommentForm: React.ForwardRefRenderFunction<
 			setCommentContent("");
 		} catch (error: any) {
 			console.log(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -58,6 +62,7 @@ const CommentForm: React.ForwardRefRenderFunction<
 				<SmileIcon />
 			</div>
 			<textarea
+				readOnly={isLoading}
 				ref={ref}
 				value={commentContent}
 				onChange={(e) => setCommentContent(e.currentTarget.value)}
@@ -78,16 +83,16 @@ const CommentForm: React.ForwardRefRenderFunction<
 				style={{
 					height: textAreaHeightValue,
 				}}
-				className={`flex-1 bg-transparent placeholder:text-sm placeholder:text-gray-400 text-sm resize-none ${
+				className={`flex-1 bg-transparent placeholder:text-sm read-only:text-gray-400 placeholder:text-gray-400 text-sm resize-none ${
 					limit ? "overflow-y-auto" : "overflow-hidden"
 				} outline-none text-xs`}
 				placeholder="Add a comment"
 			/>
 			<input
 				type="submit"
-				disabled={commentContent === ""}
+				disabled={isLoading || commentContent === ""}
 				className="font-bold text-blue-200 text-sm cursor-pointer disabled:text-gray-700 disabled:cursor-not-allowed transition-colors duration-200"
-				value={"Post"}
+				value={!isLoading ? "Post" : "Posting..."}
 			/>
 		</form>
 	);

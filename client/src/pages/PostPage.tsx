@@ -11,6 +11,7 @@ import SaveIcon from "../icons/SaveIcon";
 import { formatDate } from "../utils/utils";
 import CommentForm from "../components/CommentFrom";
 import VerifiedIcon from "../icons/VerifiedIcon";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 export type CommentReducerState = {
 	comments: CommentType[];
@@ -97,6 +98,9 @@ const PostPage = () => {
 
 	const commentFormInputRef = useRef<HTMLTextAreaElement>(null);
 
+	const [replyToId, setReplyTo] = useState<number | null>(null);
+	const [parentCommentId, setParentComment] = useState<number | null>(null);
+
 	useEffect(() => {
 		let isMounted = true;
 		const controller = new AbortController();
@@ -108,6 +112,11 @@ const PostPage = () => {
 				});
 
 				setPost(() => res.data);
+				useDocumentTitle(
+					`${(res.data as PostType).user.full_name}  On Photon: "${
+						res.data.title
+					}"`
+				);
 			} catch (error: any) {
 				console.log(error);
 				setPost(() => null);
@@ -170,6 +179,8 @@ const PostPage = () => {
 							{/* Comments Renderer */}
 
 							<CommentsRenderer
+								setReplyToId={setReplyTo}
+								setParentCommentId={setParentComment}
 								commentsState={commentsState}
 								dispatch={dispatch}
 								post={post}
@@ -204,6 +215,8 @@ const PostPage = () => {
 
 								{/* Comment Form */}
 								<CommentForm
+									parent={parentCommentId}
+									reply_to={replyToId}
 									dispatch={dispatch}
 									ref={commentFormInputRef}
 									postId={post.id}
