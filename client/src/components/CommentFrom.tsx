@@ -1,10 +1,12 @@
 import React, { FormEvent, forwardRef, useState } from "react";
 import SmileIcon from "../icons/Smile";
-import { CommentActions } from "../pages/PostPage";
+import { CommentActionTypes, CommentActions } from "../pages/PostPage";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { comment } from "postcss";
 
 interface Props {
 	postId: number;
-	dispatch: React.Dispatch<CommentActions>;
+	dispatch?: React.Dispatch<CommentActions>;
 	commentId?: number;
 	parentCommentId?: number;
 }
@@ -12,12 +14,37 @@ interface Props {
 const CommentForm: React.ForwardRefRenderFunction<
 	HTMLTextAreaElement,
 	Props
-> = ({ postId }, ref) => {
+> = ({ postId, dispatch }, ref) => {
 	const [textAreaHeightValue, setTextAreaHeightValue] = useState("10");
 	const [limit, setLimit] = useState(false);
 	const [commentContent, setCommentContent] = useState("");
-	const addComment = (e: FormEvent) => {
+	const axiosPrivate = useAxiosPrivate();
+	// Todo Add global error handling to show comment Error
+	const addComment = async (e: FormEvent) => {
 		e.preventDefault();
+
+		try {
+			const reqData = {
+				content: commentContent,
+			};
+
+			const res = await axiosPrivate.post(
+				`/api/posts/${postId}/comments/add`,
+				reqData
+			);
+
+			if (res.data.comment && dispatch !== undefined) {
+				dispatch({
+					type: CommentActionTypes.ADD_COMMENT,
+					payload: {
+						comment: res.data.comment,
+					},
+				});
+			}
+			setCommentContent("");
+		} catch (error: any) {
+			console.log(error);
+		}
 	};
 
 	return (
@@ -27,6 +54,7 @@ const CommentForm: React.ForwardRefRenderFunction<
 			</div>
 			<textarea
 				ref={ref}
+				value={commentContent}
 				onChange={(e) => setCommentContent(e.currentTarget.value)}
 				onInput={(e) => {
 					if (!e.currentTarget.value) {
@@ -40,7 +68,7 @@ const CommentForm: React.ForwardRefRenderFunction<
 					}
 					setTextAreaHeightValue("auto");
 					setTextAreaHeightValue(`${e.currentTarget.scrollHeight}px`);
-					console.log(e.currentTarget.scrollHeight);
+					// console.log(e.currentTarget.scrollHeight);
 				}}
 				style={{
 					height: textAreaHeightValue,

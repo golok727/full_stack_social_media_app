@@ -56,7 +56,7 @@ class UserProfile(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     profile_image = models.ImageField(upload_to=PathAndRename("profile_images"), blank=True, null=True)
     following = models.ManyToManyField(User, related_name='following', blank=True)
-
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
@@ -103,3 +103,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.content[:20]}... ({self.user.username})" 
+    class Meta:
+        ordering =  ["-created_at"]

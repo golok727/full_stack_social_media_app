@@ -10,6 +10,7 @@ import ShareIcon from "../icons/ShareIcon";
 import SaveIcon from "../icons/SaveIcon";
 import { formatDate } from "../utils/utils";
 import CommentForm from "../components/CommentFrom";
+import VerifiedIcon from "../icons/VerifiedIcon";
 
 export type CommentReducerState = {
 	comments: CommentType[];
@@ -144,6 +145,7 @@ const PostPage = () => {
 									/>
 									<Link className="font-bold " to={"/" + post.user.username}>
 										{post.user.username}
+										{post.user.userprofile.is_verified && <VerifiedIcon />}
 									</Link>
 								</div>
 								{/* Three Dot */}

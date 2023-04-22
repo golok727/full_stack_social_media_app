@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useMemo, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
@@ -11,7 +11,8 @@ const CreatePost = () => {
 	const [image, setImage] = useState<File | null>(null!);
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
-	const [titleLength, setTitleLength] = useState(0);
+
+	const titleLength = useMemo(() => title.length, [title]);
 
 	// Hooks
 	const { auth } = useAuth();
@@ -82,7 +83,6 @@ const CreatePost = () => {
 	};
 
 	useEffect(() => {
-		setTitleLength(() => title.length);
 		setErrorMsg("");
 	}, [title, image]);
 

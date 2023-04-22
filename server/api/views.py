@@ -317,9 +317,9 @@ def commentsView(request, postId):
             post  = Post.objects.get(id=postId)
             print(request.user)
             print(request.data)
-            comment = Comment(post=post, author=request.user)
+            comment = Comment(post=post, user=request.user)
           
-            serializer = CommentSerializer(comment, data=request.data)
+            serializer = CommentSerializer(comment, data=request.data, context={"request": request})
             
             if serializer.is_valid():
                 serializer.save()

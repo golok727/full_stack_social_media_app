@@ -12,6 +12,7 @@ import FollowButton from "./FollowButton";
 import { formatDate, numberFormatter } from "../utils/utils";
 import { BioRenderer } from "../pages/Profile";
 import CommentForm from "./CommentFrom";
+import VerifiedIcon from "../icons/VerifiedIcon";
 interface Props {
 	post: PostType;
 }
@@ -60,7 +61,7 @@ const Post: React.FC<Props> = ({ post }) => {
 					</div>
 					{/* Username */}
 					<h3
-						className={`font-bold ${
+						className={`font-bold flex items-center ${
 							post.is_mine ? "text-orange-200" : "text-white"
 						} hover:text-slate-400`}
 					>
@@ -68,7 +69,9 @@ const Post: React.FC<Props> = ({ post }) => {
 						<Link to={`/${post.user.username}`}>
 							<span className="">{post.user.username}</span>
 						</Link>
+						{post.user.userprofile.is_verified && <VerifiedIcon />}
 					</h3>
+
 					{!post.is_mine && !post.is_following && (
 						<FollowButton
 							is_following={post.is_following}

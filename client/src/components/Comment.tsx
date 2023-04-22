@@ -2,6 +2,7 @@ import { AvatarMakerSmall } from "../pages/PostPage";
 import { Link } from "react-router-dom";
 import { BioRenderer } from "../pages/Profile";
 import { useMemo } from "react";
+import VerifiedIcon from "../icons/VerifiedIcon";
 type Props = {
 	comment: CommentType;
 };
@@ -11,6 +12,7 @@ const Comment = ({ comment }: Props) => {
 		console.log("Reply to " + parentId);
 	};
 	const commentContentSplit = useMemo(() => {
+		console.log("RUN");
 		return comment.content.split(/\r?\n/);
 	}, [comment]);
 	return (
@@ -25,6 +27,8 @@ const Comment = ({ comment }: Props) => {
 			<div>
 				<Link to={"/" + comment.user} className="font-bold hover:text-gray-400">
 					{comment.user}
+
+					{comment.user_profile.is_verified && <VerifiedIcon />}
 				</Link>
 				{/* Parse the comments */}
 				<span className="block text-sm">

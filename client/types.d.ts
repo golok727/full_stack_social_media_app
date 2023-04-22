@@ -16,11 +16,13 @@ interface UserprofileUser {
 	followers_count: number;
 	id: number;
 	profile_image: string;
+	is_verified: boolean;
 }
 interface UserProfileComment {
 	followers_count: number;
 	id: number;
 	profile_image: string;
+	is_verified: boolean;
 }
 
 interface User {
@@ -58,6 +60,7 @@ interface UserProfile {
 	is_following: boolean;
 	is_mine: boolean;
 	posts_count: number;
+	is_verified: boolean;
 }
 
 interface CommentType {

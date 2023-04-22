@@ -7,6 +7,7 @@ import { numberFormatter } from "../utils/utils";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import SpinnerLoader from "../components/SpinnerLoader";
 import PostsByUser from "../components/PostsByUser";
+import VerifiedIcon from "../icons/VerifiedIcon";
 
 const Profile = () => {
 	const { username } = useParams();
@@ -77,6 +78,7 @@ const Profile = () => {
 								<header className="flex gap-3 items-center">
 									<span className="text-xl ">
 										@{userProfile.user?.username}
+										{userProfile.is_verified && <VerifiedIcon />}
 										{/* Todo Add Verified users badge */}
 									</span>
 

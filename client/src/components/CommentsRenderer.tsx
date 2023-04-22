@@ -10,6 +10,7 @@ import { BioRenderer } from "../pages/Profile";
 import Comment from "./Comment";
 import SpinnerLoader from "./SpinnerLoader";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import VerifiedIcon from "../icons/VerifiedIcon";
 interface Props {
 	post: PostType;
 	commentsState: CommentReducerState;
@@ -70,7 +71,9 @@ const CommentsRenderer: React.FC<Props> = ({
 						<div className="flex items-center gap-2">
 							<Link to={"/" + post.user.username} className="font-bold">
 								{post.user.username}
+								{post.user.userprofile.is_verified && <VerifiedIcon />}
 							</Link>
+
 							{/* Todo Parse the title  */}
 							<span className="text-sm">{post.title}</span>
 						</div>
