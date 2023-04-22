@@ -65,4 +65,5 @@ interface CommentType {
 	user_profile: UserProfileComment;
 	reply_to_username?: string;
 	user_id: number;
+	top_level_parent_id: number;
 }

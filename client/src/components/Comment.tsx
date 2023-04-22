@@ -1,30 +1,54 @@
 import { AvatarMakerSmall } from "../pages/PostPage";
 import { Link } from "react-router-dom";
 import { BioRenderer } from "../pages/Profile";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import VerifiedIcon from "../icons/VerifiedIcon";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import {
+	CommentActionTypes,
+	CommentActions,
+} from "../reducers/CommentsReducer";
 type Props = {
 	comment: CommentType;
+	dispatch: React.Dispatch<CommentActions>;
 	setReplyToId: React.Dispatch<React.SetStateAction<number | null>>;
 	setParentCommentId: React.Dispatch<React.SetStateAction<number | null>>;
+	focusInputRef: () => void;
+	setReplyToUserName: React.Dispatch<React.SetStateAction<string | null>>;
+	replies: {
+		[id: number]: CommentType[];
+	};
 };
 
-const Comment = ({ comment, setParentCommentId, setReplyToId }: Props) => {
+const Comment = ({
+	comment,
+	dispatch,
+	setParentCommentId,
+	setReplyToId,
+	focusInputRef,
+	setReplyToUserName,
+	replies: repliesReducer,
+}: Props) => {
 	const [showReplies, setShowReplies] = useState(false);
-	const [replies, setReplies] = useState<CommentType[]>([]);
+	// const [replies, setReplies] = useState<CommentType[]>([]);
+	const [loadingReplies, setLoadingReplies] = useState(false);
+
 	const axiosPrivate = useAxiosPrivate();
 
 	// Handle Reply to comment -> will be moved to parent component
 	const handleReplyToComment = (
 		parentId: number,
 		userId: number,
-		setReplies?: React.Dispatch<React.SetStateAction<CommentType[]>>
+		replyToUsername: string
 	) => {
 		setReplyToId(userId);
 		setParentCommentId(parentId);
-
-		console.log("Reply to " + parentId + " User: " + userId);
+		setReplyToUserName(replyToUsername);
+		focusInputRef();
+		console.log(
+			"Reply to " + parentId + " User: " + userId,
+			" @" + replyToUsername
+		);
 	};
 
 	// Handle SHow Replies
@@ -32,12 +56,24 @@ const Comment = ({ comment, setParentCommentId, setReplyToId }: Props) => {
 		setShowReplies((prev) => !prev);
 		if (!showReplies) {
 			try {
+				setLoadingReplies(true);
 				const res = await axiosPrivate.get(
 					`/api/posts/comments/${commentId}/replies`
 				);
-				console.log(res.data);
-				setReplies(res.data);
-			} catch (error) {}
+
+				// setReplies(res.data);
+				dispatch({
+					type: CommentActionTypes.INIT_REPLIES,
+					payload: {
+						commentId: commentId,
+						replies: res.data,
+					},
+				});
+			} catch (error) {
+				console.log(error);
+			} finally {
+				setLoadingReplies(false);
+			}
 		}
 	};
 
@@ -70,7 +106,9 @@ const Comment = ({ comment, setParentCommentId, setReplyToId }: Props) => {
 				</span>
 
 				<button
-					onClick={() => handleReplyToComment(comment.id, comment.user_id)}
+					onClick={() =>
+						handleReplyToComment(comment.id, comment.user_id, comment.user)
+					}
 					className="text-xs text-gray-500 hover:text-gray-300"
 				>
 					Reply
@@ -86,22 +124,29 @@ const Comment = ({ comment, setParentCommentId, setReplyToId }: Props) => {
 						<span className="mx-2">
 							{showReplies ? "Hide replies" : "View replies"}
 							{!showReplies && " (" + comment.replies_count + ")"}
+							{showReplies && loadingReplies && " Loading..."}
 						</span>
 					</button>
 				)}
 
-				{showReplies && replies && replies.length > 0 && (
-					<div className="">
-						{replies.map((reply, idx) => (
-							<Comment
-								setParentCommentId={setParentCommentId}
-								setReplyToId={setReplyToId}
-								comment={reply}
-								key={idx}
-							/>
-						))}
-					</div>
-				)}
+				{showReplies &&
+					repliesReducer[comment.id] &&
+					repliesReducer[comment.id].length > 0 && (
+						<div className="">
+							{repliesReducer[comment.id].map((reply, idx) => (
+								<Comment
+									replies={repliesReducer}
+									dispatch={dispatch}
+									setReplyToUserName={setReplyToUserName}
+									focusInputRef={focusInputRef}
+									setParentCommentId={setParentCommentId}
+									setReplyToId={setReplyToId}
+									comment={reply}
+									key={idx}
+								/>
+							))}
+						</div>
+					)}
 			</div>
 		</div>
 	);

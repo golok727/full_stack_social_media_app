@@ -12,81 +12,17 @@ import { formatDate } from "../utils/utils";
 import CommentForm from "../components/CommentFrom";
 import VerifiedIcon from "../icons/VerifiedIcon";
 import useDocumentTitle from "../hooks/useDocumentTitle";
-
-export type CommentReducerState = {
-	comments: CommentType[];
-	isLoading: boolean;
-	errMsg: string;
-};
-
-export enum CommentActionTypes {
-	SET_COMMENTS = "SET_COMMENTS",
-	COMMENTS_ERROR = "COMMENTS_ERROR",
-	ADD_COMMENT = "ADD_COMMENT",
-}
-
-type SetCommentsAction = {
-	type: CommentActionTypes.SET_COMMENTS;
-	payload: {
-		comments: CommentType[];
-		isLoading: boolean;
-	};
-};
-
-type AddCommentAction = {
-	type: CommentActionTypes.ADD_COMMENT;
-	payload: {
-		comment: CommentType;
-	};
-};
-
-type SetCommentsErrorAction = {
-	type: CommentActionTypes.COMMENTS_ERROR;
-	payload: {
-		errMsg: string;
-	};
-};
-
-export type CommentActions =
-	| SetCommentsAction
-	| SetCommentsErrorAction
-	| AddCommentAction;
-
-const CommentsReducer = (
-	state: CommentReducerState,
-	action: CommentActions
-): CommentReducerState => {
-	switch (action.type) {
-		case CommentActionTypes.SET_COMMENTS:
-			return {
-				...state,
-				comments: action.payload.comments,
-				isLoading: false,
-				errMsg: "Can't Get Comments",
-			};
-		case CommentActionTypes.COMMENTS_ERROR:
-			return {
-				...state,
-				comments: [],
-				isLoading: false,
-				errMsg: action.payload.errMsg,
-			};
-
-		case CommentActionTypes.ADD_COMMENT:
-			return {
-				...state,
-				comments: [...[action.payload.comment, ...state.comments]],
-			};
-		default:
-			return state;
-	}
-};
+import {
+	CommentReducerState,
+	CommentsReducer,
+} from "../reducers/CommentsReducer";
 
 const PostPage = () => {
 	const [commentsState, dispatch] = useReducer(CommentsReducer, {
 		comments: [],
 		isLoading: true,
 		errMsg: "",
+		replies: {},
 	} satisfies CommentReducerState);
 
 	const { postId } = useParams();
@@ -98,8 +34,22 @@ const PostPage = () => {
 
 	const commentFormInputRef = useRef<HTMLTextAreaElement>(null);
 
+	const focusInputRef = () => {
+		if (commentFormInputRef.current) {
+			commentFormInputRef.current.focus();
+		}
+	};
+
+	// For Reply TO
 	const [replyToId, setReplyTo] = useState<number | null>(null);
-	const [parentCommentId, setParentComment] = useState<number | null>(null);
+	const [parentCommentId, setParentCommentId] = useState<number | null>(null);
+	const [replyToUserName, setReplyToUserName] = useState<string | null>(null);
+
+	const resetReplyingToState = () => {
+		setReplyTo(null);
+		setParentCommentId(null);
+		setReplyToUserName(null);
+	};
 
 	useEffect(() => {
 		let isMounted = true;
@@ -179,11 +129,15 @@ const PostPage = () => {
 							{/* Comments Renderer */}
 
 							<CommentsRenderer
-								setReplyToId={setReplyTo}
-								setParentCommentId={setParentComment}
 								commentsState={commentsState}
-								dispatch={dispatch}
 								post={post}
+								// Fns
+
+								setReplyToUserName={setReplyToUserName}
+								focusInputRef={focusInputRef}
+								setReplyToId={setReplyTo}
+								setParentCommentId={setParentCommentId}
+								dispatch={dispatch}
 							/>
 
 							{/* Footer */}
@@ -215,6 +169,8 @@ const PostPage = () => {
 
 								{/* Comment Form */}
 								<CommentForm
+									resetReplyingToState={resetReplyingToState}
+									replyToUserName={replyToUserName}
 									parent={parentCommentId}
 									reply_to={replyToId}
 									dispatch={dispatch}

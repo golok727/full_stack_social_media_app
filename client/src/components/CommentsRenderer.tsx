@@ -1,30 +1,36 @@
 import React, { useEffect } from "react";
-import {
-	AvatarMakerSmall,
-	CommentActionTypes,
-	CommentActions,
-	CommentReducerState,
-} from "../pages/PostPage";
+import { AvatarMakerSmall } from "../pages/PostPage";
 import { Link } from "react-router-dom";
 import { BioRenderer } from "../pages/Profile";
 import Comment from "./Comment";
 import SpinnerLoader from "./SpinnerLoader";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import VerifiedIcon from "../icons/VerifiedIcon";
+import {
+	CommentActionTypes,
+	CommentActions,
+	CommentReducerState,
+} from "../reducers/CommentsReducer";
 interface Props {
 	post: PostType;
 	commentsState: CommentReducerState;
 	dispatch: React.Dispatch<CommentActions>;
 	setReplyToId: React.Dispatch<React.SetStateAction<number | null>>;
 	setParentCommentId: React.Dispatch<React.SetStateAction<number | null>>;
+	setReplyToUserName: React.Dispatch<React.SetStateAction<string | null>>;
+	focusInputRef: () => void;
 }
 // Todo Refetch comments every 20s
 const CommentsRenderer: React.FC<Props> = ({
 	post,
-	dispatch,
 	commentsState,
+
+	dispatch,
+	focusInputRef,
+
 	setReplyToId,
 	setParentCommentId,
+	setReplyToUserName,
 }) => {
 	const axiosPrivate = useAxiosPrivate();
 
@@ -37,6 +43,8 @@ const CommentsRenderer: React.FC<Props> = ({
 				const res = await axiosPrivate.get(`/api/posts/${post.id}/comments`, {
 					signal: controller.signal,
 				});
+
+				console.log(JSON.stringify(res.data[0], null, 2));
 
 				dispatch({
 					type: CommentActionTypes.SET_COMMENTS,
@@ -95,9 +103,13 @@ const CommentsRenderer: React.FC<Props> = ({
 			) : commentsState.comments && commentsState.comments.length > 0 ? (
 				commentsState.comments.map((comment: CommentType) => (
 					<Comment
+						dispatch={dispatch}
+						setReplyToUserName={setReplyToUserName}
+						focusInputRef={focusInputRef}
 						setParentCommentId={setParentCommentId}
 						setReplyToId={setReplyToId}
 						key={comment.id}
+						replies={commentsState.replies}
 						comment={comment}
 					/>
 				))

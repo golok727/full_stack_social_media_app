@@ -114,9 +114,11 @@ class CommentSerializer(ModelSerializer):
     user_profile = UserProfileSummarySerializer(source="user.userprofile",read_only=True)
     replies_count = SerializerMethodField()
     reply_to_username = serializers.StringRelatedField(source='reply_to.username', read_only=True)
+    top_level_parent_id = serializers.SerializerMethodField()
+    _parent_cache = {}
     class Meta:
         model = Comment
-        fields = ['id', 'user_profile', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id"]
+        fields = ['id', 'user_profile','top_level_parent_id', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id"]
 
     def get_replies_count(self, obj):
         return self.get_all_replies_count(obj)
@@ -127,7 +129,20 @@ class CommentSerializer(ModelSerializer):
             count += self.get_all_replies_count(reply)
         return count    
 
-
+    def get_top_level_parent_id(self, obj):
+        if obj.parent is None:
+            # If the comment has no parent, it's the top-level parent comment
+            return obj.id
+        else:
+            # Check if the parent ID is in the cache
+            if obj.parent in self._parent_cache:
+                return self._parent_cache[obj.parent]
+            else:
+                parent_comment = Comment.objects.get(id=obj.parent.id)
+                top_level_parent_id = self.get_top_level_parent_id(parent_comment)
+                # Add the parent ID to the cache for future lookups
+                self._parent_cache[obj.parent] = top_level_parent_id
+                return top_level_parent_id
 # Token Serializer
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

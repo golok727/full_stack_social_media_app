@@ -1,5 +1,7 @@
 # Prior
 
+- [ ] send only range of comments and add load more comments for more comments
+- [ ] move the reply to a context
 - [ ] Add Loading State in Comment Form
 - [ ] Changes in create post
   - [x] Add Redirects
