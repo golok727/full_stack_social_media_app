@@ -90,7 +90,7 @@ const PostPage = () => {
 
 	const { postId } = useParams();
 	const axiosPrivate = useAxiosPrivate();
-	const { auth } = useAuth();
+	// const { auth } = useAuth();
 
 	const [post, setPost] = useState<PostType | null>(null);
 	const [isLoading, setIsLoading] = useState(true);

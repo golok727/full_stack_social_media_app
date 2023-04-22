@@ -7,13 +7,14 @@ interface Props {
 	postId: number;
 	dispatch?: React.Dispatch<CommentActions>;
 	commentId?: number;
-	parentCommentId?: number;
+	parent?: number;
+	reply_to?: number;
 }
 
 const CommentForm: React.ForwardRefRenderFunction<
 	HTMLTextAreaElement,
 	Props
-> = ({ postId, dispatch }, ref) => {
+> = ({ postId, dispatch, reply_to, parent }, ref) => {
 	const [textAreaHeightValue, setTextAreaHeightValue] = useState("10");
 	const [limit, setLimit] = useState(false);
 	const [commentContent, setCommentContent] = useState("");
@@ -26,7 +27,11 @@ const CommentForm: React.ForwardRefRenderFunction<
 		try {
 			const reqData = {
 				content: commentContent,
+				...(reply_to && { reply_to }),
+				...(parent && { parent }),
 			};
+
+			console.log(reqData);
 
 			const res = await axiosPrivate.post(
 				`/api/posts/${postId}/comments/add`,

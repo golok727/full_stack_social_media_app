@@ -14,7 +14,11 @@ const Comment = ({ comment }: Props) => {
 	const axiosPrivate = useAxiosPrivate();
 
 	// Handle Reply to comment -> will be moved to parent component
-	const handleReplyToComment = (parentId: number, userId: number) => {
+	const handleReplyToComment = (
+		parentId: number,
+		userId: number,
+		setReplies?: React.Dispatch<React.SetStateAction<CommentType[]>>
+	) => {
 		console.log("Reply to " + parentId + " User: " + userId);
 	};
 
