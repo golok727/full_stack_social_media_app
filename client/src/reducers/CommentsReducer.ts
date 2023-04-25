@@ -91,7 +91,6 @@ export const CommentsReducer = (
 				...state,
 				comments: action.payload.comments,
 				isLoading: false,
-				errMsg: "Can't Get Comments",
 			};
 		case CommentActionTypes.COMMENTS_ERROR:
 			return {
@@ -145,8 +144,7 @@ export const CommentsReducer = (
 					throw new Error("If Comment if Reply then parentId cannot be null");
 				}
 				const allReplies = state.replies[action.payload.parentId];
-				console.log(action.payload.parentId);
-				console.log(state);
+
 				const updatedReplies = allReplies.map((reply) =>
 					commentId === reply.id
 						? {

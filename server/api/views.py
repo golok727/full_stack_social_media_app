@@ -363,3 +363,43 @@ def getCommentReplies(request, commentId):
 
     serializer = CommentSerializer(all_comments, many=True, context={"request": request})
     return Response(serializer.data)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def likeCommentView(request, pk):
+    try:
+        comment = Comment.objects.get(pk=pk)
+        user = request.user
+
+        if not user in comment.likes.all():
+            comment.likes.add(user)
+            return Response({"msg": True}, status=status.HTTP_200_OK)
+
+        return Response()
+
+    except Post.DoesNotExist:
+        return Response({'msg': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+    except Comment.DoesNotExist:
+        return Response({'msg': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def dislikeCommentView(request, pk):
+    try:
+        comment = Comment.objects.get(pk=pk)
+        user = request.user
+
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+            return Response({"liked": False}, status=status.HTTP_200_OK)
+
+        return Response()
+
+    except Post.DoesNotExist:
+        return Response({'msg': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    except Comment.DoesNotExist:
+        return Response({'msg': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)

@@ -8,7 +8,7 @@ import Heart from "../icons/Heart";
 import CommentIcon from "../icons/CommentIcon";
 import ShareIcon from "../icons/ShareIcon";
 import SaveIcon from "../icons/SaveIcon";
-import { formatDate } from "../utils/utils";
+import { formatDate, numberFormatter } from "../utils/utils";
 import CommentForm from "../components/CommentFrom";
 import VerifiedIcon from "../icons/VerifiedIcon";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -33,6 +33,26 @@ const PostPage = () => {
 	const [isLoading, setIsLoading] = useState(true);
 
 	const commentFormInputRef = useRef<HTMLTextAreaElement>(null);
+
+	const [isLiked, setIsLiked] = useState(false);
+
+	const handleLike = async () => {
+		if (post) {
+			setIsLiked((prev: boolean) => !prev);
+			const updatedLikesCount = isLiked
+				? post.likes_count - 1
+				: post.likes_count + 1;
+			setPost(
+				(prev) => ({ ...prev, likes_count: updatedLikesCount } as PostType)
+			);
+
+			try {
+				await axiosPrivate.post(`/api/posts/like/${post.id}`);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	};
 
 	const focusInputRef = () => {
 		if (commentFormInputRef.current) {
@@ -62,6 +82,8 @@ const PostPage = () => {
 				});
 
 				setPost(() => res.data);
+				setIsLiked(() => (res.data as PostType).is_liked);
+
 				useDocumentTitle(
 					`${(res.data as PostType).user.full_name}  On Photon: "${
 						res.data.title
@@ -146,7 +168,7 @@ const PostPage = () => {
 								<div className="border-b-[1px] border-b-gray-700 my-3">
 									<div className="py-1 flex justify-between ">
 										<div className="flex gap-2">
-											<Heart isActive={post.is_liked} />
+											<Heart isActive={isLiked} onClick={() => handleLike()} />
 
 											<CommentIcon
 												onClick={() => {
@@ -161,6 +183,12 @@ const PostPage = () => {
 										<div>
 											<SaveIcon />
 										</div>
+									</div>
+									<div>
+										<span className="font-bold text-sm">
+											{numberFormatter(post.likes_count)}{" "}
+											{post.likes_count === 1 ? "like" : "likes"}
+										</span>
 									</div>
 									<span className="text-xs text-gray-500">
 										{formatDate(post.created)}

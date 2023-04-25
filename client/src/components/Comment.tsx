@@ -96,6 +96,8 @@ const Comment = ({
 					isReply: comment.parent !== null,
 				},
 			});
+
+			await axiosPrivate.post(`/api/comment/${comment.id}/dislike/`);
 		} else {
 			dispatch({
 				type: CommentActionTypes.LIKE_COMMENT,
@@ -105,6 +107,9 @@ const Comment = ({
 					isReply: comment.parent !== null,
 				},
 			});
+			// Post to server
+
+			await axiosPrivate.post(`/api/comment/${comment.id}/like/`);
 		}
 	};
 

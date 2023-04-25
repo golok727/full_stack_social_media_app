@@ -5,7 +5,6 @@ import Heart from "../icons/Heart";
 import CommentIcon from "../icons/CommentIcon";
 import ShareIcon from "../icons/ShareIcon";
 import SaveIcon from "../icons/SaveIcon";
-import SmileIcon from "../icons/Smile";
 
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FollowButton from "./FollowButton";
@@ -29,11 +28,14 @@ const Post: React.FC<Props> = ({ post }) => {
 		splitDescription.length > 1 || post.description.length > 70
 	);
 	const axiosPrivate = useAxiosPrivate();
+
+	const [likesCount, setLikesCount] = useState(post.likes_count);
 	const [isLiked, setIsLiked] = useState(post.is_liked);
+
 	const handleLike = async () => {
-		setIsLiked((prev: boolean) => !prev);
-		if (isLiked && post.likes_count > 0) post.likes_count--;
-		else post.likes_count++;
+		setIsLiked((prev) => !prev);
+		const updatedLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
+		setLikesCount(updatedLikesCount);
 
 		try {
 			await axiosPrivate.post(`/api/posts/like/${post.id}`);
@@ -148,7 +150,7 @@ const Post: React.FC<Props> = ({ post }) => {
 					{/* Likes Count */}
 					<div>
 						<span className="cursor-pointer text-sm font-bold tracking-tighter">
-							{numberFormatter(post.likes_count)}{" "}
+							{numberFormatter(likesCount)}{" "}
 							{post.likes_count === 1 ? "like" : "likes"}
 						</span>
 					</div>

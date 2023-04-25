@@ -18,6 +18,10 @@ urlpatterns = [
     path("posts/<str:postId>/comments/", views.commentsView, name="comments_view_get_comments"),
     path("posts/comments/<str:commentId>/replies", views.getCommentReplies, name="comments_view"),
 
+
+    path("comment/<str:pk>/like/", views.likeCommentView, name="like_comment"),
+    path("comment/<str:pk>/dislike/", views.dislikeCommentView, name="dislike_comment"),
+
     
     
     path("users/profile/<str:username>", views.getUserProfile, name="user_profile"),
