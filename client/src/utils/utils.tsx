@@ -21,18 +21,18 @@ export const formatDate = (() => {
 		const diffYears = Math.floor(diffDays / 365);
 		let diff;
 		if (diffSeconds < 60) {
-			diff = `${diffSeconds} second${diffSeconds === 1 ? "" : "s"}`;
+			diff = `${diffSeconds}s`;
 		} else if (diffMinutes < 60) {
-			diff = `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"}`;
+			diff = `${diffMinutes}m`;
 		} else if (diffHours < 24) {
-			diff = `${diffHours} hour${diffHours === 1 ? "" : "s"}`;
+			diff = `${diffHours}h`;
 		} else if (diffDays < 30) {
-			diff = `${diffDays} day${diffDays === 1 ? "" : "s"}`;
+			diff = `${diffDays}day${diffDays === 1 ? "" : "s"}`;
 		} else if (diffMonths < 12) {
 			diff = `${diffMonths} month${diffMonths === 1 ? "" : "s"}`;
 		} else {
 			diff = `${diffYears} year${diffYears === 1 ? "" : "s"}`;
 		}
-		return `${diff} ago`;
+		return `${diff}`;
 	};
 })();

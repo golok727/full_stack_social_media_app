@@ -10,7 +10,7 @@ import {
 } from "../reducers/CommentsReducer";
 import Pin from "../icons/Pin";
 import Heart from "../icons/Heart";
-import { numberFormatter } from "../utils/utils";
+import { formatDate, numberFormatter } from "../utils/utils";
 type Props = {
 	comment: CommentType;
 	dispatch: React.Dispatch<CommentActions>;
@@ -152,14 +152,22 @@ const Comment = ({
 						{" "}
 						<BioRenderer bio={commentContentSplit} />{" "}
 					</span>
-					<button
-						onClick={() =>
-							handleReplyToComment(comment.id, comment.user_id, comment.user)
-						}
-						className="text-xs text-gray-500 hover:text-gray-300"
-					>
-						Reply
-					</button>
+
+					{/* Status */}
+					<div className="font-bold flex gap-2">
+						<span className="text-xs text-gray-500">
+							{formatDate(comment.created_at)}
+						</span>
+
+						<button
+							onClick={() =>
+								handleReplyToComment(comment.id, comment.user_id, comment.user)
+							}
+							className="text-xs text-gray-500 hover:text-gray-300"
+						>
+							Reply
+						</button>
+					</div>
 					{comment.parent === null && comment.replies_count > 0 && (
 						<button
 							onClick={() => handleShowReplies(comment.id)}

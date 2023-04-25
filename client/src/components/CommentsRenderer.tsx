@@ -61,8 +61,13 @@ const CommentsRenderer: React.FC<Props> = ({
 		};
 		fetchComments();
 
+		const interval = setInterval(() => {
+			fetchComments();
+		}, 20000);
+
 		return () => {
 			isMounted = false;
+			clearInterval(interval);
 			controller.abort();
 		};
 	}, []);
