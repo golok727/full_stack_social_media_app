@@ -12,7 +12,7 @@ const Heart: React.FC<Props> = ({ isActive = false, ...rest }) => {
 			viewBox="0 0 24 24"
 			strokeWidth={1.5}
 			stroke={isActive ? "none" : "currentColor"}
-			className={`w-7 h-7 cursor-pointer ${
+			className={`${rest.className} w-7 h-7 cursor-pointer ${
 				!isActive && "hover:stroke-slate-500"
 			}`}
 			{...rest}

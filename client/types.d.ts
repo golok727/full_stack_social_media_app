@@ -66,4 +66,9 @@ interface CommentType {
 	reply_to_username?: string;
 	user_id: number;
 	top_level_parent_id: number;
+
+	is_liked_by_me: boolean;
+	is_mine: boolean;
+	likes_count: number;
+	pinned: boolean;
 }

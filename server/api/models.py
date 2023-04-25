@@ -25,7 +25,7 @@ class Post(models.Model):
     description= models.TextField(blank=True, null=True)
     image  = models.ImageField(upload_to=PathAndRename("post_images"), blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True,  on_delete=models.CASCADE, related_name='posts')
-    likes = models.ManyToManyField(User, blank=True, related_name="liked_posts",  related_query_name='liked_post',)
+    likes = models.ManyToManyField(User, blank=True, related_name="liked_posts",  related_query_name='liked_post')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -100,8 +100,10 @@ class Comment(models.Model):
     reply_to = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    likes = models.ManyToManyField(User, blank=True, related_name="liked_post_comment",  related_query_name='liked_post_comment')
+    pinned = models.BooleanField(default=False)
+    
     def __str__(self):
         return f"{self.content[:20]}... ({self.user.username})" 
     class Meta:
-        ordering =  ["-created_at"]
+        ordering =  ["-pinned", "-created_at"]

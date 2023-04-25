@@ -115,10 +115,26 @@ class CommentSerializer(ModelSerializer):
     replies_count = SerializerMethodField()
     reply_to_username = serializers.StringRelatedField(source='reply_to.username', read_only=True)
     top_level_parent_id = serializers.SerializerMethodField()
+
+    is_mine = serializers.SerializerMethodField()
+    is_liked_by_me = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
+
+
     _parent_cache = {}
     class Meta:
         model = Comment
-        fields = ['id', 'user_profile','top_level_parent_id', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id"]
+        fields = ['id', 'user_profile','top_level_parent_id', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id", "pinned", "is_mine", "is_liked_by_me", "likes_count"]
+
+    def get_is_mine(self, obj):
+        return obj.user == self.context['request'].user
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()
+
+
+    def get_is_liked_by_me(self, obj):
+        return obj.likes.filter(id=self.context['request'].user.id).exists()
 
     def get_replies_count(self, obj):
         return self.get_all_replies_count(obj)
@@ -143,6 +159,12 @@ class CommentSerializer(ModelSerializer):
                 # Add the parent ID to the cache for future lookups
                 self._parent_cache[obj.parent] = top_level_parent_id
                 return top_level_parent_id
+
+
+    def validate(self, data):
+        if data.get('pinned', False) and data.get('parent', None) is not None:
+                raise serializers.ValidationError("Only parent comments can be pinned.")
+        return data
 # Token Serializer
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

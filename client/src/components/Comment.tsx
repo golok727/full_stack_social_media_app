@@ -8,6 +8,9 @@ import {
 	CommentActionTypes,
 	CommentActions,
 } from "../reducers/CommentsReducer";
+import Pin from "../icons/Pin";
+import Heart from "../icons/Heart";
+import { numberFormatter } from "../utils/utils";
 type Props = {
 	comment: CommentType;
 	dispatch: React.Dispatch<CommentActions>;
@@ -80,6 +83,31 @@ const Comment = ({
 		}
 	};
 
+	// Handle Like Comment
+	const handleLike = async () => {
+		console.log("Like" + " " + comment.content);
+
+		if (comment.is_liked_by_me) {
+			dispatch({
+				type: CommentActionTypes.DISLIKE_COMMENT,
+				payload: {
+					commentId: comment.id,
+					parentId: comment.parent,
+					isReply: comment.parent !== null,
+				},
+			});
+		} else {
+			dispatch({
+				type: CommentActionTypes.LIKE_COMMENT,
+				payload: {
+					commentId: comment.id,
+					parentId: comment.parent,
+					isReply: comment.parent !== null,
+				},
+			});
+		}
+	};
+
 	const commentContentSplit = useMemo(() => {
 		const newCommentContent = comment.reply_to
 			? "@" + comment.reply_to_username + " " + comment.content
@@ -88,69 +116,88 @@ const Comment = ({
 	}, [comment]);
 
 	return (
-		<div className="flex gap-2 my-5">
-			<div>
-				<AvatarMakerSmall
-					avatar={comment.user_profile.profile_image}
-					username={comment.user}
-					border={false}
-				/>
-			</div>
-			<div>
-				<Link to={"/" + comment.user} className="font-bold hover:text-gray-400">
-					{comment.user}
-
-					{comment.user_profile.is_verified && <VerifiedIcon />}
-				</Link>
-				{/* Parse the comments */}
-				<span className="block text-sm">
-					{" "}
-					<BioRenderer bio={commentContentSplit} />{" "}
-				</span>
-
-				<button
-					onClick={() =>
-						handleReplyToComment(comment.id, comment.user_id, comment.user)
-					}
-					className="text-xs text-gray-500 hover:text-gray-300"
-				>
-					Reply
-				</button>
-
-				{comment.parent === null && comment.replies_count > 0 && (
-					<button
-						onClick={() => handleShowReplies(comment.id)}
-						className="text-xs text-gray-400 hover:text-gray-300 flex items-center"
+		<div>
+			<div className="flex gap-2 my-5">
+				{/* Left */}
+				<div>
+					<AvatarMakerSmall
+						avatar={comment.user_profile.profile_image}
+						username={comment.user}
+						border={false}
+					/>
+				</div>
+				{/* Mid */}
+				<div className="flex-1">
+					<Link
+						to={"/" + comment.user}
+						className="font-bold hover:text-gray-400"
 					>
-						<span className="w-[30px] h-[1px] bg-slate-400 inline-block "></span>
-
-						<span className="mx-2">
-							{showReplies ? "Hide replies" : "View replies"}
-							{!showReplies && " (" + comment.replies_count + ")"}
-							{showReplies && loadingReplies && " Loading..."}
+						<span className={`${comment.is_mine && "text-orange-400"}`}>
+							{comment.user}
 						</span>
+						{comment.user_profile.is_verified && <VerifiedIcon />}
+						{comment.pinned && (
+							<span className="text-gray-400 text-xs font-thin ml-2">
+								<Pin className="w-3 h-3 inline-block" /> pinned
+							</span>
+						)}
+					</Link>
+					{/* Parse the comments */}
+					<span className="block text-sm">
+						{" "}
+						<BioRenderer bio={commentContentSplit} />{" "}
+					</span>
+					<button
+						onClick={() =>
+							handleReplyToComment(comment.id, comment.user_id, comment.user)
+						}
+						className="text-xs text-gray-500 hover:text-gray-300"
+					>
+						Reply
 					</button>
-				)}
-
-				{showReplies &&
-					repliesReducer[comment.id] &&
-					repliesReducer[comment.id].length > 0 && (
-						<div className="">
-							{repliesReducer[comment.id].map((reply, idx) => (
-								<Comment
-									replies={repliesReducer}
-									dispatch={dispatch}
-									setReplyToUserName={setReplyToUserName}
-									focusInputRef={focusInputRef}
-									setParentCommentId={setParentCommentId}
-									setReplyToId={setReplyToId}
-									comment={reply}
-									key={idx}
-								/>
-							))}
-						</div>
+					{comment.parent === null && comment.replies_count > 0 && (
+						<button
+							onClick={() => handleShowReplies(comment.id)}
+							className="text-xs text-gray-400 hover:text-gray-300 flex items-center"
+						>
+							<span className="w-[30px] h-[1px] bg-slate-400 inline-block "></span>
+							<span className="mx-2">
+								{showReplies ? "Hide replies" : "View replies"}
+								{!showReplies && " (" + comment.replies_count + ")"}
+								{showReplies && loadingReplies && " Loading..."}
+							</span>
+						</button>
 					)}
+				</div>
+				<div className="self-center flex flex-col items-center">
+					<Heart
+						isActive={comment.is_liked_by_me}
+						onClick={() => handleLike()}
+						className="w-3 h-3 cursor-pointer"
+					/>
+					<span className="text-xs text-gray">
+						{numberFormatter(comment.likes_count)}
+					</span>
+				</div>
 			</div>
+			{showReplies &&
+				repliesReducer[comment.id] &&
+				repliesReducer[comment.id].length > 0 && (
+					<div className="pl-10">
+						{repliesReducer[comment.id].map((reply, idx) => (
+							<Comment
+								replies={repliesReducer}
+								dispatch={dispatch}
+								setReplyToUserName={setReplyToUserName}
+								focusInputRef={focusInputRef}
+								setParentCommentId={setParentCommentId}
+								setReplyToId={setReplyToId}
+								comment={reply}
+								key={idx}
+							/>
+						))}
+					</div>
+				)}
 		</div>
 	);
 };

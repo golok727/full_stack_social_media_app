@@ -13,7 +13,10 @@ export enum CommentActionTypes {
 	ADD_COMMENT = "ADD_COMMENT",
 	INIT_REPLIES = "INIT_REPLIES",
 	ADD_REPLY = "ADD_REPLY",
+	LIKE_COMMENT = "LIKE_COMMENT",
+	DISLIKE_COMMENT = "DISLIKE_COMMENT",
 }
+
 type SetCommentsAction = {
 	type: CommentActionTypes.SET_COMMENTS;
 	payload: {
@@ -36,26 +39,47 @@ type SetCommentsErrorAction = {
 	};
 };
 
-type InitCommentReplies = {
+type InitCommentRepliesAction = {
 	type: CommentActionTypes.INIT_REPLIES;
 	payload: {
 		commentId: number;
 		replies: CommentType[];
 	};
 };
-type AddCommentReply = {
+type AddCommentReplyAction = {
 	type: CommentActionTypes.ADD_REPLY;
 	payload: {
 		commentId: number;
 		reply: CommentType;
 	};
 };
+
+type LikeCommentAction = {
+	type: CommentActionTypes.LIKE_COMMENT;
+	payload: {
+		isReply: boolean;
+		commentId: number;
+		parentId: number | null;
+	};
+};
+
+type DisLikeCommentAction = {
+	type: CommentActionTypes.DISLIKE_COMMENT;
+	payload: {
+		isReply: boolean;
+		commentId: number;
+		parentId: number | null;
+	};
+};
+
 export type CommentActions =
 	| SetCommentsAction
 	| SetCommentsErrorAction
 	| AddCommentAction
-	| InitCommentReplies
-	| AddCommentReply;
+	| InitCommentRepliesAction
+	| AddCommentReplyAction
+	| LikeCommentAction
+	| DisLikeCommentAction;
 
 export const CommentsReducer = (
 	state: CommentReducerState,
@@ -109,6 +133,94 @@ export const CommentsReducer = (
 				...state,
 				replies: { ...state.replies, [action.payload.commentId]: newReplies },
 				comments: updatedComments,
+			};
+
+		case CommentActionTypes.LIKE_COMMENT:
+			const isReply = action.payload.isReply;
+			const commentId = action.payload.commentId;
+
+			// If it is reply
+			if (isReply) {
+				if (action.payload.parentId === null) {
+					throw new Error("If Comment if Reply then parentId cannot be null");
+				}
+				const allReplies = state.replies[action.payload.parentId];
+				const updatedReplies = allReplies.map((reply) =>
+					commentId === reply.id
+						? {
+								...reply,
+								likes_count: reply.likes_count + 1,
+								is_liked_by_me: true,
+						  }
+						: reply
+				);
+				return {
+					...state,
+					replies: {
+						...state.replies,
+						[action.payload.parentId]: updatedReplies,
+					},
+				};
+			}
+
+			return {
+				...state,
+				comments: state.comments.map((comment) =>
+					comment.id === commentId
+						? {
+								...comment,
+								is_liked_by_me: true,
+								likes_count: comment.likes_count + 1,
+						  }
+						: comment
+				),
+			};
+
+		case CommentActionTypes.DISLIKE_COMMENT:
+			const isReplyDislike = action.payload.isReply;
+			const commentIdDislike = action.payload.commentId;
+
+			// If it is reply
+			if (isReplyDislike) {
+				if (action.payload.parentId === null) {
+					throw new Error("If Comment if Reply then parentId cannot be null");
+				}
+				const allReplies = state.replies[action.payload.parentId];
+				const updatedReplies = allReplies.map((reply) =>
+					commentIdDislike === reply.id
+						? {
+								...reply,
+								likes_count:
+									reply.likes_count > 0
+										? reply.likes_count - 1
+										: reply.likes_count,
+								is_liked_by_me: false,
+						  }
+						: reply
+				);
+				return {
+					...state,
+					replies: {
+						...state.replies,
+						[action.payload.parentId]: updatedReplies,
+					},
+				};
+			}
+
+			return {
+				...state,
+				comments: state.comments.map((comment) =>
+					comment.id === commentIdDislike
+						? {
+								...comment,
+								is_liked_by_me: false,
+								likes_count:
+									comment.likes_count > 0
+										? comment.likes_count - 1
+										: comment.likes_count,
+						  }
+						: comment
+				),
 			};
 
 		default:
