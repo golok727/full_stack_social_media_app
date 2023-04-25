@@ -91,11 +91,12 @@ export const CommentsReducer = (
 				...state,
 				comments: action.payload.comments,
 				isLoading: false,
+				errMsg: "",
 			};
 		case CommentActionTypes.COMMENTS_ERROR:
 			return {
 				...state,
-				comments: [],
+
 				isLoading: false,
 				errMsg: action.payload.errMsg,
 			};

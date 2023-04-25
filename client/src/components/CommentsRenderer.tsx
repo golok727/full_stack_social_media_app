@@ -102,6 +102,16 @@ const CommentsRenderer: React.FC<Props> = ({
 				</div>
 			</header>
 
+			{
+				/* {Error}
+				 */
+				!commentsState.isLoading && commentsState.errMsg && (
+					<span className="text-center block text-red-400">
+						{commentsState.errMsg}
+					</span>
+				)
+			}
+
 			{/* Comments */}
 			{commentsState.isLoading ? (
 				<SpinnerLoader />
