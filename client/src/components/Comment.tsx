@@ -92,7 +92,7 @@ const Comment = ({
 				type: CommentActionTypes.DISLIKE_COMMENT,
 				payload: {
 					commentId: comment.id,
-					parentId: comment.parent,
+					parentId: comment.top_level_parent_id,
 					isReply: comment.parent !== null,
 				},
 			});
@@ -101,7 +101,7 @@ const Comment = ({
 				type: CommentActionTypes.LIKE_COMMENT,
 				payload: {
 					commentId: comment.id,
-					parentId: comment.parent,
+					parentId: comment.top_level_parent_id,
 					isReply: comment.parent !== null,
 				},
 			});
