@@ -111,6 +111,7 @@ class CommentSerializer(ModelSerializer):
     user = StringRelatedField()
     post = StringRelatedField()
     user_id = serializers.IntegerField(source='user.id', read_only=True)
+    post_id = serializers.IntegerField(source='post.id', read_only=True)
     user_profile = UserProfileSummarySerializer(source="user.userprofile",read_only=True)
     replies_count = SerializerMethodField()
     reply_to_username = serializers.StringRelatedField(source='reply_to.username', read_only=True)
@@ -124,7 +125,7 @@ class CommentSerializer(ModelSerializer):
     _parent_cache = {}
     class Meta:
         model = Comment
-        fields = ['id', 'user_profile','top_level_parent_id', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id", "pinned", "is_mine", "is_liked_by_me", "likes_count"]
+        fields = ['id', 'user_profile','top_level_parent_id', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id", "pinned", "is_mine", "is_liked_by_me", "likes_count", "post_id"]
 
     def get_is_mine(self, obj):
         return obj.user == self.context['request'].user

@@ -65,6 +65,7 @@ interface CommentType {
 	user_profile: UserProfileComment;
 	reply_to_username?: string;
 	user_id: number;
+	post_id: number;
 	top_level_parent_id: number;
 
 	is_liked_by_me: boolean;

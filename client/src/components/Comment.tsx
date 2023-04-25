@@ -11,6 +11,8 @@ import {
 import Pin from "../icons/Pin";
 import Heart from "../icons/Heart";
 import { formatDate, numberFormatter } from "../utils/utils";
+import { useModal } from "../context/ModalProvider";
+import SettingHorizontal from "../icons/SettingHorizontal";
 type Props = {
 	comment: CommentType;
 	dispatch: React.Dispatch<CommentActions>;
@@ -32,6 +34,10 @@ const Comment = ({
 	setReplyToUserName,
 	replies: repliesReducer,
 }: Props) => {
+	// Modal
+	const { showModal } = useModal();
+
+	// State
 	const [showReplies, setShowReplies] = useState(false);
 	// const [replies, setReplies] = useState<CommentType[]>([]);
 	const [loadingReplies, setLoadingReplies] = useState(false);
@@ -57,7 +63,7 @@ const Comment = ({
 		setShowReplies(true);
 	};
 
-	// Handle SHow Replies
+	// Handle Show Replies
 	const handleShowReplies = async (commentId: number) => {
 		setShowReplies((prev) => !prev);
 		if (!showReplies) {
@@ -122,7 +128,7 @@ const Comment = ({
 
 	return (
 		<div>
-			<div className="flex gap-2 my-5">
+			<div className="flex gap-2 my-5 group">
 				{/* Left */}
 				<div>
 					<AvatarMakerSmall
@@ -154,11 +160,14 @@ const Comment = ({
 					</span>
 
 					{/* Status */}
-					<div className="font-bold flex gap-2">
+					<div className="font-bold flex gap-2 py-1 items-center relative">
 						<span className="text-xs text-gray-500">
 							{formatDate(comment.created_at)}
 						</span>
-
+						<span className="text-xs text-gray-500">
+							{numberFormatter(comment.likes_count)}
+							{comment.likes_count === 1 ? " like" : " likes"}
+						</span>
 						<button
 							onClick={() =>
 								handleReplyToComment(comment.id, comment.user_id, comment.user)
@@ -166,7 +175,16 @@ const Comment = ({
 							className="text-xs text-gray-500 hover:text-gray-300"
 						>
 							Reply
-						</button>
+						</button>{" "}
+						<SettingHorizontal
+							className="w-6 h-6 stroke-gray-300 cursor-pointer hidden group-hover:block absolute left-1/3  transition-all duration-150"
+							onClick={() =>
+								showModal("COMMENT_OPTIONS", {
+									commentId: comment.id,
+									userId: comment.user_id,
+								})
+							}
+						/>
 					</div>
 					{comment.parent === null && comment.replies_count > 0 && (
 						<button
@@ -188,9 +206,6 @@ const Comment = ({
 						onClick={() => handleLike()}
 						className="w-3 h-3 cursor-pointer"
 					/>
-					<span className="text-xs text-gray">
-						{numberFormatter(comment.likes_count)}
-					</span>
 				</div>
 			</div>
 			{showReplies &&

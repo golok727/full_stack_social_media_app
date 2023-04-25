@@ -11,7 +11,6 @@ const CreatePost = () => {
 	const [image, setImage] = useState<File | null>(null!);
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
-
 	const titleLength = useMemo(() => title.length, [title]);
 
 	// Hooks
@@ -73,6 +72,9 @@ const CreatePost = () => {
 				});
 				setIsSuccess(true);
 				console.log(res.data);
+				setImage(null);
+				setTitle("");
+				setDescription("");
 			} catch (error) {
 				setErrorMsg("Something went wrong");
 				console.error(error);
@@ -183,7 +185,11 @@ const CreatePost = () => {
 						<span className="w-full h-[1px] bg-slate-700 block "></span>
 
 						{/* DropZone */}
-						<DropZone setImage={setImage} image={image} />
+						<DropZone
+							setErrorMsg={setErrorMsg}
+							setImage={setImage}
+							image={image}
+						/>
 						{/* DropZone */}
 
 						<div className="flex justify-center py-3">
@@ -204,14 +210,50 @@ const CreatePost = () => {
 interface DropZoneProps {
 	setImage: React.Dispatch<React.SetStateAction<File | null>>;
 	image: File | null;
+	setErrorMsg: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function DropZone({ setImage, image }: DropZoneProps) {
+function DropZone({ setImage, setErrorMsg, image }: DropZoneProps) {
+	// Drag drop
+
+	const [isDragging, setIsDragging] = useState(false);
+	const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		setIsDragging(true);
+	};
+
+	const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		setIsDragging(false);
+	};
+
+	const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		setIsDragging(false);
+		const imageFile = e.dataTransfer.files[0];
+		const mimeTypes = ["image/jpeg", "image/png"];
+		if (mimeTypes.includes(imageFile.type)) {
+			setImage(imageFile);
+		} else {
+			setImage(null);
+			setErrorMsg("File type: " + imageFile.type + " is not allowed for now");
+		}
+		// Do something with the files
+	};
+
 	return (
-		<div className="py-3">
+		<div
+			className="py-3"
+			onDragEnter={handleDragEnter}
+			onDragOver={handleDragEnter}
+			onDragLeave={handleDragLeave}
+			onDrop={handleDrop}
+		>
 			<label
 				htmlFor="dropzone-file"
-				className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-transparent hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-950`}
+				className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 ${
+					isDragging ? "border-dashed" : "border-solid"
+				} rounded-lg cursor-pointer bg-gray-50  dark:bg-transparent hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-950`}
 			>
 				<div
 					className={`${

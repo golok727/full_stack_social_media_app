@@ -16,6 +16,8 @@ import {
 	CommentReducerState,
 	CommentsReducer,
 } from "../reducers/CommentsReducer";
+import SettingHorizontal from "../icons/SettingHorizontal";
+import { useModal } from "../context/ModalProvider";
 
 const PostPage = () => {
 	const [commentsState, dispatch] = useReducer(CommentsReducer, {
@@ -27,7 +29,9 @@ const PostPage = () => {
 
 	const { postId } = useParams();
 	const axiosPrivate = useAxiosPrivate();
-	// const { auth } = useAuth();
+
+	// Custom Hooks
+	const { showModal } = useModal();
 
 	const [post, setPost] = useState<PostType | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -131,20 +135,14 @@ const PostPage = () => {
 								</div>
 								{/* Three Dot */}
 								<div>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth={1.5}
-										stroke="currentColor"
-										className="w-6 h-6 cursor-pointer hover:stroke-orange-400"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-										/>
-									</svg>
+									<SettingHorizontal
+										onClick={() =>
+											showModal("POST_OPTIONS", {
+												postId: post.id,
+												userId: post.user.id,
+											})
+										}
+									/>
 								</div>
 							</header>
 
