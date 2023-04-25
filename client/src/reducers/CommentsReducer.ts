@@ -93,13 +93,22 @@ export const CommentsReducer = (
 			};
 
 		case CommentActionTypes.ADD_REPLY:
-			const newReplies = [
-				...state.replies[action.payload.commentId],
-				...[action.payload.reply],
-			];
+			const existingReplies = state.replies[action.payload.commentId] || [];
+			const newReplies = [...existingReplies, ...[action.payload.reply]];
+
+			// Update comment replies count
+			const updatedComments = state.comments.map((comment) =>
+				comment.id === action.payload.commentId
+					? ({
+							...comment,
+							replies_count: comment.replies_count + 1,
+					  } satisfies CommentType)
+					: comment
+			);
 			return {
 				...state,
 				replies: { ...state.replies, [action.payload.commentId]: newReplies },
+				comments: updatedComments,
 			};
 
 		default:

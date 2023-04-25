@@ -45,10 +45,13 @@ const Comment = ({
 		setParentCommentId(parentId);
 		setReplyToUserName(replyToUsername);
 		focusInputRef();
-		console.log(
-			"Reply to " + parentId + " User: " + userId,
-			" @" + replyToUsername
-		);
+
+		// console.log(
+		// 	"Reply to " + parentId + " User: " + userId,
+		// 	" @" + replyToUsername
+		// );
+
+		setShowReplies(true);
 	};
 
 	// Handle SHow Replies

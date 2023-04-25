@@ -44,8 +44,6 @@ const CommentForm: React.ForwardRefRenderFunction<
 				...(parent && { parent }),
 			};
 
-			console.log(reqData);
-
 			const res = await axiosPrivate.post(
 				`/api/posts/${postId}/comments/add`,
 				reqData
@@ -64,9 +62,9 @@ const CommentForm: React.ForwardRefRenderFunction<
 			if (
 				data &&
 				dispatch !== undefined &&
-				parent &&
-				reply_to &&
-				data.top_level_parent_id
+				parent !== null &&
+				reply_to !== null &&
+				data.top_level_parent_id !== null
 			) {
 				dispatch({
 					type: CommentActionTypes.ADD_REPLY,
