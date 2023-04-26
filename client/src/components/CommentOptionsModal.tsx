@@ -51,7 +51,8 @@ const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 				className="w-[20em] bg-neutral-900 rounded-md overflow-hidden"
 				onClick={(e) => stopPropagation(e)}
 			>
-				{comment.user_id === auth.user?.id && (
+				{(auth.user?.id === comment.post_user_id ||
+					comment.user_id === auth.user?.id) && (
 					<>
 						<button className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
 							Delete

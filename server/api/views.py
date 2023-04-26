@@ -407,26 +407,38 @@ def dislikeCommentView(request, pk):
     except Comment.DoesNotExist:
         return Response({'msg': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(["PUT"])
+@api_view(["PUT", "DELETE"])
 @permission_classes([IsAuthenticated])
 def commentUpdateView(request, pk):
-    try:
-        comment = Comment.objects.get(id=pk)
-        if comment.user != request.user:
-            if request.data.get('pinned') is not None:
-                serializer = CommentSerializer(instance=comment, data={"pinned": request.data.get("pinned")}, context={"request": request}, partial=True)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response({"msg": "Comment Updated", "comment": serializer.data})
+    if request.method == "PUT":
+        try:
+            comment = Comment.objects.get(id=pk)
+            if comment.user != request.user:
+                # Check if it is for pinning so that it can be pinned by the post user so the "Not yours error is avoided"
+                if request.data.get('pinned') is not None:
+                    serializer = CommentSerializer(instance=comment, data={"pinned": request.data.get("pinned")}, context={"request": request}, partial=True)
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response({"msg": "Comment Updated", "comment": serializer.data})
 
-            return Response({"msg": "Not your comment"}, status=status.HTTP_403_FORBIDDEN)
-        
-        serializer = CommentSerializer(instance=comment, data=request.data, context={"request": request}, partial=True)
+                return Response({"msg": "Not your comment"}, status=status.HTTP_403_FORBIDDEN)
+            
+            serializer = CommentSerializer(instance=comment, data=request.data, context={"request": request}, partial=True)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"msg": "Comment Updated", "comment": serializer.data})
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"msg": "Comment Updated", "comment": serializer.data})
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Comment.DoesNotExist:
-        return Response({"msg": "comment does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Comment.DoesNotExist:
+            return Response({"msg": "comment does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == "DELETE":
+            try:
+                comment = Comment.objects.get(id=pk)
+                if comment.user != request.user and comment.post.user != request.user:
+                    return Response({"msg": "You are not allowed to delete this comment"}, status=status.HTTP_403_FORBIDDEN)
+                comment.delete()
+                return Response({"msg": "Comment deleted"}, status=status.HTTP_204_NO_CONTENT)
+            except Comment.DoesNotExist:
+                return Response({"msg": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
