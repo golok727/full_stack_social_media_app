@@ -6,15 +6,9 @@ import Pin from "../icons/Pin";
 import Report from "../icons/Report";
 
 interface Props {
-	commentId: number;
-	userId: number;
-	commentPostId: number;
+	comment: CommentType;
 }
-const CommentOptionsModal: React.FC<Props> = ({
-	commentId,
-	userId,
-	commentPostId,
-}) => {
+const CommentOptionsModal: React.FC<Props> = ({ comment }) => {
 	const { hideModal } = useModal();
 	const { auth } = useAuth();
 
@@ -30,7 +24,7 @@ const CommentOptionsModal: React.FC<Props> = ({
 				className="w-[20em] bg-neutral-900 rounded-md overflow-hidden"
 				onClick={(e) => stopPropagation(e)}
 			>
-				{userId === auth.user?.id && (
+				{comment.user_id === auth.user?.id && (
 					<>
 						<button className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
 							Delete
@@ -43,7 +37,7 @@ const CommentOptionsModal: React.FC<Props> = ({
 					Pin Comment
 				</button>
 
-				{userId !== auth.user?.id && (
+				{comment.user_id !== auth.user?.id && (
 					<button className="flex justify-center items-center  gap-2 w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
 						<Report />
 						Report

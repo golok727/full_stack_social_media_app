@@ -8,12 +8,8 @@ interface ModalContextType {
 	showModal: (
 		modelType: ModalType,
 		payload: {
-			postId?: number;
-			commentId?: number;
-			commentPostId?: number;
-
-			userId: number;
-			isPinned?: boolean;
+			post?: PostType;
+			comment?: CommentType;
 		}
 	) => void;
 	hideModal: () => void;
@@ -31,28 +27,23 @@ interface Props {
 }
 const ModalProvider: React.FC<Props> = ({ children }) => {
 	const [modalType, setModalType] = useState<ModalType | null>(null);
-	const [postId, setPostId] = useState<number | null>(null);
-	const [commentId, setCommentId] = useState<number | null>(null);
-	const [userId, setUserId] = useState<number | null>(null);
-	const [commentPostId, setCommentPostId] = useState<number | null>(null);
-	const [isPinned, setIsPinned] = useState<boolean | null>(null);
+
+	const [currentPost, setCurrentPost] = useState<PostType | null>(null);
+	const [currentComment, setCurrentComment] = useState<CommentType | null>(
+		null
+	);
 
 	const showModal = (
 		type: ModalType,
 		payload: {
-			postId?: number;
-			commentPostId?: number;
-			commentId?: number;
-			userId: number;
-			isPinned?: boolean;
+			post?: PostType;
+			comment?: CommentType;
 		}
 	) => {
 		setModalType(type);
-		setPostId(payload.postId || null);
-		setUserId(payload.userId);
-		setCommentId(payload.commentId || null);
-		setIsPinned(isPinned || null);
-		setCommentPostId(commentPostId || null);
+
+		setCurrentComment(payload.comment || null);
+		setCurrentPost(payload.post || null);
 	};
 
 	const hideModal = () => {
@@ -70,15 +61,9 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 	return (
 		<ModalContext.Provider value={{ modalType, showModal, hideModal }}>
 			{children}
-			{modalType === "POST_OPTIONS" && (
-				<PostOptionsModal postId={postId!} userId={userId!} />
-			)}
+			{modalType === "POST_OPTIONS" && <PostOptionsModal post={currentPost!} />}
 			{modalType === "COMMENT_OPTIONS" && (
-				<CommentOptionsModal
-					userId={userId!}
-					commentId={commentId!}
-					commentPostId={commentPostId!}
-				/>
+				<CommentOptionsModal comment={currentComment!} />
 			)}
 		</ModalContext.Provider>
 	);

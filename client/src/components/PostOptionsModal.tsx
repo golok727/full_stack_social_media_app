@@ -5,11 +5,10 @@ import useAuth from "../hooks/useAuth";
 import CpuChip from "../icons/CpuChip";
 import Report from "../icons/Report";
 interface Props {
-	postId: number;
-	userId: number;
+	post: PostType;
 }
 
-const PostOptionsModal: React.FC<Props> = ({ postId, userId }) => {
+const PostOptionsModal: React.FC<Props> = ({ post }) => {
 	const { hideModal } = useModal();
 	const { auth } = useAuth();
 	const stopPropagation = (event: React.MouseEvent) => {
@@ -24,7 +23,7 @@ const PostOptionsModal: React.FC<Props> = ({ postId, userId }) => {
 				className="w-[20em] bg-neutral-900 rounded-md overflow-hidden"
 				onClick={(e) => stopPropagation(e)}
 			>
-				{userId === auth.user?.id && (
+				{post.user.id === auth.user?.id && (
 					<>
 						<button className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
 							Delete
@@ -40,7 +39,7 @@ const PostOptionsModal: React.FC<Props> = ({ postId, userId }) => {
 					</>
 				)}
 
-				{userId !== auth.user?.id && (
+				{post.user.id !== auth.user?.id && (
 					<button className="flex justify-center items-center  gap-2 w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
 						<Report />
 						Report

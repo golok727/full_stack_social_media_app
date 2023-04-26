@@ -138,8 +138,7 @@ const PostPage = () => {
 									<SettingHorizontal
 										onClick={() =>
 											showModal("POST_OPTIONS", {
-												postId: post.id,
-												userId: post.user.id,
+												post,
 											})
 										}
 									/>
