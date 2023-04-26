@@ -17,6 +17,7 @@ export enum CommentActionTypes {
 	DISLIKE_COMMENT = "DISLIKE_COMMENT",
 	PIN_COMMENT = "PIN_COMMENT",
 	UNPIN_COMMENT = "UNPIN_COMMENT",
+	DELETE_COMMENT = "DELETE_COMMENT",
 }
 
 type SetCommentsAction = {
@@ -87,6 +88,15 @@ type UnPinCommentAction = {
 	};
 };
 
+type DeleteCommentAction = {
+	type: CommentActionTypes.DELETE_COMMENT;
+	payload: {
+		isReply: boolean;
+		commentId: number;
+		parentId: number | null;
+	};
+};
+
 export type CommentActions =
 	| SetCommentsAction
 	| SetCommentsErrorAction
@@ -96,7 +106,8 @@ export type CommentActions =
 	| LikeCommentAction
 	| DisLikeCommentAction
 	| PinCommentAction
-	| UnPinCommentAction;
+	| UnPinCommentAction
+	| DeleteCommentAction;
 
 export const CommentsReducer = (
 	state: CommentReducerState,
@@ -159,7 +170,7 @@ export const CommentsReducer = (
 			// If it is reply
 			if (isReply) {
 				if (action.payload.parentId === null) {
-					throw new Error("If Comment if Reply then parentId cannot be null");
+					throw new Error("If Comment is Reply then parentId cannot be null");
 				}
 				const allReplies = state.replies[action.payload.parentId];
 
@@ -201,7 +212,7 @@ export const CommentsReducer = (
 			// If it is reply
 			if (isReplyDislike) {
 				if (action.payload.parentId === null) {
-					throw new Error("If Comment if Reply then parentId cannot be null");
+					throw new Error("If Comment is Reply then parentId cannot be null");
 				}
 				const allReplies = state.replies[action.payload.parentId];
 				const updatedReplies = allReplies.map((reply) =>
@@ -267,6 +278,37 @@ export const CommentsReducer = (
 					comment.id === action.payload.commentId
 						? { ...comment, pinned: false }
 						: comment
+				),
+			};
+
+		case CommentActionTypes.DELETE_COMMENT:
+			const isReplyDelete = action.payload.isReply;
+			const commentIdDelete = action.payload.commentId;
+
+			// If it is reply
+			if (isReplyDelete) {
+				if (action.payload.parentId === null) {
+					throw new Error("If Comment is Reply then parentId cannot be null");
+				}
+				const allReplies = state.replies[action.payload.parentId];
+
+				const updatedReplies = allReplies.filter(
+					(reply) => commentIdDelete !== reply.id
+				);
+
+				return {
+					...state,
+					replies: {
+						...state.replies,
+						[action.payload.parentId]: updatedReplies,
+					},
+				};
+			}
+
+			return {
+				...state,
+				comments: state.comments.filter(
+					(comment) => comment.id !== commentIdDelete
 				),
 			};
 

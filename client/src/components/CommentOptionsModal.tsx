@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useModal } from "../context/ModalProvider";
 import CpuChip from "../icons/CpuChip";
 import useAuth from "../hooks/useAuth";
@@ -18,7 +18,7 @@ const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 	const { hideModal } = useModal();
 	const { auth } = useAuth();
 	const axiosPrivate = useAxiosPrivate();
-
+	const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 	const stopPropagation = (event: React.MouseEvent) => {
 		event.stopPropagation();
 	};
@@ -42,6 +42,26 @@ const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 		});
 	};
 
+	// Todo make a tost when comment is deleted or show error if it is not deleted
+
+	const handleDeleteComment = async () => {
+		commentDispatch({
+			type: CommentActionTypes.DELETE_COMMENT,
+			payload: {
+				commentId: comment.id,
+				isReply: comment.parent !== null,
+				parentId: comment.top_level_parent_id,
+			},
+		});
+		try {
+			await axiosPrivate.delete(`/api/comments/${comment.id}`);
+		} catch (err) {
+			// Do Error Handling
+		}
+
+		hideModal();
+	};
+
 	return (
 		<div
 			className="fixed inset-0 bg-black bg-opacity-70 text-white  flex justify-center items-center "
@@ -54,9 +74,32 @@ const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 				{(auth.user?.id === comment.post_user_id ||
 					comment.user_id === auth.user?.id) && (
 					<>
-						<button className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
-							Delete
-						</button>
+						{!showDeleteConfirmation && (
+							<button
+								onClick={() => setShowDeleteConfirmation(true)}
+								className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700"
+							>
+								Delete
+							</button>
+						)}
+
+						{showDeleteConfirmation && (
+							<div className="flex">
+								<button
+									onClick={() => handleDeleteComment()}
+									className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700 border-r-[1px] border-r-gray-700"
+								>
+									Confirm
+								</button>
+
+								<button
+									onClick={() => setShowDeleteConfirmation(false)}
+									className="w-full py-3 px-2 text-green-400 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700"
+								>
+									Go Back
+								</button>
+							</div>
+						)}
 					</>
 				)}
 
