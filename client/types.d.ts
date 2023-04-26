@@ -60,6 +60,7 @@ interface CommentType {
 	id: number;
 	parent: null;
 	post: string;
+	post_user_id: number;
 	reply_to: null | number;
 	user: string;
 	user_profile: UserProfileComment;
@@ -67,7 +68,6 @@ interface CommentType {
 	user_id: number;
 	post_id: number;
 	top_level_parent_id: number;
-
 	is_liked_by_me: boolean;
 	is_mine: boolean;
 	likes_count: number;

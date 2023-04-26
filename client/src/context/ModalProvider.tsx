@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import PostOptionsModal from "../components/PostOptionsModal";
 import CommentOptionsModal from "../components/CommentOptionsModal";
+import { CommentActions } from "../reducers/CommentsReducer";
 
 type ModalType = "POST_OPTIONS" | "COMMENT_OPTIONS";
 
@@ -10,7 +11,8 @@ interface ModalContextType {
 		payload: {
 			post?: PostType;
 			comment?: CommentType;
-		}
+		},
+		commentDispatchFn?: React.Dispatch<CommentActions>
 	) => void;
 	hideModal: () => void;
 	modalType: ModalType | null;
@@ -33,15 +35,18 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 		null
 	);
 
+	const commentDispatchFnRef = useRef<React.Dispatch<CommentActions>>();
+
 	const showModal = (
 		type: ModalType,
 		payload: {
 			post?: PostType;
 			comment?: CommentType;
-		}
+		},
+		commentDispatchFn?: React.Dispatch<CommentActions>
 	) => {
 		setModalType(type);
-
+		commentDispatchFnRef.current = commentDispatchFn!;
 		setCurrentComment(payload.comment || null);
 		setCurrentPost(payload.post || null);
 	};
@@ -65,7 +70,10 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 			{children}
 			{modalType === "POST_OPTIONS" && <PostOptionsModal post={currentPost!} />}
 			{modalType === "COMMENT_OPTIONS" && (
-				<CommentOptionsModal comment={currentComment!} />
+				<CommentOptionsModal
+					commentDispatch={commentDispatchFnRef.current!}
+					comment={currentComment!}
+				/>
 			)}
 		</ModalContext.Provider>
 	);

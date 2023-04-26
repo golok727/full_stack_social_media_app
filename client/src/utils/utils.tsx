@@ -27,7 +27,7 @@ export const formatDate = (() => {
 		} else if (diffHours < 24) {
 			diff = `${diffHours}h`;
 		} else if (diffDays < 30) {
-			diff = `${diffDays}day${diffDays === 1 ? "" : "s"}`;
+			diff = `${diffDays} day${diffDays === 1 ? "" : "s"}`;
 		} else if (diffMonths < 12) {
 			diff = `${diffMonths} month${diffMonths === 1 ? "" : "s"}`;
 		} else {

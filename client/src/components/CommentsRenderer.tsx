@@ -44,8 +44,6 @@ const CommentsRenderer: React.FC<Props> = ({
 					signal: controller.signal,
 				});
 
-				console.log(JSON.stringify(res.data[0], null, 2));
-
 				dispatch({
 					type: CommentActionTypes.SET_COMMENTS,
 					payload: { comments: res.data, isLoading: false },

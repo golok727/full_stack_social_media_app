@@ -15,6 +15,8 @@ export enum CommentActionTypes {
 	ADD_REPLY = "ADD_REPLY",
 	LIKE_COMMENT = "LIKE_COMMENT",
 	DISLIKE_COMMENT = "DISLIKE_COMMENT",
+	PIN_COMMENT = "PIN_COMMENT",
+	UNPIN_COMMENT = "UNPIN_COMMENT",
 }
 
 type SetCommentsAction = {
@@ -71,6 +73,19 @@ type DisLikeCommentAction = {
 		parentId: number | null;
 	};
 };
+type PinCommentAction = {
+	type: CommentActionTypes.PIN_COMMENT;
+	payload: {
+		commentId: number;
+	};
+};
+
+type UnPinCommentAction = {
+	type: CommentActionTypes.UNPIN_COMMENT;
+	payload: {
+		commentId: number;
+	};
+};
 
 export type CommentActions =
 	| SetCommentsAction
@@ -79,7 +94,9 @@ export type CommentActions =
 	| InitCommentRepliesAction
 	| AddCommentReplyAction
 	| LikeCommentAction
-	| DisLikeCommentAction;
+	| DisLikeCommentAction
+	| PinCommentAction
+	| UnPinCommentAction;
 
 export const CommentsReducer = (
 	state: CommentReducerState,
@@ -220,6 +237,35 @@ export const CommentsReducer = (
 										? comment.likes_count - 1
 										: comment.likes_count,
 						  }
+						: comment
+				),
+			};
+
+		case CommentActionTypes.PIN_COMMENT:
+			const pinnedCommentId = action.payload.commentId;
+			const updatedCommentsPin = state.comments.map((comment) =>
+				comment.id === pinnedCommentId ? { ...comment, pinned: true } : comment
+			);
+			const sortedComments = updatedCommentsPin.sort((a, b) => {
+				// Sort comments by the "pinned" property and then by the "created_at" property
+				if (a.pinned === b.pinned) {
+					return (
+						new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+					);
+				}
+				return a.pinned ? -1 : 1;
+			});
+			return {
+				...state,
+				comments: sortedComments,
+			};
+
+		case CommentActionTypes.UNPIN_COMMENT:
+			return {
+				...state,
+				comments: state.comments.map((comment) =>
+					comment.id === action.payload.commentId
+						? { ...comment, pinned: false }
 						: comment
 				),
 			};

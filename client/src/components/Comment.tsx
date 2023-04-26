@@ -179,9 +179,13 @@ const Comment = ({
 						<SettingHorizontal
 							className="w-6 h-6 stroke-gray-300 cursor-pointer hidden group-hover:block absolute left-1/3  transition-all duration-150"
 							onClick={() =>
-								showModal("COMMENT_OPTIONS", {
-									comment: comment,
-								})
+								showModal(
+									"COMMENT_OPTIONS",
+									{
+										comment: comment,
+									},
+									dispatch
+								)
 							}
 						/>
 					</div>

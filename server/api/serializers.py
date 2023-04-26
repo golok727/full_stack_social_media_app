@@ -112,6 +112,7 @@ class CommentSerializer(ModelSerializer):
     post = StringRelatedField()
     user_id = serializers.IntegerField(source='user.id', read_only=True)
     post_id = serializers.IntegerField(source='post.id', read_only=True)
+    post_user_id = serializers.IntegerField(source="post.user.id", read_only=True)
     user_profile = UserProfileSummarySerializer(source="user.userprofile",read_only=True)
     replies_count = SerializerMethodField()
     reply_to_username = serializers.StringRelatedField(source='reply_to.username', read_only=True)
@@ -125,7 +126,7 @@ class CommentSerializer(ModelSerializer):
     _parent_cache = {}
     class Meta:
         model = Comment
-        fields = ['id', 'user_profile','top_level_parent_id', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id", "pinned", "is_mine", "is_liked_by_me", "likes_count", "post_id"]
+        fields = ['id', 'user_profile','top_level_parent_id', 'post', 'content', 'parent', 'reply_to', 'created_at', 'user',"replies_count", "reply_to_username", "user_id", "pinned", "is_mine", "is_liked_by_me", "likes_count", 'post_id', 'post_user_id']
 
     def get_is_mine(self, obj):
         return obj.user == self.context['request'].user
@@ -165,7 +166,7 @@ class CommentSerializer(ModelSerializer):
     def validate(self, data):
         if data.get('pinned', False) and data.get('parent', None) is not None:
                 raise serializers.ValidationError("Only parent comments can be pinned.")
-                
+
         if data.get('pinned', False):
             comment = self.instance
             # Check if the user is the owner of the post
