@@ -14,6 +14,11 @@ const Profile = () => {
 	const { auth } = useAuth();
 	const [userProfile, setUserProfile] = useState<UserProfile | null>(null!);
 
+	type currentTabType = "POSTS" | "SAVED";
+	const [currentTab, setCurrentTab] = useState<currentTabType>("POSTS");
+
+	const isTabActive = (tab: currentTabType) => currentTab === tab;
+
 	const [isLoading, setIsLoading] = useState(true);
 	const axiosPrivate = useAxiosPrivate();
 
@@ -148,11 +153,36 @@ const Profile = () => {
 								</section>
 							</div>
 						</header>
-						{/* All Posts By Section */}
-						Posts
-						{userProfile && !isLoading && username && (
-							<PostsByUser username={username} />
-						)}
+
+						{/* Tab Switcher */}
+						<div className="flex gap-3 my-2">
+							<button
+								onClick={() => setCurrentTab("POSTS")}
+								className={`${
+									isTabActive("POSTS") &&
+									"bg-gradient-to-r from-purple-700 to to-orange-500"
+								} bg-slate-900 text-sm hover:bg-purple-800 font-bold px-7 py-1 rounded-md`}
+							>
+								Posts
+							</button>
+							<button
+								onClick={() => setCurrentTab("SAVED")}
+								className={`${
+									isTabActive("SAVED") &&
+									"bg-gradient-to-r from-purple-700 to to-orange-500"
+								} bg-slate-900 text-sm hover:bg-purple-800 font-bold px-7 py-1 rounded-md`}
+							>
+								Saved
+							</button>
+						</div>
+
+						{/* Posts By User */}
+						{userProfile &&
+							!isLoading &&
+							username &&
+							currentTab === "POSTS" && <PostsByUser username={username} />}
+
+						<footer> &copy;radhaKrsna</footer>
 					</div>
 				) : (
 					<Navigate to={"/404"} />
