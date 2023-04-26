@@ -165,7 +165,16 @@ class CommentSerializer(ModelSerializer):
     def validate(self, data):
         if data.get('pinned', False) and data.get('parent', None) is not None:
                 raise serializers.ValidationError("Only parent comments can be pinned.")
+                
+        if data.get('pinned', False):
+            comment = self.instance
+            # Check if the user is the owner of the post
+            if self.context['request'].user != comment.post.user:
+                raise serializers.ValidationError("Only the owner of the post can pin comments.")
+        # Always return the validated data
         return data
+
+
 # Token Serializer
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

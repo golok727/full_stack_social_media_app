@@ -31,11 +31,12 @@ const CommentOptionsModal: React.FC<Props> = ({ comment }) => {
 						</button>
 					</>
 				)}
-
-				<button className="flex justify-center items-center text-gray-300 gap-2 w-full py-3 px-2 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
-					<Pin className="stroke-gray-500" />
-					Pin Comment
-				</button>
+				{comment.parent === null && (
+					<button className="flex justify-center items-center text-gray-300 gap-2 w-full py-3 px-2 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
+						<Pin className="stroke-gray-500" />
+						<span>{comment.pinned ? "Unpin Comment" : "Pin Comment"}</span>
+					</button>
+				)}
 
 				{comment.user_id !== auth.user?.id && (
 					<button className="flex justify-center items-center  gap-2 w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">

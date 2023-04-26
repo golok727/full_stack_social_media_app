@@ -48,6 +48,8 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 
 	const hideModal = () => {
 		setModalType(null);
+		setCurrentComment(null);
+		setCurrentPost(null);
 	};
 
 	useEffect(() => {

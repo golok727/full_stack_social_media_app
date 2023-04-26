@@ -22,6 +22,8 @@ urlpatterns = [
     path("comment/<str:pk>/like/", views.likeCommentView, name="like_comment"),
     path("comment/<str:pk>/dislike/", views.dislikeCommentView, name="dislike_comment"),
 
+
+    path("comments/<str:pk>", views.commentUpdateView, name="update_co"),
     
     
     path("users/profile/<str:username>", views.getUserProfile, name="user_profile"),

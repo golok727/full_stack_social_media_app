@@ -4,6 +4,7 @@ import { useModal } from "../context/ModalProvider";
 import useAuth from "../hooks/useAuth";
 import CpuChip from "../icons/CpuChip";
 import Report from "../icons/Report";
+import { useNavigate } from "react-router-dom";
 interface Props {
 	post: PostType;
 }
@@ -14,6 +15,13 @@ const PostOptionsModal: React.FC<Props> = ({ post }) => {
 	const stopPropagation = (event: React.MouseEvent) => {
 		event.stopPropagation();
 	};
+	const navigate = useNavigate();
+
+	const handleAboutThisAccount = () => {
+		navigate("/" + post.user.username);
+		hideModal();
+	};
+
 	return (
 		<div
 			className="fixed inset-0 bg-black bg-opacity-70 text-white  flex justify-center items-center transition-all "
@@ -61,7 +69,10 @@ const PostOptionsModal: React.FC<Props> = ({ post }) => {
 					Share To
 				</button>
 
-				<button className="w-full py-3 px-2 hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
+				<button
+					onClick={() => handleAboutThisAccount()}
+					className="w-full py-3 px-2 hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700"
+				>
 					About This Account
 				</button>
 

@@ -329,6 +329,9 @@ def commentsView(request, postId):
             else:
                 return Response(serializer.errors, status=400)        
 
+
+
+
     # Check if post exits
 
     except Post.DoesNotExist:
@@ -403,3 +406,27 @@ def dislikeCommentView(request, pk):
 
     except Comment.DoesNotExist:
         return Response({'msg': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def commentUpdateView(request, pk):
+    try:
+        comment = Comment.objects.get(id=pk)
+        if comment.user != request.user:
+            if request.data.get('pinned') is not None:
+                serializer = CommentSerializer(instance=comment, data={"pinned": request.data.get("pinned")}, context={"request": request}, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"msg": "Comment Updated", "comment": serializer.data})
+
+            return Response({"msg": "Not your comment"}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = CommentSerializer(instance=comment, data=request.data, context={"request": request}, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"msg": "Comment Updated", "comment": serializer.data})
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Comment.DoesNotExist:
+        return Response({"msg": "comment does not exist"}, status=status.HTTP_400_BAD_REQUEST)
