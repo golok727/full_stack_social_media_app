@@ -73,3 +73,9 @@ interface CommentType {
 	likes_count: number;
 	pinned: boolean;
 }
+interface AppErrors {
+	postError: string;
+	commentDeleteError: string;
+	commentPostError: string;
+	serverError: string;
+}

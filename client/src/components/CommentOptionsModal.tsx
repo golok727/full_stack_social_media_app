@@ -9,6 +9,7 @@ import {
 	CommentActionTypes,
 	CommentActions,
 } from "../reducers/CommentsReducer";
+import { useApp } from "../context/AppProvider";
 
 interface Props {
 	comment: CommentType;
@@ -17,6 +18,8 @@ interface Props {
 const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 	const { hideModal } = useModal();
 	const { auth } = useAuth();
+	const { appDispatch } = useApp();
+
 	const axiosPrivate = useAxiosPrivate();
 	const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 	const stopPropagation = (event: React.MouseEvent) => {

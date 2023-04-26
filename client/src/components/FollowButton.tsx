@@ -18,6 +18,7 @@ const FollowButton: React.FC<Props> = ({
 
 	const [isFollowing, setIsFollowing] = useState(is_following);
 	const axiosPrivate = useAxiosPrivate();
+
 	const handleFollow = async () => {
 		// Set loading to true on start
 		setIsLoading(true);

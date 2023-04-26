@@ -5,12 +5,18 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import PostsPlaceHolder from "./PostsPlaceHolder";
 import Post from "./Post";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import { useApp } from "../context/AppProvider";
+import { AppReducerActions } from "../reducers/AppReducer";
 
 const Posts = () => {
-	const [posts, setPosts] = useState<PostType[]>([]);
 	const axiosPrivate = useAxiosPrivate();
 	const location = useLocation();
-	const { auth, logout } = useAuth();
+	const { logout } = useAuth();
+
+	const {
+		appState: { homePosts },
+		appDispatch,
+	} = useApp();
 
 	useEffect(() => {
 		useDocumentTitle("Photon");
@@ -22,7 +28,12 @@ const Posts = () => {
 				const res = await axiosPrivate.get("/api/posts/", {
 					signal: controller.signal,
 				});
-				isMounted && setPosts(res.data);
+
+				isMounted &&
+					appDispatch({
+						type: AppReducerActions.INIT_POSTS,
+						payload: { posts: res.data },
+					});
 				// console.log(res.data);
 			} catch (error: any) {
 				if (error?.response?.status === 401) {
@@ -44,14 +55,14 @@ const Posts = () => {
 	return (
 		<div className="container mx-auto max-w-6xl pt-20 pb-10">
 			<div className="flex flex-col items-center gap-4">
-				{posts.length === 0 ? (
+				{homePosts.length === 0 ? (
 					<div>
 						{/* Placeholder for posts before fetching the data */}
 						<PostsPlaceHolder />
 						<span className="text-white">No posts yet</span>
 					</div>
 				) : (
-					posts.map((post, id) => <Post post={post} key={id} />)
+					homePosts.map((post, id) => <Post post={post} key={id} />)
 				)}
 			</div>
 		</div>
