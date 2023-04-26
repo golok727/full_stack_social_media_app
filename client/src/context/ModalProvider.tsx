@@ -11,8 +11,8 @@ interface ModalContextType {
 		payload: {
 			post?: PostType;
 			comment?: CommentType;
-		},
-		commentDispatchFn?: React.Dispatch<CommentActions>
+			commentDispatchFn?: React.Dispatch<CommentActions>;
+		}
 	) => void;
 	hideModal: () => void;
 	modalType: ModalType | null;
@@ -42,11 +42,11 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 		payload: {
 			post?: PostType;
 			comment?: CommentType;
-		},
-		commentDispatchFn?: React.Dispatch<CommentActions>
+			commentDispatchFn?: React.Dispatch<CommentActions>;
+		}
 	) => {
 		setModalType(type);
-		commentDispatchFnRef.current = commentDispatchFn!;
+		commentDispatchFnRef.current = payload.commentDispatchFn!;
 		setCurrentComment(payload.comment || null);
 		setCurrentPost(payload.post || null);
 	};
