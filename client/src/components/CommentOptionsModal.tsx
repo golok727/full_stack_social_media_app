@@ -18,7 +18,7 @@ interface Props {
 const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 	const { hideModal } = useModal();
 	const { auth } = useAuth();
-	const { appDispatch } = useApp();
+	// const { appDispatch } = useApp();
 
 	const axiosPrivate = useAxiosPrivate();
 	const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -48,21 +48,20 @@ const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 	// Todo make a tost when comment is deleted or show error if it is not deleted
 
 	const handleDeleteComment = async () => {
-		commentDispatch({
-			type: CommentActionTypes.DELETE_COMMENT,
-			payload: {
-				commentId: comment.id,
-				isReply: comment.parent !== null,
-				parentId: comment.top_level_parent_id,
-			},
-		});
 		try {
+			commentDispatch({
+				type: CommentActionTypes.DELETE_COMMENT,
+				payload: {
+					commentId: comment.id,
+					isReply: comment.parent !== null,
+					parentId: comment.top_level_parent_id,
+				},
+			});
+			hideModal();
 			await axiosPrivate.delete(`/api/comments/${comment.id}`);
 		} catch (err) {
 			// Do Error Handling
 		}
-
-		hideModal();
 	};
 
 	return (
