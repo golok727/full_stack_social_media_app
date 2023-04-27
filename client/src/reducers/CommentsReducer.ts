@@ -9,6 +9,7 @@ export type CommentReducerState = {
 
 export enum CommentActionTypes {
 	SET_COMMENTS = "SET_COMMENTS",
+	ADD_COMMENTS = "ADD_COMMENTS",
 	COMMENTS_ERROR = "COMMENTS_ERROR",
 	ADD_COMMENT = "ADD_COMMENT",
 	INIT_REPLIES = "INIT_REPLIES",
@@ -25,6 +26,12 @@ type SetCommentsAction = {
 	payload: {
 		comments: CommentType[];
 		isLoading: boolean;
+	};
+};
+type AddCommentsAction = {
+	type: CommentActionTypes.ADD_COMMENTS;
+	payload: {
+		comments: CommentType[];
 	};
 };
 
@@ -100,6 +107,7 @@ type DeleteCommentAction = {
 export type CommentActions =
 	| SetCommentsAction
 	| SetCommentsErrorAction
+	| AddCommentsAction
 	| AddCommentAction
 	| InitCommentRepliesAction
 	| AddCommentReplyAction
@@ -121,6 +129,15 @@ export const CommentsReducer = (
 				isLoading: false,
 				errMsg: "",
 			};
+
+		case CommentActionTypes.ADD_COMMENTS:
+			return {
+				...state,
+				comments: [...state.comments, ...action.payload.comments],
+				isLoading: false,
+				errMsg: "",
+			};
+
 		case CommentActionTypes.COMMENTS_ERROR:
 			return {
 				...state,

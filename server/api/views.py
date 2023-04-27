@@ -6,8 +6,9 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from .models import Post, Comment
 from .serializers import PostSerializer, UserSerializer, UserProfileSerializer, CommentSerializer
-from django.contrib.auth.models import User
 
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 
@@ -304,8 +305,16 @@ def commentsView(request, postId):
             try:
                 post = Post.objects.get(id=postId)
                 comments = Comment.objects.filter(post=post, parent=None)
+                # paginator = Paginator(comments, 10)
 
-                return Response(CommentSerializer(comments, many=True, context={"request": request}).data)
+                # page_number = request.GET.get('page')
+                # page_obj = paginator.get_page(page_number)
+
+                serializer = CommentSerializer(comments, many=True, context={"request": request})
+
+                return Response({'comments': serializer.data})
+
+                
             except Post.DoesNotExist:
                 return Response({"msg": "Post Does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { AvatarMakerSmall } from "../pages/PostPage";
 import { Link } from "react-router-dom";
 import { BioRenderer } from "../pages/Profile";
@@ -11,6 +11,7 @@ import {
 	CommentActions,
 	CommentReducerState,
 } from "../reducers/CommentsReducer";
+import Add from "../icons/Add";
 interface Props {
 	post: PostType;
 	commentsState: CommentReducerState;
@@ -37,17 +38,16 @@ const CommentsRenderer: React.FC<Props> = ({
 	useEffect(() => {
 		let isMounted = true;
 		const controller = new AbortController();
-
 		const fetchComments = async () => {
 			try {
 				const res = await axiosPrivate.get(`/api/posts/${post.id}/comments`, {
 					signal: controller.signal,
 				});
-
-				dispatch({
-					type: CommentActionTypes.SET_COMMENTS,
-					payload: { comments: res.data, isLoading: false },
-				});
+				isMounted &&
+					dispatch({
+						type: CommentActionTypes.ADD_COMMENTS,
+						payload: { comments: res.data.comments },
+					});
 			} catch (error) {
 				// Todo Error Remove
 				console.error(error);
@@ -131,6 +131,11 @@ const CommentsRenderer: React.FC<Props> = ({
 					No Comments Yet
 				</span>
 			)}
+			{
+				<div className="flex justify-center">
+					<Add onClick={() => {}} />
+				</div>
+			}
 		</section>
 	);
 };
