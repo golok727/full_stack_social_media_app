@@ -3,6 +3,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { numberFormatter } from "../utils/utils";
 import SpinnerLoader from "./SpinnerLoader";
 import { Link } from "react-router-dom";
+import { AvatarMakerSmall } from "../pages/PostPage";
 
 const SavedPosts = () => {
 	const axiosPrivate = useAxiosPrivate();
@@ -73,6 +74,14 @@ export function MiniSavedPost({ savedPost }: { savedPost: SavedPost }) {
 				alt={savedPost.post.title}
 			/>
 			<div className="absolute inset-0 bg-black bg-opacity-50 transition-all hidden group-hover:flex justify-center items-center">
+				<div className="flex gap-2 items-center absolute top-3 left-3 bg-black py-1 px-2 rounded-full">
+					<AvatarMakerSmall
+						avatar={savedPost.post.user.userprofile.profile_image}
+						username={"U"}
+					/>
+
+					<span className="font-bold">By @{savedPost.post.user.username}</span>
+				</div>
 				<div className="font-bold">
 					{/* Likes */}
 					<div className="text-center">

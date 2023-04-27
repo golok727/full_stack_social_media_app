@@ -12,11 +12,13 @@ class UserProfileSummarySerializer(ModelSerializer):
 
     followers_count = SerializerMethodField()
 
+
     def get_followers_count(self, obj):
         return obj.following.count()
     class Meta:
         model = UserProfile
         fields = ["id", "followers_count", "profile_image", "is_verified"]
+
 
 # User Serializer
 class UserSerializer(ModelSerializer):
@@ -32,6 +34,12 @@ class UserSerializer(ModelSerializer):
         if obj.first_name:
             return obj.first_name
         return ""
+class UserSummarySerializer(ModelSerializer):
+    userprofile = UserProfileSummarySerializer()
+    class Meta: 
+        model = User
+        fields = ["id", "username", "userprofile" ]
+
 
 
 
@@ -175,8 +183,8 @@ class CommentSerializer(ModelSerializer):
         return data
 
 class SimplePostSerializer (ModelSerializer):
-
     likes_count = SerializerMethodField()
+    user = UserSummarySerializer()
     class Meta: 
         model = Post
         fields = ['user', 'image', "likes_count", "title", "id"]
@@ -187,6 +195,7 @@ class SimplePostSerializer (ModelSerializer):
 # Saved post serializer 
 class SavedPostSerializer(ModelSerializer):
     post = SimplePostSerializer()
+    user_profile = UserProfileSummarySerializer()
     class Meta:
         model = SavedPost
         fields = '__all__'

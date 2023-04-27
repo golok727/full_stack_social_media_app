@@ -24,6 +24,11 @@ interface UserProfileComment {
 	profile_image: string;
 	is_verified: boolean;
 }
+interface UserSummarySerializer {
+	id: number;
+	username: string;
+	userprofile: UserprofileUser;
+}
 
 interface User {
 	date_joined: Date;
@@ -83,7 +88,7 @@ interface AppErrors {
 interface SavedPost {
 	id: number;
 	post: SimplePost;
-	user_profile: number;
+	user_profile: UserprofileUser;
 }
 
 interface SimplePost {
@@ -91,5 +96,5 @@ interface SimplePost {
 	image: string;
 	likes_count: number;
 	title: string;
-	user: number;
+	user: UserSummarySerializer;
 }

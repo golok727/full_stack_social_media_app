@@ -7,31 +7,38 @@ const EditAccount = () => {
 			{auth.user &&
 				Object.keys(auth.user).map((key, idx) => (
 					<div className="text-white  flex flex-col gap-2">
-						<label htmlFor="" className="">
-							{key}
-						</label>
 						{(typeof (auth.user as any)[key] === "string" ||
 							typeof (auth.user as any)[key] === "number") && (
-							<input
-								key={idx}
-								type="text"
-								className="w-56 bg-transparent border-[1px]"
-								placeholder={key}
-								name=""
-								id=""
-								value={(auth.user as any)[key]}
-							/>
+							<>
+								<label htmlFor="" className="">
+									{key}
+								</label>
+								<input
+									key={idx}
+									type="text"
+									className="w-56 bg-transparent border-[1px]"
+									placeholder={key}
+									name=""
+									id=""
+									value={(auth.user as any)[key]}
+								/>
+							</>
 						)}
 
 						{typeof (auth.user as any)[key] === "boolean" && (
-							<input
-								key={idx}
-								type="checkbox"
-								className="w-56 bg-transparent border-[1px]"
-								name=""
-								id=""
-								checked={(auth.user as any)[key]}
-							/>
+							<>
+								<label htmlFor="" className="">
+									{key}
+								</label>
+								<input
+									key={idx}
+									type="checkbox"
+									className="w-56 bg-transparent border-[1px]"
+									name=""
+									id=""
+									checked={(auth.user as any)[key]}
+								/>
+							</>
 						)}
 					</div>
 				))}

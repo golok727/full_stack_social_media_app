@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FollowButton from "../components/FollowButton";
@@ -59,6 +59,7 @@ const Profile = () => {
 		return () => {
 			isMounted = false;
 			controller.abort();
+			setCurrentTab("POSTS");
 		};
 	}, [username]);
 
