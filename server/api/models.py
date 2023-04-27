@@ -48,7 +48,6 @@ class Post(models.Model):
     
 
 # UserProfile Model 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
@@ -80,6 +79,7 @@ class UserProfile(models.Model):
         ordering = ['-id']
 
 
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -89,6 +89,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
+
+class SavedPost(models.Model):
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE,  )
+    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.post.title[:10] + " (" +  self.user_profile.user.username + " )"
+
 
 
 # Comment Model

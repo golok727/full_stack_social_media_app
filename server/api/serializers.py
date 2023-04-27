@@ -1,11 +1,10 @@
 from rest_framework.serializers import ModelSerializer, SlugRelatedField, SerializerMethodField, StringRelatedField
 from rest_framework import serializers
-from .models import Post, UserProfile, Comment
+from .models import Post, UserProfile, Comment, SavedPost
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from django.db.models import Count
 
 
 #  User Profile Summary to send with user Serializer
@@ -174,6 +173,23 @@ class CommentSerializer(ModelSerializer):
                 raise serializers.ValidationError("Only the owner of the post can pin comments.")
         # Always return the validated data
         return data
+
+class SimplePostSerializer (ModelSerializer):
+
+    likes_count = SerializerMethodField()
+    class Meta: 
+        model = Post
+        fields = ['user', 'image', "likes_count", "title", "id"]
+        # exclude = ["likes"]
+    def get_likes_count(self, obj):
+        return obj.likes.count()
+                            
+# Saved post serializer 
+class SavedPostSerializer(ModelSerializer):
+    post = SimplePostSerializer()
+    class Meta:
+        model = SavedPost
+        fields = '__all__'
 
 
 # Token Serializer

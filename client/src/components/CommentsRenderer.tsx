@@ -45,8 +45,8 @@ const CommentsRenderer: React.FC<Props> = ({
 				});
 				isMounted &&
 					dispatch({
-						type: CommentActionTypes.ADD_COMMENTS,
-						payload: { comments: res.data.comments },
+						type: CommentActionTypes.SET_COMMENTS,
+						payload: { comments: res.data.comments, isLoading: false },
 					});
 			} catch (error) {
 				// Todo Error Remove
@@ -131,11 +131,6 @@ const CommentsRenderer: React.FC<Props> = ({
 					No Comments Yet
 				</span>
 			)}
-			{
-				<div className="flex justify-center">
-					<Add onClick={() => {}} />
-				</div>
-			}
 		</section>
 	);
 };

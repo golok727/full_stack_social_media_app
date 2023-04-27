@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view, parser_classes, permission_class
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .models import Post, Comment
-from .serializers import PostSerializer, UserSerializer, UserProfileSerializer, CommentSerializer
+from .models import Post, Comment, UserProfile
+from .serializers import PostSerializer, UserSerializer, UserProfileSerializer, CommentSerializer, SavedPostSerializer
 
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -451,3 +451,14 @@ def commentUpdateView(request, pk):
                 return Response({"msg": "Comment deleted"}, status=status.HTTP_204_NO_CONTENT)
             except Comment.DoesNotExist:
                 return Response({"msg": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def getSavedPosts(request):
+    if request.method == "GET": 
+        print(request.user)
+        user_profile = UserProfile.objects.get(user=request.user)
+        saved_posts = user_profile.savedpost_set.all()
+        serializer = SavedPostSerializer(saved_posts, many=True, context={"request": request})
+
+        return Response(serializer.data)

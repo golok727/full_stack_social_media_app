@@ -11,6 +11,7 @@ urlpatterns = [
     path("posts/<str:postId>", views.getPostById, name="get_post_by_id"),
     path("posts/like/<str:pk>", views.likePostView, name="like_post"),
     path("posts/user/<str:username>", views.getPostsByUser, name="get_all_posts_by_user"),
+    path("posts/saved/", views.getSavedPosts, name="saved_posts"),
 
     # Add new comment to a post specifications in the views file {parent: for parent comment, content: content of teh comment, reply_to for replying to a comment}
     path("posts/<str:postId>/comments/add", views.commentsView, name="comments_view_add_comment"),

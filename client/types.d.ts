@@ -79,3 +79,17 @@ interface AppErrors {
 	commentPostError: string;
 	serverError: string;
 }
+
+interface SavedPost {
+	id: number;
+	post: SimplePost;
+	user_profile: number;
+}
+
+interface SimplePost {
+	id: number;
+	image: string;
+	likes_count: number;
+	title: string;
+	user: number;
+}

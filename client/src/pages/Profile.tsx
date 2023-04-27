@@ -8,6 +8,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import SpinnerLoader from "../components/SpinnerLoader";
 import PostsByUser from "../components/PostsByUser";
 import VerifiedIcon from "../icons/VerifiedIcon";
+import SavedPosts from "../components/SavedPosts";
 
 const Profile = () => {
 	const { username } = useParams();
@@ -165,15 +166,17 @@ const Profile = () => {
 							>
 								Posts
 							</button>
-							<button
-								onClick={() => setCurrentTab("SAVED")}
-								className={`${
-									isTabActive("SAVED") &&
-									"bg-gradient-to-r from-purple-700 to to-orange-500"
-								} bg-slate-900 text-sm hover:bg-purple-800 font-bold px-7 py-1 rounded-md`}
-							>
-								Saved
-							</button>
+							{userProfile.user.id === auth.user?.id && (
+								<button
+									onClick={() => setCurrentTab("SAVED")}
+									className={`${
+										isTabActive("SAVED") &&
+										"bg-gradient-to-r from-purple-700 to to-orange-500"
+									} bg-slate-900 text-sm hover:bg-purple-800 font-bold px-7 py-1 rounded-md`}
+								>
+									Saved
+								</button>
+							)}
 						</div>
 
 						{/* Posts By User */}
@@ -182,6 +185,9 @@ const Profile = () => {
 							username &&
 							currentTab === "POSTS" && <PostsByUser username={username} />}
 
+						{userProfile &&
+							userProfile.user.id === auth.user?.id &&
+							currentTab === "SAVED" && <SavedPosts />}
 						<footer> &copy;radhaKrsna</footer>
 					</div>
 				) : (
