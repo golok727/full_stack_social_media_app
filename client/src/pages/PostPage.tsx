@@ -1,6 +1,5 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import useAuth from "../hooks/useAuth";
 import { useEffect, useReducer, useRef, useState } from "react";
 import SpinnerLoader from "../components/SpinnerLoader";
 import CommentsRenderer from "../components/CommentsRenderer";
@@ -85,8 +84,8 @@ const PostPage = () => {
 					signal: controller.signal,
 				});
 
-				setPost(() => res.data);
-				setIsLiked(() => (res.data as PostType).is_liked);
+				isMounted && setPost(() => res.data);
+				isMounted && setIsLiked(() => (res.data as PostType).is_liked);
 
 				useDocumentTitle(
 					`${(res.data as PostType).user.full_name}  On Photon: "${
@@ -178,7 +177,7 @@ const PostPage = () => {
 											<ShareIcon />
 										</div>
 										<div>
-											<SaveIcon />
+											<SaveIcon isActive={post.is_saved} postId={post.id} />
 										</div>
 									</div>
 									<div>

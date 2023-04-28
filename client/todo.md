@@ -1,15 +1,8 @@
 # Prior
 
+- [ ] Add Confirmation before unfollowing an account
 - [ ] send only range of comments and add load more comments for more comments
-- [x] move the reply to a context
-- [x] Add Loading State in Comment Form
-- [ ] Changes in create post
-  - [x] Add Redirects
-  - [x] Add title and description length limits
-- [x] view post on click
-  - [x] Add a post /p/:id route to implement this
-- [ ] Add Confirmation before un following an account
-- [ ] Posts Context for better post management
+- [ ] Pagination for home posts
 
 # Bugs :&#40;
 
@@ -26,13 +19,9 @@
 
 # Features
 
+- [ ] User Search functionality
 - [ ] Add Profile Type to each user profile
 - [ ] Add profile image editing
-- [x] Add Verified users badge
 
 <br/>
 <br/>
-
-- # Tags
-  - [ ] parse tags in frontend
-  - [ ] parse tags in backend and add to database of users following a tag

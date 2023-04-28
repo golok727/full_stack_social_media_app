@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 from django.contrib.auth.models import User
 import os 
 from uuid import uuid4
@@ -19,6 +20,18 @@ class PathAndRename:
         filename = f"{uuid4().hex}.{ext}"
         return os.path.join(self.path, filename)
 
+class Tag(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    slug= models.SlugField(max_length=255, unique=True)
+
+    def save(self,*args, **kwargs):
+        self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return self.name
+
+
 #  Post Model
 class Post(models.Model):
     title= models.CharField(max_length=100, blank=True, null=True)
@@ -28,17 +41,48 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, blank=True, related_name="liked_posts",  related_query_name='liked_post')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self): 
         return self.title
     
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        is_new_post = not self.pk  # Check if it's a new post
 
-        with Image.open(self.image.path) as img:
-            if img.width > 1080 or img.height > 1080:
-                img.thumbnail((1080,1080), resample=Image.BICUBIC)
-                img.save(self.image.path, optimize=True, quality=75)
+        super().save(*args, **kwargs)  # Save the instance to generate an ID
+
+        if is_new_post:  # If it's a new post, update the tags
+            self._parse_and_update_tags()
+        else:  # If it's an existing post, update the tags on update
+            self._update_tags_on_update()
+
+
+    def _parse_and_update_tags(self):
+        tags = self._extract_tags_from_description()
+        self.tags.clear()  # Remove existing tags
+        for tag_name in tags:
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            self.tags.add(tag)
+
+    def _update_tags_on_update(self):
+        existing_tags = set(self.tags.values_list('name', flat=True))
+        new_tags = set(self._extract_tags_from_description())
+
+        tags_to_remove = existing_tags - new_tags
+        tags_to_add = new_tags - existing_tags
+
+        # Remove tags that are no longer present in the description
+        for tag_name in tags_to_remove:
+            tag = Tag.objects.get(name=tag_name)
+            self.tags.remove(tag)
+
+        # Add new tags found in the updated description
+        for tag_name in tags_to_add:
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            self.tags.add(tag)
+
+    def _extract_tags_from_description(self):
+        return [tag.strip('#') for tag in self.description.split() if tag.startswith('#')]
 
     class Meta: 
         ordering =  ["-created"]

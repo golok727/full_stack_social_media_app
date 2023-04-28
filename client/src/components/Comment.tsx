@@ -1,7 +1,6 @@
 import { AvatarMakerSmall } from "../pages/PostPage";
 import { Link } from "react-router-dom";
-import { BioRenderer } from "../pages/Profile";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import VerifiedIcon from "../icons/VerifiedIcon";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {
@@ -13,6 +12,7 @@ import Heart from "../icons/Heart";
 import { formatDate, numberFormatter } from "../utils/utils";
 import { useModal } from "../context/ModalProvider";
 import SettingHorizontal from "../icons/SettingHorizontal";
+import { PhotonParserRenderer } from "./PhotonTextParser";
 type Props = {
 	comment: CommentType;
 	dispatch: React.Dispatch<CommentActions>;
@@ -119,13 +119,6 @@ const Comment = ({
 		}
 	};
 
-	const commentContentSplit = useMemo(() => {
-		const newCommentContent = comment.reply_to
-			? "@" + comment.reply_to_username + " " + comment.content
-			: comment.content;
-		return newCommentContent.split(/\r?\n/);
-	}, [comment]);
-
 	return (
 		<div>
 			<div className="flex gap-2 my-5 group">
@@ -155,8 +148,13 @@ const Comment = ({
 					</Link>
 					{/* Parse the comments */}
 					<span className="block text-sm">
-						{" "}
-						<BioRenderer bio={commentContentSplit} />{" "}
+						<PhotonParserRenderer
+							text={
+								comment.reply_to_username
+									? `@${comment.reply_to_username} ${comment.content}`
+									: comment.content
+							}
+						/>
 					</span>
 
 					{/* Status */}

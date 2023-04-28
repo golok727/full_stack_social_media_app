@@ -84,14 +84,17 @@ class PostSerializer(ModelSerializer):
     is_liked = SerializerMethodField()
     is_mine = SerializerMethodField()
     is_following = SerializerMethodField()
+    is_saved = SerializerMethodField()
     user = UserSerializer(read_only=True)
     user_id = SlugRelatedField(queryset=User.objects.all, slug_field="user", write_only=True)
 
     
     class Meta: 
         model = Post
-        # fields = '__all__'
-        exclude = ["likes"]
+        exclude = ["likes", "tags"]
+
+    def get_is_saved(self, obj):
+        return obj.savedpost_set.filter(user_profile=self.context.get('request').user.userprofile).exists()
 
     def get_is_following(self, obj):
         request = self.context.get('request')

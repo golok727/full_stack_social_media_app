@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
 import Heart from "../icons/Heart";
@@ -9,26 +9,23 @@ import SaveIcon from "../icons/SaveIcon";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import FollowButton from "./FollowButton";
 import { formatDate, numberFormatter } from "../utils/utils";
-import { BioRenderer } from "../pages/Profile";
 import CommentForm from "./CommentFrom";
 import VerifiedIcon from "../icons/VerifiedIcon";
 import SettingHorizontal from "../icons/SettingHorizontal";
 import { useModal } from "../context/ModalProvider";
+import { PhotonParserRenderer } from "./PhotonTextParser";
 interface Props {
 	post: PostType;
 }
 
-const splitNewLines = (str: string): string[] => str.split(/\r?\n/);
-
 const Post: React.FC<Props> = ({ post }) => {
 	const [imageLoadError, setImageLoadError] = useState(false);
-	const splitDescription = useMemo(
-		() => splitNewLines(post.description),
-		[post.description]
-	);
-	const [truncateDesc, setTruncateDesc] = useState(
-		splitDescription.length > 1 || post.description.length > 70
-	);
+
+	const [truncateDesc, setTruncateDesc] = useState(() => {
+		const { description } = post;
+		return description.length > 70 || description.includes("\n");
+	});
+
 	const axiosPrivate = useAxiosPrivate();
 
 	const [likesCount, setLikesCount] = useState(post.likes_count);
@@ -50,8 +47,8 @@ const Post: React.FC<Props> = ({ post }) => {
 	};
 
 	return (
-		<div className="text-white border-[1px] border-slate-600 px-3 py-2 rounded ">
-			<header className="flex py-3 border-b-slate-600 border-b-2 mb-4 justify-between items-center">
+		<div className="text-white border-[1px] border-neutral-700 px-3 py-2 rounded ">
+			<header className="flex py-3 border-b-neutral-600 border-b-2 mb-4 justify-between items-center">
 				<div className="flex items-center gap-2">
 					<div className="avatar cursor-pointer">
 						{post.user.userprofile.profile_image ? (
@@ -100,10 +97,8 @@ const Post: React.FC<Props> = ({ post }) => {
 
 			<section>
 				<div
-					className="rounded-md bg-gradient-to-r cursor-pointer from-slate-900 to to-slate-950 background-animate"
+					className="md:w-[500px] w-[400px]  rounded-md bg-gradient-to-r cursor-pointer from-slate-900 to to-slate-950 background-animate"
 					style={{
-						width: "400px",
-						maxWidth: "400px",
 						overflow: "hidden",
 						height: "auto",
 						...(imageLoadError ? { minHeight: "400px" } : {}),
@@ -139,7 +134,7 @@ const Post: React.FC<Props> = ({ post }) => {
 					</div>
 
 					<div>
-						<SaveIcon isActive={false} />
+						<SaveIcon postId={post.id} isActive={post.is_saved} />
 					</div>
 				</header>
 
@@ -161,12 +156,15 @@ const Post: React.FC<Props> = ({ post }) => {
 								<span className="font-bold mr-2">{post.user.username}</span>
 							</Link>
 							{/* Make A separate comp to render title that also works with description */}
-
-							{post.title}
 						</p>
+						<PhotonParserRenderer text={post.title} nextLine={false} />
 
 						<div className="py-2 text-[.8rem]">
-							{truncateDesc ? "..." : <BioRenderer bio={splitDescription} />}
+							{truncateDesc ? (
+								"..."
+							) : (
+								<PhotonParserRenderer text={post.description} />
+							)}
 						</div>
 					</div>
 					{truncateDesc && (

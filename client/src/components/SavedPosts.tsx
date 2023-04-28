@@ -19,7 +19,6 @@ const SavedPosts = () => {
 				const res = await axiosPrivate.get(`/api/posts/saved/`, {
 					signal: controller.signal,
 				});
-				console.log(res.data);
 				isMounted && setSavedPosts(() => res.data);
 			} catch (error) {
 				console.log(error);

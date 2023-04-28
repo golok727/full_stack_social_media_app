@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { AvatarMakerSmall } from "../pages/PostPage";
 import { Link } from "react-router-dom";
-import { BioRenderer } from "../pages/Profile";
 import Comment from "./Comment";
 import SpinnerLoader from "./SpinnerLoader";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -11,7 +10,7 @@ import {
 	CommentActions,
 	CommentReducerState,
 } from "../reducers/CommentsReducer";
-import Add from "../icons/Add";
+import { PhotonParserRenderer } from "./PhotonTextParser";
 interface Props {
 	post: PostType;
 	commentsState: CommentReducerState;
@@ -90,13 +89,15 @@ const CommentsRenderer: React.FC<Props> = ({
 							</Link>
 
 							{/* Todo Parse the title  */}
-							<span className="text-sm">{post.title}</span>
+							<span className="text-sm">
+								<PhotonParserRenderer text={post.title} nextLine={false} />
+							</span>
 						</div>
 					</div>
 				</div>
 				{/* Des */}
 				<div className="px-12 py-2">
-					<BioRenderer bio={post.description.split(/\r?\n/)} />
+					<PhotonParserRenderer text={post.description} />
 				</div>
 			</header>
 

@@ -9,6 +9,8 @@ import SpinnerLoader from "../components/SpinnerLoader";
 import PostsByUser from "../components/PostsByUser";
 import VerifiedIcon from "../icons/VerifiedIcon";
 import SavedPosts from "../components/SavedPosts";
+import { PhotonParserRenderer } from "../components/PhotonTextParser";
+import Cog from "../icons/Cog";
 
 const Profile = () => {
 	const { username } = useParams();
@@ -22,14 +24,6 @@ const Profile = () => {
 
 	const [isLoading, setIsLoading] = useState(true);
 	const axiosPrivate = useAxiosPrivate();
-
-	const makeBio = useMemo(() => {
-		if (userProfile?.bio) {
-			const bioSplit = userProfile.bio.split(/\r\n/);
-			return bioSplit;
-		}
-		return [];
-	}, [userProfile?.bio]);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -92,7 +86,7 @@ const Profile = () => {
 									{(auth.user as User).id === userProfile.user.id ? (
 										<Link
 											to="/account/edit"
-											className="bg-gray-100 text-black rounded-md p-2  text-sm font-bold hover:bg-gray-200 cursor-pointer"
+											className=" bg-gray-100 text-black rounded-md p-2  text-sm font-bold hover:bg-gradient-to-r hover:text-white from-purple-600 to-pink-700 cursor-pointer transition-all duration-300"
 										>
 											Edit Profile
 										</Link>
@@ -148,9 +142,7 @@ const Profile = () => {
 
 									{/* Todo Add user type in backend and frontend */}
 									<div className="text-xs py-2 md:hover:text-gray-200 md:hover:text-sm md:text-gray-300 text-gray-200 transition-all">
-										{makeBio && makeBio.length > 0 && (
-											<BioRenderer bio={makeBio} />
-										)}
+										<PhotonParserRenderer text={userProfile.bio || ""} />
 									</div>
 								</section>
 							</div>

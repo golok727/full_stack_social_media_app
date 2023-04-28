@@ -36,16 +36,16 @@ const CreatePost = () => {
 		}
 
 		if (title.length > 100) {
-			setErrorMsg("A Title should be less than 100 characters");
+			setErrorMsg("The Title should be less than 100 characters");
 			return;
 		}
 		if (description.length > 5000) {
-			setErrorMsg("A description should be less than 5000 characters");
+			setErrorMsg("The description should be less than 5000 characters");
 			return;
 		}
 
 		if (!image) {
-			setErrorMsg("A Image is required");
+			setErrorMsg("An Image is required");
 			return;
 		}
 
@@ -94,7 +94,7 @@ const CreatePost = () => {
 	// handle Component UnMount
 
 	return (
-		<div className="pt-20 container mx-auto max-w-4xl">
+		<div className="pt-24 container mx-auto max-w-4xl">
 			<form
 				onSubmit={handleSubmit}
 				className="flex justify-center items-center flex-col"
@@ -143,7 +143,7 @@ const CreatePost = () => {
 
 				{!isSuccess && !isLoading && (
 					<div className="border-[1px] rounded border-gray-700 md:w-1/2 w-3/4 px-3 py-2 text-white ">
-						<div className="relative">
+						<div className=" flex items-center">
 							<input
 								type="text"
 								placeholder="Title"
@@ -156,19 +156,20 @@ const CreatePost = () => {
 								className="w-full px-3 py-2 bg-transparent outline-none placeholder:text-slate-500 text-sm"
 							/>
 							{/* Title Length */}
-							{titleLength > 0 && (
-								<span
-									className={`${
-										titleLength > 40 && "-bottom-7 md:bottom-1"
-									} absolute right-3 bottom-1 text-xs ${
-										titleLength > 100
-											? "text-red-500 font-bold -bottom-7"
-											: "text-violet-300 "
-									} transition-all duration-150`}
-								>
-									{titleLength}
-								</span>
-							)}
+							<div>
+								{titleLength > 0 && (
+									<span
+										className={`
+									 text-xs ${
+											titleLength > 100
+												? "text-red-500 font-bold -bottom-7"
+												: "text-violet-300 "
+										} transition-all duration-150`}
+									>
+										{titleLength}
+									</span>
+								)}
+							</div>
 						</div>
 						<span className="w-full h-[1px] bg-slate-700 block"></span>
 						<div className="">
@@ -231,7 +232,15 @@ function DropZone({ setImage, setErrorMsg, image }: DropZoneProps) {
 		e.preventDefault();
 		setIsDragging(false);
 		const imageFile = e.dataTransfer.files[0];
-		const mimeTypes = ["image/jpeg", "image/png"];
+		const mimeTypes = [
+			"image/jpeg",
+			"image/png",
+			"image/gif",
+			"image/bmp",
+			"image/tiff",
+			"image/webp",
+			"image/svg+xml",
+		];
 		if (mimeTypes.includes(imageFile.type)) {
 			setImage(imageFile);
 		} else {

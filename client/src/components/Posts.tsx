@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -34,7 +34,6 @@ const Posts = () => {
 						type: AppReducerActions.INIT_POSTS,
 						payload: { posts: res.data },
 					});
-				// console.log(res.data);
 			} catch (error: any) {
 				if (error?.response?.status === 401) {
 					logout(location);

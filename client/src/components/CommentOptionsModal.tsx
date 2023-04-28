@@ -124,7 +124,7 @@ const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 				)}
 
 				{auth.user?.is_superuser && (
-					<button className="flex justify-center items-center gap-2 w-full py-3 px-2 font-bold text-purple-500 hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
+					<button className="flex justify-center items-center gap-2 w-full py-3 px-2 font-bold text-purple-500 hover:bg-neutral-800 transition-colors ">
 						<CpuChip />
 						Disable Comment
 					</button>

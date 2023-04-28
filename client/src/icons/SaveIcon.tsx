@@ -1,21 +1,40 @@
-import React from "react";
+import React, { HTMLAttributes, useState } from "react";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-interface Props extends React.SVGProps<SVGSVGElement> {
-	isActive?: boolean;
+interface Props extends HTMLAttributes<SVGElement> {
+	isActive: boolean;
+	postId: number;
 }
 
-const SaveIcon: React.FC<Props> = ({ isActive = false, ...rest }) => {
+const SaveIcon: React.FC<Props> = ({ isActive = false, postId, ...rest }) => {
+	const [isSaved, setSaved] = useState(isActive);
+
+	const axiosPrivate = useAxiosPrivate();
+
+	const handleSave = async () => {
+		setSaved((prev) => !prev);
+		try {
+			const res = await axiosPrivate.post("/api/posts/saved/", {
+				post_id: postId,
+			});
+			setSaved(res.data.saved);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			fill={`${isActive ? "white" : "none"}`}
+			fill={`${isSaved ? "white" : "none"}`}
 			viewBox="0 0 24 24"
 			strokeWidth={1}
-			stroke={isActive ? "none" : "currentColor"}
+			stroke={isSaved ? "none" : "currentColor"}
 			className={`w-7 h-7 cursor-pointer ${
-				!isActive && "hover:stroke-slate-500"
+				!isSaved && "hover:stroke-slate-500"
 			}`}
 			{...rest}
+			onClick={() => handleSave()}
 		>
 			<path
 				strokeLinecap="round"

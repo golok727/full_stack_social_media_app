@@ -4,6 +4,7 @@ interface PostType {
 	id: number;
 	image: string;
 	is_liked: boolean;
+	is_saved: boolean;
 	is_mine: boolean;
 	likes: number[];
 	likes_count: number;

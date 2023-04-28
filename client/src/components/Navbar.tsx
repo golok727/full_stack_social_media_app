@@ -12,7 +12,7 @@ const Navbar = () => {
 			<div className="flex gap-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-pink-600 font-bold">
 				<Link to="/">Home</Link>
 				<Link to="/create">Create</Link>
-				<Link to="/p">Posts</Link>
+				<Link to="/explore">Explore</Link>
 				<Link to={`/${auth.user?.username}`}>Profile</Link>
 			</div>
 

@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, parser_classes, permission_class
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .models import Post, Comment, UserProfile
+from .models import Post, Comment, UserProfile, SavedPost
 from .serializers import PostSerializer, UserSerializer, UserProfileSerializer, CommentSerializer, SavedPostSerializer
 
 from django.contrib.auth.models import User
@@ -18,7 +18,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime, timedelta
-
+from django.db.models import Count
 
 @api_view(["GET"])
 def getUserProfile(request, username):
@@ -237,18 +237,12 @@ def getPosts(request):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True, context={"request": request})
 
-        # user_profile_fields = User._meta.get_fields()
+        # [print(field) for field  in Post._meta.get_fields()]
+        
         
         return Response(serializer.data)
 
     if request.method == "POST": 
-        # print(request.data)
-        # serializer = PostSerializer(data=request.data)
-
-        # if serializer.is_valid():
-        #     serializer.save()
-        # else :
-            # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = request.data
 
@@ -265,7 +259,6 @@ def getPosts(request):
         return Response({"msg": "Post Created", "data": serializer.data})
 
 
-        # return Response({"status":"Post created"}, status=status.HTTP_201_CREATED)
 
 
 
@@ -304,11 +297,7 @@ def commentsView(request, postId):
         if request.method == "GET":
             try:
                 post = Post.objects.get(id=postId)
-                comments = Comment.objects.filter(post=post, parent=None)
-                # paginator = Paginator(comments, 10)
-
-                # page_number = request.GET.get('page')
-                # page_obj = paginator.get_page(page_number)
+                comments = Comment.objects.filter(post=post, parent=None).annotate(likes_count=Count('likes')).order_by('-pinned', '-likes_count', '-created_at')
 
                 serializer = CommentSerializer(comments, many=True, context={"request": request})
 
@@ -338,22 +327,14 @@ def commentsView(request, postId):
             else:
                 return Response(serializer.errors, status=400)        
 
-
-
-
     # Check if post exits
 
     except Post.DoesNotExist:
         return Response({"msg": "Post does not exits"}, status=status.HTTP_400_BAD_REQUEST)
-    
-# @api_view(["GET"]) 
-# @permission_classes([IsAuthenticated])
-# def getCommentReplies(request, commentId):
-#     comment = Comment.objects.get(id=commentId)
-#     replies = Comment.objects.filter(parent=comment)
-#     serializer = CommentSerializer(replies, many=True, context={"request": request})
-#     return Response(serializer.data)
 
+
+
+    
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getCommentReplies(request, commentId):
@@ -361,7 +342,6 @@ def getCommentReplies(request, commentId):
     replies = Comment.objects.filter(parent=comment)
     serializer = CommentSerializer(replies, many=True, context={"request": request})
 
-    # Collect all subchild comments recursively
     def get_subchild_comments(comment_obj, comments_list):
         subchild_comments = Comment.objects.filter(parent=comment_obj)
         for subchild_comment in subchild_comments:
@@ -454,11 +434,33 @@ def commentUpdateView(request, pk):
 
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
-def getSavedPosts(request):
+def savedPostsView(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+
     if request.method == "GET": 
-        print(request.user)
-        user_profile = UserProfile.objects.get(user=request.user)
+        # print([print(field) for field in UserProfile._meta.get_fields()])
         saved_posts = user_profile.savedpost_set.all()
         serializer = SavedPostSerializer(saved_posts, many=True, context={"request": request})
 
         return Response(serializer.data)
+    
+
+    if request.method == "POST":
+        post_id = request.data.get("post_id")
+
+        try:
+            post = Post.objects.get(id=post_id)
+
+            # Remove the post if it's already saved, or save it otherwise
+            saved_post, created = SavedPost.objects.get_or_create(user_profile=user_profile, post=post)
+
+            if created:
+                saved = True
+            else:
+                saved_post.delete()
+                saved = False
+
+            return Response({"saved": saved}, status=status.HTTP_200_OK)
+
+        except Post.DoesNotExist:
+            return Response({"message": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
