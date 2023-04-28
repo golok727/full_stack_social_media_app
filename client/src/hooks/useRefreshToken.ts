@@ -1,5 +1,4 @@
 import axios from "axios";
-// import axios, { AxiosRequestConfig } from "axios";
 import useAuth from "./useAuth";
 
 const useRefreshToken = () => {

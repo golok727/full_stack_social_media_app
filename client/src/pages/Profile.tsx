@@ -10,7 +10,11 @@ import PostsByUser from "../components/PostsByUser";
 import VerifiedIcon from "../icons/VerifiedIcon";
 import SavedPosts from "../components/SavedPosts";
 import { PhotonParserRenderer } from "../components/PhotonTextParser";
-import Cog from "../icons/Cog";
+
+const GENDER_TYPES: { [key: string]: string } = {
+	Male: "He/Him",
+	Female: "She/Her",
+};
 
 const Profile = () => {
 	const { username } = useParams();
@@ -37,6 +41,7 @@ const Profile = () => {
 					signal: controller.signal,
 				});
 
+				console.log(res.data);
 				isMounted && setUserProfile((prev) => ({ ...prev, ...res.data }));
 				if (res.data?.user?.username) {
 					useDocumentTitle(`@${res.data?.user.username} | Photon`);
@@ -80,7 +85,6 @@ const Profile = () => {
 									<span className="text-xl ">
 										@{userProfile.user?.username}
 										{userProfile.is_verified && <VerifiedIcon />}
-										{/* Todo Add Verified users badge */}
 									</span>
 
 									{(auth.user as User).id === userProfile.user.id ? (
@@ -140,7 +144,17 @@ const Profile = () => {
 										</span>
 									)}
 
-									{/* Todo Add user type in backend and frontend */}
+									{userProfile.account_type && (
+										<span className="block text-xs font-bold tracing-tight text-neutral-500 pt-2 hover:text-neutral-300">
+											{userProfile.account_type}
+										</span>
+									)}
+
+									{userProfile.gender !== "Prefer Not to Say" && (
+										<span className="block text-xs font-bold tracing-tight text-neutral-500 pt-2 hover:text-neutral-300">
+											{GENDER_TYPES[userProfile.gender]}
+										</span>
+									)}
 									<div className="text-xs py-2 md:hover:text-gray-200 md:hover:text-sm md:text-gray-300 text-gray-200 transition-all">
 										<PhotonParserRenderer text={userProfile.bio || ""} />
 									</div>

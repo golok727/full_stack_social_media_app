@@ -92,6 +92,33 @@ class Post(models.Model):
     
 
 # UserProfile Model 
+ACCOUNT_TYPE_CHOICES = [
+    ('Artist', 'Artist'),
+    ('Entrepreneur', 'Entrepreneur'),
+    ('Doctor', 'Doctor'),
+    ('Engineer', 'Engineer'),
+    ('Influencer', 'Influencer'),
+    ('Designer', 'Designer'),
+    ('Photographer', 'Photographer'),
+    ('Writer', 'Writer'),
+    ('Musician', 'Musician'),
+    ('Chef', 'Chef'),
+    ('Athlete', 'Athlete'),
+    ('Teacher', 'Teacher'),
+    ('Scientist', 'Scientist'),
+    ('Lawyer', 'Lawyer'),
+    ('Student', 'Student'),
+    ('Investor', 'Investor'),
+    ('Freelancer', 'Freelancer'),
+    ('Journalist', 'Journalist'),
+    ('Consultant', 'Consultant'),
+    ('Traveler', 'Traveler'),
+]
+GENDER_CHOICES = [
+    ('PreferNotSay', 'Prefer Not to Say'),
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+]
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
@@ -100,6 +127,20 @@ class UserProfile(models.Model):
     profile_image = models.ImageField(upload_to=PathAndRename("profile_images"), blank=True, null=True)
     following = models.ManyToManyField(User, related_name='following', blank=True)
     is_verified = models.BooleanField(default=False)
+    gender = models.CharField(
+        max_length=20,
+        choices=GENDER_CHOICES,
+        default="PreferNotSay"
+    )
+    close_friends = models.ManyToManyField(User, blank=True, related_name='close_friends')
+
+    account_type = models.CharField(
+        max_length=20,
+        choices=ACCOUNT_TYPE_CHOICES,
+        default=None,
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.user.username

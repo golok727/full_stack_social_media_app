@@ -19,6 +19,7 @@ const EditAccount = () => {
 									className="w-56 bg-transparent border-[1px]"
 									placeholder={key}
 									name=""
+									readOnly
 									id=""
 									value={(auth.user as any)[key]}
 								/>
@@ -34,6 +35,7 @@ const EditAccount = () => {
 									key={idx}
 									type="checkbox"
 									className="w-56 bg-transparent border-[1px]"
+									readOnly
 									name=""
 									id=""
 									checked={(auth.user as any)[key]}

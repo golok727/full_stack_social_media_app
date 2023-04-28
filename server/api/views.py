@@ -4,11 +4,11 @@ from rest_framework.decorators import api_view, parser_classes, permission_class
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .models import Post, Comment, UserProfile, SavedPost
-from .serializers import PostSerializer, UserSerializer, UserProfileSerializer, CommentSerializer, SavedPostSerializer
+from .models import Post, Comment, UserProfile, SavedPost, Tag
+from .serializers import PostSerializer, UserSerializer, UserProfileSerializer, CommentSerializer, SavedPostSerializer, SimplePostSerializer
 
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator
+
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 
@@ -464,3 +464,16 @@ def savedPostsView(request):
 
         except Post.DoesNotExist:
             return Response({"message": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def tagsView(request, tag_name):
+    try:
+        tag = Tag.objects.get(name=tag_name)
+        posts = tag.post_set.all()
+        serializer = SimplePostSerializer(posts, many=True, context={"request": request})
+        return Response(serializer.data)
+    except Tag.DoesNotExist:
+        return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
+

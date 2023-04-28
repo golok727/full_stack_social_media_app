@@ -14,6 +14,7 @@ import VerifiedIcon from "../icons/VerifiedIcon";
 import SettingHorizontal from "../icons/SettingHorizontal";
 import { useModal } from "../context/ModalProvider";
 import { PhotonParserRenderer } from "./PhotonTextParser";
+import HeartStatic from "../icons/HeartStatic";
 interface Props {
 	post: PostType;
 }
@@ -30,20 +31,36 @@ const Post: React.FC<Props> = ({ post }) => {
 
 	const [likesCount, setLikesCount] = useState(post.likes_count);
 	const [isLiked, setIsLiked] = useState(post.is_liked);
+	const [heartAnimate, setHeartAnimate] = useState(false);
 
 	// Modal
 	const { showModal } = useModal();
 	// Handle Like
+
+	const addLike = async (postId: number) => {
+		try {
+			await axiosPrivate.post(`/api/posts/like/${postId}`);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 	const handleLike = async () => {
 		setIsLiked((prev) => !prev);
 		const updatedLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
 		setLikesCount(updatedLikesCount);
+		addLike(post.id);
+	};
 
-		try {
-			await axiosPrivate.post(`/api/posts/like/${post.id}`);
-		} catch (error) {
-			console.log(error);
+	const handleDoubleClickLike = () => {
+		if (!isLiked) {
+			addLike(post.id);
 		}
+		setHeartAnimate(true);
+
+		setTimeout(() => {
+			setHeartAnimate(false);
+		}, 600);
+		setIsLiked(true);
 	};
 
 	return (
@@ -97,7 +114,8 @@ const Post: React.FC<Props> = ({ post }) => {
 
 			<section>
 				<div
-					className="md:w-[500px] w-[400px]  rounded-md bg-gradient-to-r cursor-pointer from-slate-900 to to-slate-950 background-animate"
+					onDoubleClick={() => handleDoubleClickLike()}
+					className="relative md:w-[500px] w-[400px]  rounded-md bg-gradient-to-r cursor-pointer from-slate-900 to to-slate-950 background-animate"
 					style={{
 						overflow: "hidden",
 						height: "auto",
@@ -116,6 +134,11 @@ const Post: React.FC<Props> = ({ post }) => {
 						alt={`Loading image: ${post.title}`}
 						loading="lazy"
 					/>
+					{heartAnimate && (
+						<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000">
+							<HeartStatic />
+						</div>
+					)}
 				</div>
 			</section>
 

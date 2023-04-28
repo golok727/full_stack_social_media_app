@@ -4,7 +4,7 @@ import useAuth from "../hooks/useAuth";
 const Navbar = () => {
 	const { logout, auth } = useAuth();
 	return (
-		<div className="text-white flex gap-3 items-center justify-between px-5 py-3 border-b-[1px] border-slate-800 fixed w-full bg-neutral-900 shadow-2xl">
+		<div className=" text-white flex gap-3 items-center justify-between px-5 py-3 border-b-[1px] border-slate-800 fixed z-10 w-full bg-neutral-900 shadow-2xl">
 			<div className="text-neutral-400 font-bold text hidden md:inline-flex">
 				<span>Welcome {auth.user?.username} :&#41;</span>
 			</div>

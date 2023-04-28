@@ -17,6 +17,7 @@ import {
 } from "../reducers/CommentsReducer";
 import SettingHorizontal from "../icons/SettingHorizontal";
 import { useModal } from "../context/ModalProvider";
+import HeartStatic from "../icons/HeartStatic";
 
 const PostPage = () => {
 	const [commentsState, dispatch] = useReducer(CommentsReducer, {
@@ -34,11 +35,18 @@ const PostPage = () => {
 
 	const [post, setPost] = useState<PostType | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [heartAnimate, setHeartAnimate] = useState(false);
 
 	const commentFormInputRef = useRef<HTMLTextAreaElement>(null);
 
 	const [isLiked, setIsLiked] = useState(false);
-
+	const addLike = async (postId: number) => {
+		try {
+			await axiosPrivate.post(`/api/posts/like/${postId}`);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 	const handleLike = async () => {
 		if (post) {
 			setIsLiked((prev: boolean) => !prev);
@@ -49,11 +57,18 @@ const PostPage = () => {
 				(prev) => ({ ...prev, likes_count: updatedLikesCount } as PostType)
 			);
 
-			try {
-				await axiosPrivate.post(`/api/posts/like/${post.id}`);
-			} catch (error) {
-				console.log(error);
-			}
+			addLike(post.id);
+		}
+	};
+
+	const handleDoubleClickLike = () => {
+		if (post) {
+			if (!isLiked) addLike(post.id);
+			setIsLiked(true);
+			setHeartAnimate(true);
+			setTimeout(() => {
+				setHeartAnimate(false);
+			}, 600);
 		}
 	};
 
@@ -111,12 +126,20 @@ const PostPage = () => {
 			{!isLoading ? (
 				post ? (
 					<div className="flex md:min-h-[40em] min-h-[30em] md:max-h-[40em] flex-col md:flex-row border-[1px] rounded-md border-gray-700 overflow-hidden">
-						<div className="aspect md:h-[40em] h-[27em] md:max-w-2xl ">
+						<div
+							className="relative aspect md:h-[40em] h-[27em] md:max-w-2xl"
+							onDoubleClick={() => handleDoubleClickLike()}
+						>
 							<img
 								src={post.image}
 								className="h-full object-cover"
 								alt={post.title}
 							/>
+							{heartAnimate && (
+								<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000">
+									<HeartStatic />
+								</div>
+							)}
 						</div>
 						{/* Right */}
 						<div className="flex flex-col flex-1 md:w-[35em] w-full">

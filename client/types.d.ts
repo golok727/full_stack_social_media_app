@@ -45,6 +45,8 @@ interface User {
 }
 
 interface UserProfile {
+	account_type: string | null;
+	gender: string;
 	bio: string | null;
 	birth_date: string | null;
 	followers_count: number;

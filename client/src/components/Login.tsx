@@ -1,7 +1,7 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import axios, { Axios } from "axios";
+import axios from "axios";
 import { AxiosError } from "axios";
 const Login = () => {
 	const { setAuth, auth } = useAuth();
@@ -35,7 +35,7 @@ const Login = () => {
 			const accessToken = res.data?.access;
 			const user = res.data?.user;
 			setAuth({ accessToken, user });
-
+			localStorage.setItem("ili", JSON.stringify(true));
 			setUsername("");
 			setPassword("");
 			navigate(from, { replace: true });
@@ -53,6 +53,10 @@ const Login = () => {
 			setIsLoading(false);
 		}
 	};
+
+	if (localStorage.getItem("ili")) {
+		return <Navigate to={"/"} />;
+	}
 
 	return (
 		<section className="min-h-screen text-white flex justify-center items-center ">
