@@ -1,5 +1,5 @@
 # Prior
-
+- [ ] Image Type confirmation is not working when the file is choosen with the input:file field
 - [ ] Add Confirmation before unfollowing an account
 - [ ] send only range of comments and add load more comments for more comments
 - [ ] Pagination for home posts
