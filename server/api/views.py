@@ -20,16 +20,34 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime, timedelta
 from django.db.models import Count
 
-@api_view(["GET"])
+@api_view(["GET", "PUT"])
 def getUserProfile(request, username):
-  
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return Response({"message": f"User '{username}' not found"}, status=404)
-    profile = user.userprofile
-    serializer = UserProfileSerializer(profile, many=False, context={"request": request})
-    return Response(serializer.data)
+    
+    if(request.method == "GET"):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"message": f"User '{username}' not found"}, status=404)
+        profile = user.userprofile
+        serializer = UserProfileSerializer(profile, many=False, context={"request": request})
+        return Response(serializer.data)
+
+        # Update userprofile
+    if(request.method == "PUT"):
+        user_profile = request.user.userprofile
+
+        if user_profile.user != request.user:
+            return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True, context={"request": request})
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=400)
+
+
 
 # Follow a User
 @api_view(["POST"])

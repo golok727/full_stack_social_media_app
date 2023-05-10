@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface EditorCanvasProps {
 	imageUrl: string;
+	onSave: (image: HTMLImageElement) => void;
 }
-const EditorCanvas = ({ imageUrl }: EditorCanvasProps) => {
+const EditorCanvas = ({ imageUrl, onSave = () => {} }: EditorCanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null!);
 	const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 	const [imageProperties, setImageProperties] = useState({
@@ -138,17 +139,39 @@ const EditorCanvas = ({ imageUrl }: EditorCanvasProps) => {
 	const handleMouseLeave = () => {
 		setIsDragging(false);
 	};
-	const handleWheel = (e: WheelEvent) => {
-		e.preventDefault();
+	// const handleWheel = (e: WheelEvent) => {
+	// 	e.preventDefault();
+	// };
+
+	// useEffect(() => {
+	// 	document.addEventListener("wheel", handleWheel);
+
+	// 	return () => {
+	// 		document.removeEventListener("wheel", handleWheel);
+	// 	};
+	// }, []);
+
+	const convertCanvasToImage = (): HTMLImageElement => {
+		const canvas = canvasRef.current;
+		const image = new Image();
+		if (canvas) {
+			image.src = canvas.toDataURL("image/webp");
+		}
+		return image;
 	};
 
-	useEffect(() => {
-		document.addEventListener("wheel", handleWheel);
-
-		return () => {
-			document.removeEventListener("wheel", handleWheel);
-		};
-	}, []);
+	const convertCanvasToBlob = (): Promise<Blob | null> => {
+		return new Promise((resolve) => {
+			const canvas = canvasRef.current;
+			if (canvas) {
+				canvas.toBlob((blob) => {
+					resolve(blob);
+				}, "image/jpeg"); // Change the MIME type to match your desired image format
+			} else {
+				resolve(null);
+			}
+		});
+	};
 
 	return (
 		<div>
@@ -162,7 +185,12 @@ const EditorCanvas = ({ imageUrl }: EditorCanvasProps) => {
 				onMouseUp={handleMoveUp}
 				onMouseLeave={handleMouseLeave}
 			></canvas>
-			<button className="block bg-gradient-to-r from-pink-700 to-violet-600 rounded px-3 py-1 my-4">
+			<button
+				onClick={() => {
+					onSave(convertCanvasToImage());
+				}}
+				className="block bg-gradient-to-r from-pink-700 to-violet-600 rounded px-3 py-1 my-4"
+			>
 				Save
 			</button>
 		</div>
