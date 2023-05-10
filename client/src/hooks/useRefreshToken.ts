@@ -16,7 +16,7 @@ const useRefreshToken = () => {
 
 			return res.data?.access;
 		} catch (error: any) {
-			if (error.response.status >= 400) {
+			if (error.response.status >= 400 && error.response.status < 500) {
 				console.log("Error");
 				logout();
 
