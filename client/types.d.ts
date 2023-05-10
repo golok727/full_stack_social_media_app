@@ -59,6 +59,7 @@ interface UserProfile {
 	is_mine: boolean;
 	posts_count: number;
 	is_verified: boolean;
+	gender: "Male" | "Female" | "Prefer No to Say";
 }
 
 interface CommentType {

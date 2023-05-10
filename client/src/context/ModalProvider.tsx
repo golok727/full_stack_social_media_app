@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import PostOptionsModal from "../components/PostOptionsModal";
 import CommentOptionsModal from "../components/CommentOptionsModal";
 import { CommentActions } from "../reducers/CommentsReducer";
+import ProfileEditor from "../components/ProfileEditor/ProfileEditor";
 
-type ModalType = "POST_OPTIONS" | "COMMENT_OPTIONS";
+type ModalType = "POST_OPTIONS" | "COMMENT_OPTIONS" | "PROFILE_IMAGE_EDITOR";
 
 interface ModalContextType {
 	showModal: (
@@ -75,6 +76,8 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 					comment={currentComment!}
 				/>
 			)}
+
+			{modalType === "PROFILE_IMAGE_EDITOR" && <ProfileEditor />}
 		</ModalContext.Provider>
 	);
 };
