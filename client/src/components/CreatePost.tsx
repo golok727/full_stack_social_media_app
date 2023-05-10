@@ -66,8 +66,6 @@ const CreatePost = () => {
 					},
 					headers: {
 						"Content-Type": "multipart/form-data",
-						// TODO IMPORTANT -> REMOVE THIS....
-						Authorization: `Bearer ${auth.accessToken}`,
 					},
 				});
 				setIsSuccess(true);
