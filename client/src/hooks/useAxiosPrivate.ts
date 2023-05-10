@@ -1,13 +1,12 @@
-import { defineConfig } from "vite";
 import { useEffect } from "react";
-import axios, { axiosPrivate } from "../api/axios";
+import { axiosPrivate } from "../api/axios";
 import useRefreshToken from "./useRefreshToken";
 import useAuth from "./useAuth";
 import { useNavigate } from "react-router-dom";
 
 const useAxiosPrivate = () => {
 	const refreshFn = useRefreshToken();
-	const { auth } = useAuth();
+	const { auth, logout } = useAuth();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -18,7 +17,9 @@ const useAxiosPrivate = () => {
 				}
 				return config;
 			},
-			(err) => Promise.reject(err)
+			(err) => {
+				return Promise.reject(err);
+			}
 		);
 
 		const responseInterceptor = axiosPrivate.interceptors.response.use(
@@ -34,7 +35,6 @@ const useAxiosPrivate = () => {
 						prevReq.headers["Authorization"] = `Bearer ${newAccess}`;
 						return axiosPrivate(prevReq);
 					} catch (error) {
-						navigate("/login");
 						return Promise.reject(err);
 					}
 				}
@@ -46,7 +46,7 @@ const useAxiosPrivate = () => {
 			axiosPrivate.interceptors.request.eject(requestInterceptor);
 			axiosPrivate.interceptors.response.eject(responseInterceptor);
 		};
-	}, [auth, refreshFn]);
+	}, [auth, refreshFn, logout]);
 
 	return axiosPrivate;
 };

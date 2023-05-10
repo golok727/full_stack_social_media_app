@@ -38,6 +38,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 	});
 
 	const logout = async (location?: Location) => {
+		console.log("logout");
 		setAuth((prev) => ({ ...prev, accessToken: "", user: null }));
 		await axios.post("/api/auth/logout/", {
 			withCredentials: true,
