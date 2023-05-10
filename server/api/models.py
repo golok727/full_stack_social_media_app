@@ -56,6 +56,9 @@ class Post(models.Model):
         else:  # If it's an existing post, update the tags on update
             self._update_tags_on_update()
 
+        if self.image and is_new_post:  # If it's a new post and image is present
+            self._compress_image_as_webp()
+
 
     def _parse_and_update_tags(self):
         tags = self._extract_tags_from_description()
@@ -84,6 +87,19 @@ class Post(models.Model):
     def _extract_tags_from_description(self):
         return [tag.strip('#') for tag in self.description.split() if tag.startswith('#')]
 
+    def _compress_image_as_webp(self):
+        # Open the uploaded image using PIL
+        image = Image.open(self.image.path)
+
+        # Set the maximum dimension for resizing the image
+        max_dimension = 500
+
+        # Resize the image if it exceeds the maximum dimension
+        if image.width > max_dimension or image.height > max_dimension:
+            image.thumbnail((max_dimension, max_dimension), resample=Image.BICUBIC)
+
+        # Convert the image to WebP format with compression
+        image.save(self.image.path, "WEBP", method=6, quality=90)
     class Meta: 
         ordering =  ["-created"]
         verbose_name = 'Post'
