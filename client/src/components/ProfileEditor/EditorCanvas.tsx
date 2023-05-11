@@ -167,24 +167,28 @@ const EditorCanvas = ({ imageUrl, onSave = () => {} }: EditorCanvasProps) => {
 	};
 
 	return (
-		<div className="flex items-center flex-col p-3">
+		<div className="flex items-center flex-col p-3 md:bg-zinc-900 md:rounded-xl md:px-4 md:my-4">
 			<h3 className="my-2 font-bold flex">
 				Crop Your Image
 				<PencilSquareIcon width={20} className="inline-block ml-2" />
 			</h3>
-			<canvas
-				ref={canvasRef}
-				width={500}
-				height={500}
-				className="bg-black cursor-move rounded border-[1px] border-gray-900 shadow-2xl w-2/3 md:w-full"
-				onMouseDown={handleMouseDown}
-				onTouchStart={handleMouseDown}
-				onMouseMove={handleMouseMove}
-				onTouchMove={handleMouseMove}
-				onMouseUp={handleMoueUp}
-				onTouchEnd={handleMoueUp}
-				onMouseLeave={handleMouseLeave}
-			></canvas>
+			<div className="relative flex justify-center">
+				<canvas
+					ref={canvasRef}
+					width={500}
+					height={500}
+					className="bg-black relative cursor-move rounded border-[1px] border-gray-900 shadow-2xl w-2/3 md:w-full"
+					onMouseDown={handleMouseDown}
+					onTouchStart={handleMouseDown}
+					onMouseMove={handleMouseMove}
+					onTouchMove={handleMouseMove}
+					onMouseUp={handleMoueUp}
+					onTouchEnd={handleMoueUp}
+					onMouseLeave={handleMouseLeave}
+				></canvas>
+				<Grid isDragging={isDragging} />
+			</div>
+
 			<button
 				onClick={() => {
 					onSave(convertCanvasToImage());
@@ -193,6 +197,25 @@ const EditorCanvas = ({ imageUrl, onSave = () => {} }: EditorCanvasProps) => {
 			>
 				Save
 			</button>
+		</div>
+	);
+};
+
+const Grid = ({ isDragging }: { isDragging: boolean }) => {
+	return (
+		<div
+			className={` ${
+				isDragging ? "opacity-60" : "opacity-0"
+			} md:grid  transition-all duration-300 absolute top-0 left-0 w-full h-full grid-cols-3 hidden grid-rows-3 pointer-events-none`}
+		>
+			{Array.from({ length: 9 }).map((_, index) => (
+				<div
+					key={index}
+					className={`${(index + 1) % 3 !== 0 ? "border-r-[1px] " : ""}${
+						index < 6 ? "border-b-[1px] " : ""
+					}border-gray-100`}
+				></div>
+			))}
 		</div>
 	);
 };

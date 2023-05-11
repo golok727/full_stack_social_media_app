@@ -115,8 +115,14 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({
 	}, [image]);
 
 	return (
-		<div className="fixed inset-0 text-white flex justify-center items-center transition-all duration-1000">
-			<div className="flex justify-center items-center w-[60em] h-[40em] max-w-full mx-2 bg-black rounded bg-opacity-50 backdrop-blur-sm border-[1px] border-neutral-700 relative">
+		<div
+			onClick={() => hideModal()}
+			className="z-20 fixed inset-0 text-white flex justify-center items-center transition-all duration-1000"
+		>
+			<div
+				onClick={(e) => e.stopPropagation()}
+				className="flex justify-center items-center w-[60em] h-[45em] mt-3 md:mt-1 p-3 max-w-full mx-2 bg-black rounded bg-opacity-50 backdrop-blur-sm border-[1px] border-neutral-700 relative"
+			>
 				<div className="absolute top-3 right-3">
 					<Close onClick={() => hideModal()} />
 				</div>
