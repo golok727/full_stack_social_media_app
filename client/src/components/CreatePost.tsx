@@ -69,7 +69,6 @@ const CreatePost = () => {
 					},
 				});
 				setIsSuccess(true);
-				console.log(res.data);
 				setImage(null);
 				setTitle("");
 				setDescription("");

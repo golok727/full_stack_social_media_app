@@ -43,10 +43,11 @@ interface User {
 	full_name: string;
 	userprofile: UserProfileUser;
 }
+type Gender = "Male" | "Female" | "Prefer Not To Say";
 
 interface UserProfile {
 	account_type: string | null;
-	gender: string;
+	gender: Gender;
 	bio: string | null;
 	birth_date: string | null;
 	followers_count: number;

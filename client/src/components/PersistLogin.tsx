@@ -10,6 +10,10 @@ const PersistLogin = () => {
 	const { auth } = useAuth();
 	const [serverError, setServerError] = useState(false);
 	useEffect(() => {
+		console.log(
+			"%cPhoton",
+			"font-weight: bold; color: violet; font-size: 2rem"
+		);
 		let isMounted = true;
 		const verifyRefreshToken = async () => {
 			try {

@@ -14,7 +14,7 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({
 	userProfileDispatch,
 }) => {
 	const { hideModal } = useModal();
-	const { auth, setAuth } = useAuth();
+	const { auth } = useAuth();
 	const axiosPrivate = useAxiosPrivate();
 
 	const [isProfilePictureUploadLoading, setProfilePictureUploading] =
@@ -84,7 +84,6 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({
 					},
 				}
 			);
-			console.log(res.data);
 			userProfileDispatch(() => res.data);
 		} catch (error) {
 			console.log(error);

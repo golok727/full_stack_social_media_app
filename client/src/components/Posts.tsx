@@ -48,6 +48,7 @@ const Posts = () => {
 		return () => {
 			isMounted = false;
 			controller.abort();
+			appDispatch({ type: AppReducerActions.RESET_HOME_POSTS });
 		};
 	}, []);
 

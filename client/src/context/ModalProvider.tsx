@@ -3,16 +3,25 @@ import PostOptionsModal from "../components/PostOptionsModal";
 import CommentOptionsModal from "../components/CommentOptionsModal";
 import { CommentActions } from "../reducers/CommentsReducer";
 import ProfileEditor from "../components/ProfileEditor/ProfileEditor";
+import GenderChooserModal from "../components/GenderChooserModal";
+import { AccountState } from "../pages/EditAccount";
 
 // type ModalType = "POST_OPTIONS" | "COMMENT_OPTIONS" | "PROFILE_IMAGE_EDITOR";
 export enum ModalType {
 	POST_OPTIONS = "POST_OPTIONS",
 	COMMENT_OPTIONS = "COMMENT_OPTIONS",
 	PROFILE_IMAGE_EDITOR = "PROFILE_IMAGE_EDITOR",
+	GENDER_CHANGER = "GENDER_CHANGER",
 }
 interface PostOptionsPayload {
 	type: ModalType.POST_OPTIONS;
 	post: PostType;
+}
+
+interface GenderChangerPayload {
+	type: ModalType.GENDER_CHANGER;
+	accountStateDispatch: React.Dispatch<React.SetStateAction<AccountState>>;
+	gender: Gender;
 }
 
 interface CommentOptionsPayload {
@@ -29,7 +38,8 @@ interface ProfileImageEditorPayload {
 type ModalPayload =
 	| PostOptionsPayload
 	| CommentOptionsPayload
-	| ProfileImageEditorPayload;
+	| ProfileImageEditorPayload
+	| GenderChangerPayload;
 
 interface ModalContextType {
 	showModal: (settings: ModalPayload) => void;
@@ -68,6 +78,13 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
 			{modalPayload?.type === ModalType.POST_OPTIONS && (
 				<PostOptionsModal post={modalPayload.post} />
+			)}
+
+			{modalPayload?.type === ModalType.GENDER_CHANGER && (
+				<GenderChooserModal
+					accountStateDispatch={modalPayload.accountStateDispatch}
+					gender={modalPayload.gender}
+				/>
 			)}
 
 			{modalPayload?.type === ModalType.COMMENT_OPTIONS && (

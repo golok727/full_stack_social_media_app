@@ -131,7 +131,7 @@ ACCOUNT_TYPE_CHOICES = [
     ('Traveler', 'Traveler'),
 ]
 GENDER_CHOICES = [
-    ('PreferNotSay', 'Prefer Not to Say'),
+    ('Prefer Not To Say', 'Prefer Not To Say'),
     ('Male', 'Male'),
     ('Female', 'Female'),
 ]
@@ -146,7 +146,7 @@ class UserProfile(models.Model):
     gender = models.CharField(
         max_length=20,
         choices=GENDER_CHOICES,
-        default="PreferNotSay"
+        default="Prefer Not To Say"
     )
     close_friends = models.ManyToManyField(User, blank=True, related_name='close_friends')
 

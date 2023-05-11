@@ -41,7 +41,6 @@ const Profile = () => {
 					signal: controller.signal,
 				});
 
-				console.log(res.data);
 				isMounted && setUserProfile((prev) => ({ ...prev, ...res.data }));
 				if (res.data?.user?.username) {
 					useDocumentTitle(`@${res.data?.user.username} | Photon`);
@@ -150,7 +149,7 @@ const Profile = () => {
 										</span>
 									)}
 
-									{userProfile.gender !== "Prefer Not to Say" && (
+									{userProfile.gender !== "Prefer Not To Say" && (
 										<span className="block text-xs font-bold tracing-tight text-neutral-500 pt-2 hover:text-neutral-300">
 											{GENDER_TYPES[userProfile.gender]}
 										</span>

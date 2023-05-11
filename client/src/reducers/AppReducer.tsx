@@ -5,6 +5,7 @@ export interface AppReducerState {
 
 export enum AppReducerActions {
 	INIT_POSTS = "INIT_POSTS",
+	RESET_HOME_POSTS = "RESET_HOME_POSTS",
 	SET_ERRORS = "SET_ERRORS",
 	RESET_ERRORS = "RESET_ERRORS",
 }
@@ -14,6 +15,9 @@ interface InitPostAction {
 	payload: {
 		posts: PostType[];
 	};
+}
+interface ResetHomePosts {
+	type: AppReducerActions.RESET_HOME_POSTS;
 }
 
 interface SetErrorsAction {
@@ -26,15 +30,24 @@ interface ResetErrorsAction {
 	payload: {};
 }
 
-export type AppActions = InitPostAction | SetErrorsAction | ResetErrorsAction;
+export type AppActions =
+	| InitPostAction
+	| SetErrorsAction
+	| ResetErrorsAction
+	| ResetHomePosts;
 
 const AppReducer = (
 	state: AppReducerState,
 	action: AppActions
 ): AppReducerState => {
 	switch (action.type) {
-		case AppReducerActions.INIT_POSTS:
+		case AppReducerActions.INIT_POSTS: {
 			return { ...state, homePosts: action.payload.posts };
+		}
+
+		case AppReducerActions.RESET_HOME_POSTS: {
+			return { ...state, homePosts: [] };
+		}
 
 		default:
 			return state;
