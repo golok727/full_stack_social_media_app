@@ -131,7 +131,7 @@ const Login = () => {
 								isLoading && "cursor-wait"
 							}`}
 							aria-label="submit"
-							disabled={isLoading ? true : false}
+							disabled={isLoading}
 						/>
 					</div>
 				</form>
