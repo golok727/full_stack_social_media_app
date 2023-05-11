@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useModal } from "../../context/ModalProvider";
 import Close from "../../icons/Close";
 import FileChooser from "../FileChooser";
@@ -6,10 +6,19 @@ import EditorCanvas from "./EditorCanvas";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useAuth from "../../hooks/useAuth";
 
-const ProfileEditor = () => {
+type ProfileEditorProps = {
+	userProfileDispatch: React.Dispatch<React.SetStateAction<UserProfile | null>>;
+};
+
+const ProfileEditor: React.FC<ProfileEditorProps> = ({
+	userProfileDispatch,
+}) => {
 	const { hideModal } = useModal();
-	const { auth } = useAuth();
+	const { auth, setAuth } = useAuth();
 	const axiosPrivate = useAxiosPrivate();
+
+	const [isProfilePictureUploadLoading, setProfilePictureUploading] =
+		useState(false);
 
 	const [image, setImage] = useState<File | null>(null);
 	const [croppedImage, setCroppedImage] = useState<File | null>(null);
@@ -63,6 +72,9 @@ const ProfileEditor = () => {
 
 			if (!croppedImage) return;
 			formData.append("profile_image", croppedImage);
+
+			setProfilePictureUploading(true);
+
 			const res = await axiosPrivate.put(
 				`/api/users/profile/${auth.user?.username}`,
 				formData,
@@ -73,8 +85,12 @@ const ProfileEditor = () => {
 				}
 			);
 			console.log(res.data);
+			userProfileDispatch(() => res.data);
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setProfilePictureUploading(false);
+			hideModal();
 		}
 	};
 
@@ -144,12 +160,13 @@ const ProfileEditor = () => {
 							)}
 						</div>
 						<button
+							disabled={isProfilePictureUploadLoading}
 							onClick={() => {
 								handleImageUpload();
 							}}
 							className="block bg-gradient-to-r from-pink-700 to-violet-600 rounded px-3 py-1 my-4"
 						>
-							Upload
+							{isProfilePictureUploadLoading ? "Uploading.." : "Upload"}
 						</button>
 					</div>
 				)}

@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const useAxiosPrivate = () => {
 	const refreshFn = useRefreshToken();
-	const { auth, logout } = useAuth();
-	const navigate = useNavigate();
+	const { auth } = useAuth();
 
 	useEffect(() => {
 		const requestInterceptor = axiosPrivate.interceptors.request.use(
@@ -46,7 +45,7 @@ const useAxiosPrivate = () => {
 			axiosPrivate.interceptors.request.eject(requestInterceptor);
 			axiosPrivate.interceptors.response.eject(responseInterceptor);
 		};
-	}, [auth, refreshFn, logout]);
+	}, [auth, refreshFn]);
 
 	return axiosPrivate;
 };

@@ -13,6 +13,9 @@ interface ModalContextType {
 			post?: PostType;
 			comment?: CommentType;
 			commentDispatchFn?: React.Dispatch<CommentActions>;
+			userProfileDispatch?: React.Dispatch<
+				React.SetStateAction<UserProfile | null>
+			>;
 		}
 	) => void;
 	hideModal: () => void;
@@ -36,7 +39,12 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 		null
 	);
 
-	const commentDispatchFnRef = useRef<React.Dispatch<CommentActions>>();
+	const commentDispatchFnRef = useRef<React.Dispatch<CommentActions> | null>(
+		null
+	);
+	const userProfileDispatchRef = useRef<React.Dispatch<
+		React.SetStateAction<UserProfile | null>
+	> | null>(null);
 
 	const showModal = (
 		type: ModalType,
@@ -44,10 +52,14 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 			post?: PostType;
 			comment?: CommentType;
 			commentDispatchFn?: React.Dispatch<CommentActions>;
+			userProfileDispatch?: React.Dispatch<
+				React.SetStateAction<UserProfile | null>
+			>;
 		}
 	) => {
 		setModalType(type);
 		commentDispatchFnRef.current = payload.commentDispatchFn!;
+		userProfileDispatchRef.current = payload.userProfileDispatch!;
 		setCurrentComment(payload.comment || null);
 		setCurrentPost(payload.post || null);
 	};
@@ -56,6 +68,9 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 		setModalType(null);
 		setCurrentComment(null);
 		setCurrentPost(null);
+
+		commentDispatchFnRef.current = null;
+		userProfileDispatchRef.current = null;
 	};
 
 	useEffect(() => {
@@ -77,7 +92,9 @@ const ModalProvider: React.FC<Props> = ({ children }) => {
 				/>
 			)}
 
-			{modalType === "PROFILE_IMAGE_EDITOR" && <ProfileEditor />}
+			{modalType === "PROFILE_IMAGE_EDITOR" && (
+				<ProfileEditor userProfileDispatch={userProfileDispatchRef.current!} />
+			)}
 		</ModalContext.Provider>
 	);
 };

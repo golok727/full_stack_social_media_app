@@ -97,7 +97,11 @@ const EditAccount = () => {
 				<div className="border-[1px] border-neutral-700 rounded-sm px-5 py-3">
 					<header className="flex w-full gap-10 py-3">
 						<EditProfileImageRound
-							onClick={() => showModal("PROFILE_IMAGE_EDITOR", {})}
+							onClick={() =>
+								showModal("PROFILE_IMAGE_EDITOR", {
+									userProfileDispatch: setUserProfile,
+								})
+							}
 							src={userProfile?.profile_image ?? ""}
 							alt={userProfile?.user.username}
 						/>

@@ -2,16 +2,16 @@ import React, { createContext, useState } from "react";
 import axios from "axios";
 import { useNavigate, Location } from "react-router-dom";
 
-export interface User {
-	date_joined: Date;
-	email: string;
-	first_name: string;
-	id: number;
-	is_superuser: boolean;
-	last_login: Date;
-	last_name: string;
-	username: string;
-}
+// export interface User {
+// 	date_joined: Date;
+// 	email: string;
+// 	first_name: string;
+// 	id: number;
+// 	is_superuser: boolean;
+// 	last_login: Date;
+// 	last_name: string;
+// 	username: string;
+// }
 
 interface Auth {
 	user: User | null;

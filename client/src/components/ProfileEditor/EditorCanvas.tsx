@@ -160,18 +160,18 @@ const EditorCanvas = ({ imageUrl, onSave = () => {} }: EditorCanvasProps) => {
 		return image;
 	};
 
-	const convertCanvasToBlob = (): Promise<Blob | null> => {
-		return new Promise((resolve) => {
-			const canvas = canvasRef.current;
-			if (canvas) {
-				canvas.toBlob((blob) => {
-					resolve(blob);
-				}, "image/jpeg"); // Change the MIME type to match your desired image format
-			} else {
-				resolve(null);
-			}
-		});
-	};
+	// const convertCanvasToBlob = (): Promise<Blob | null> => {
+	// 	return new Promise((resolve) => {
+	// 		const canvas = canvasRef.current;
+	// 		if (canvas) {
+	// 			canvas.toBlob((blob) => {
+	// 				resolve(blob);
+	// 			}, "image/jpeg"); // Change the MIME type to match your desired image format
+	// 		} else {
+	// 			resolve(null);
+	// 		}
+	// 	});
+	// };
 
 	return (
 		<div>
