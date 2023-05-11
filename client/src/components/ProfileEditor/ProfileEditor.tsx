@@ -122,12 +122,6 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({
 					<Close onClick={() => hideModal()} />
 				</div>
 
-				{/* {imageUrl !== "" && (
-					<div>
-						<img src={imageUrl} alt="" />
-					</div>
-				)} */}
-
 				{currStep === "CHOOSE" && (
 					<FileChooser
 						text="Choose an Image"
@@ -142,10 +136,12 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({
 				)}
 
 				{currStep === "EDIT" && (
-					<EditorCanvas
-						onSave={handleProfileImageCropSave}
-						imageUrl={imageUrl}
-					/>
+					<div className="">
+						<EditorCanvas
+							onSave={handleProfileImageCropSave}
+							imageUrl={imageUrl}
+						/>
+					</div>
 				)}
 
 				{currStep === "PREVIEW" && (
