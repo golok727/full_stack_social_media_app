@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 interface EditorCanvasProps {
 	imageUrl: string;
 	onSave: (image: HTMLImageElement) => void;
@@ -60,43 +60,56 @@ const EditorCanvas = ({ imageUrl, onSave = () => {} }: EditorCanvasProps) => {
 		}
 	}, [imageUrl]);
 
-	// Handlers
+	const handleMouseDown = useCallback(
+		(
+			e:
+				| React.MouseEvent<HTMLCanvasElement, MouseEvent>
+				| React.TouchEvent<HTMLCanvasElement>
+		) => {
+			e.preventDefault(); // Prevents default touch behavior
 
-	const handleMoveDown = useCallback(
-		(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+			const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+			const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
 			setIsDragging(true);
-			setDragStart({ x: e.clientX, y: e.clientY });
+			setDragStart({ x: clientX, y: clientY });
 		},
 		[]
 	);
 
+	// if (isDragging) {
+	// 	const offsetX = e.clientX - dragStart.x;
+	// 	const offsetY = e.clientY - dragStart.y;
+	// 	setImageProperties((prevProps) => ({
+	// 		...prevProps,
+	// 		x: prevProps.x + offsetX,
+	// 		y: prevProps.y + offsetY,
+	// 	}));
+	// 	setDragStart({ x: e.clientX, y: e.clientY });
+	// 	const canvas = canvasRef.current;
+	// 	const ctx = canvas?.getContext("2d");
+	// 	if (canvas && ctx) {
+	// 		const { x, y, width, height } = imageProperties;
+	// 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	// 		ctx.drawImage(imageRef.current!, x, y, width, height);
+	// 	}
+	// }
+
 	const handleMouseMove = useCallback(
-		(e: React.MouseEvent<HTMLCanvasElement>) => {
-			// if (isDragging) {
-			// 	const offsetX = e.clientX - dragStart.x;
-			// 	const offsetY = e.clientY - dragStart.y;
-
-			// 	setImageProperties((prevProps) => ({
-			// 		...prevProps,
-			// 		x: prevProps.x + offsetX,
-			// 		y: prevProps.y + offsetY,
-			// 	}));
-
-			// 	setDragStart({ x: e.clientX, y: e.clientY });
-
-			// 	const canvas = canvasRef.current;
-			// 	const ctx = canvas?.getContext("2d");
-
-			// 	if (canvas && ctx) {
-			// 		const { x, y, width, height } = imageProperties;
-			// 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-			// 		ctx.drawImage(imageRef.current!, x, y, width, height);
-			// 	}
-			// }
-
+		(
+			e:
+				| React.MouseEvent<HTMLCanvasElement>
+				| React.TouchEvent<HTMLCanvasElement>
+		) => {
 			if (isDragging) {
-				const offsetX = e.clientX - dragStart.x;
-				const offsetY = e.clientY - dragStart.y;
+				const offsetX =
+					"touches" in e
+						? e.touches[0].clientX - dragStart.x
+						: e.clientX - dragStart.x;
+				const offsetY =
+					"touches" in e
+						? e.touches[0].clientY - dragStart.y
+						: e.clientY - dragStart.y;
 
 				const canvas = canvasRef.current;
 				const ctx = canvas?.getContext("2d");
@@ -124,7 +137,10 @@ const EditorCanvas = ({ imageUrl, onSave = () => {} }: EditorCanvasProps) => {
 						y: newY,
 					}));
 
-					setDragStart({ x: e.clientX, y: e.clientY });
+					setDragStart({
+						x: "touches" in e ? e.touches[0].clientX : e.clientX,
+						y: "touches" in e ? e.touches[0].clientY : e.clientY,
+					});
 
 					ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 					ctx.drawImage(imageRef.current!, newX, newY, width, height);
@@ -133,23 +149,13 @@ const EditorCanvas = ({ imageUrl, onSave = () => {} }: EditorCanvasProps) => {
 		},
 		[isDragging, dragStart, imageProperties]
 	);
-	const handleMoveUp = () => {
+
+	const handleMoueUp = () => {
 		setIsDragging(false);
 	};
 	const handleMouseLeave = () => {
 		setIsDragging(false);
 	};
-	// const handleWheel = (e: WheelEvent) => {
-	// 	e.preventDefault();
-	// };
-
-	// useEffect(() => {
-	// 	document.addEventListener("wheel", handleWheel);
-
-	// 	return () => {
-	// 		document.removeEventListener("wheel", handleWheel);
-	// 	};
-	// }, []);
 
 	const convertCanvasToImage = (): HTMLImageElement => {
 		const canvas = canvasRef.current;
@@ -160,36 +166,30 @@ const EditorCanvas = ({ imageUrl, onSave = () => {} }: EditorCanvasProps) => {
 		return image;
 	};
 
-	// const convertCanvasToBlob = (): Promise<Blob | null> => {
-	// 	return new Promise((resolve) => {
-	// 		const canvas = canvasRef.current;
-	// 		if (canvas) {
-	// 			canvas.toBlob((blob) => {
-	// 				resolve(blob);
-	// 			}, "image/jpeg"); // Change the MIME type to match your desired image format
-	// 		} else {
-	// 			resolve(null);
-	// 		}
-	// 	});
-	// };
-
 	return (
-		<div>
+		<div className="flex items-center flex-col p-3">
+			<h3 className="my-2 font-bold flex">
+				Crop Your Image
+				<PencilSquareIcon width={20} className="inline-block ml-2" />
+			</h3>
 			<canvas
 				ref={canvasRef}
 				width={500}
 				height={500}
-				className="bg-black cursor-move rounded border-[1px] border-gray-900 shadow-2xl"
-				onMouseDown={handleMoveDown}
+				className="bg-black cursor-move rounded border-[1px] border-gray-900 shadow-2xl w-2/3 md:w-full"
+				onMouseDown={handleMouseDown}
+				onTouchStart={handleMouseDown}
 				onMouseMove={handleMouseMove}
-				onMouseUp={handleMoveUp}
+				onTouchMove={handleMouseMove}
+				onMouseUp={handleMoueUp}
+				onTouchEnd={handleMoueUp}
 				onMouseLeave={handleMouseLeave}
 			></canvas>
 			<button
 				onClick={() => {
 					onSave(convertCanvasToImage());
 				}}
-				className="block bg-gradient-to-r from-pink-700 to-violet-600 rounded px-3 py-1 my-4"
+				className=" bg-gradient-to-r from-pink-700 to-violet-600 rounded px-3 py-1 my-4 md:w-full transition-transform duration-100 hover:scale-105"
 			>
 				Save
 			</button>
