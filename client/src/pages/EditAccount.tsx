@@ -5,7 +5,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import SpinnerLoader from "../components/SpinnerLoader";
 import EditProfileImageRound from "../components/ProfileEditor/EditProfileImageRound";
 import VerifiedIcon from "../icons/VerifiedIcon";
-import { useModal } from "../context/ModalProvider";
+import { ModalType, useModal } from "../context/ModalProvider";
 
 interface AccountState {
 	bio: string;
@@ -24,7 +24,7 @@ const EditAccount = () => {
 
 	const [isUserProfileDataLoading, setIsUserProfileDataLoading] =
 		useState(true);
-
+	//
 	const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
 	const [accountState, setAccountState] = useState<AccountState>({
@@ -98,7 +98,8 @@ const EditAccount = () => {
 					<header className="flex w-full gap-10 py-3">
 						<EditProfileImageRound
 							onClick={() =>
-								showModal("PROFILE_IMAGE_EDITOR", {
+								showModal({
+									type: ModalType.PROFILE_IMAGE_EDITOR,
 									userProfileDispatch: setUserProfile,
 								})
 							}

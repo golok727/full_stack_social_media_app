@@ -16,7 +16,7 @@ import {
 	CommentsReducer,
 } from "../reducers/CommentsReducer";
 import SettingHorizontal from "../icons/SettingHorizontal";
-import { useModal } from "../context/ModalProvider";
+import { ModalType, useModal } from "../context/ModalProvider";
 import HeartStatic from "../icons/HeartStatic";
 
 const PostPage = () => {
@@ -159,7 +159,8 @@ const PostPage = () => {
 								<div>
 									<SettingHorizontal
 										onClick={() =>
-											showModal("POST_OPTIONS", {
+											showModal({
+												type: ModalType.POST_OPTIONS,
 												post,
 											})
 										}

@@ -4,96 +4,81 @@ import CommentOptionsModal from "../components/CommentOptionsModal";
 import { CommentActions } from "../reducers/CommentsReducer";
 import ProfileEditor from "../components/ProfileEditor/ProfileEditor";
 
-type ModalType = "POST_OPTIONS" | "COMMENT_OPTIONS" | "PROFILE_IMAGE_EDITOR";
+// type ModalType = "POST_OPTIONS" | "COMMENT_OPTIONS" | "PROFILE_IMAGE_EDITOR";
+export enum ModalType {
+	POST_OPTIONS = "POST_OPTIONS",
+	COMMENT_OPTIONS = "COMMENT_OPTIONS",
+	PROFILE_IMAGE_EDITOR = "PROFILE_IMAGE_EDITOR",
+}
+interface PostOptionsPayload {
+	type: ModalType.POST_OPTIONS;
+	post: PostType;
+}
+
+interface CommentOptionsPayload {
+	type: ModalType.COMMENT_OPTIONS;
+	comment: CommentType;
+	commentDispatchFn: React.Dispatch<CommentActions>;
+}
+
+interface ProfileImageEditorPayload {
+	type: ModalType.PROFILE_IMAGE_EDITOR;
+	userProfileDispatch: React.Dispatch<React.SetStateAction<UserProfile | null>>;
+}
+
+type ModalPayload =
+	| PostOptionsPayload
+	| CommentOptionsPayload
+	| ProfileImageEditorPayload;
 
 interface ModalContextType {
-	showModal: (
-		modelType: ModalType,
-		payload: {
-			post?: PostType;
-			comment?: CommentType;
-			commentDispatchFn?: React.Dispatch<CommentActions>;
-			userProfileDispatch?: React.Dispatch<
-				React.SetStateAction<UserProfile | null>
-			>;
-		}
-	) => void;
+	showModal: (settings: ModalPayload) => void;
 	hideModal: () => void;
-	modalType: ModalType | null;
 }
 
 const ModalContext = React.createContext<ModalContextType>({
-	modalType: null,
 	showModal: () => {},
 	hideModal: () => {},
 });
 
-interface Props {
+interface ModalProviderProps {
 	children: React.ReactElement | React.ReactElement[];
 }
-const ModalProvider: React.FC<Props> = ({ children }) => {
-	const [modalType, setModalType] = useState<ModalType | null>(null);
+const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
+	const [modalPayload, setModalPayload] = useState<ModalPayload | null>(null);
 
-	const [currentPost, setCurrentPost] = useState<PostType | null>(null);
-	const [currentComment, setCurrentComment] = useState<CommentType | null>(
-		null
-	);
-
-	const commentDispatchFnRef = useRef<React.Dispatch<CommentActions> | null>(
-		null
-	);
-	const userProfileDispatchRef = useRef<React.Dispatch<
-		React.SetStateAction<UserProfile | null>
-	> | null>(null);
-
-	const showModal = (
-		type: ModalType,
-		payload: {
-			post?: PostType;
-			comment?: CommentType;
-			commentDispatchFn?: React.Dispatch<CommentActions>;
-			userProfileDispatch?: React.Dispatch<
-				React.SetStateAction<UserProfile | null>
-			>;
-		}
-	) => {
-		setModalType(type);
-		commentDispatchFnRef.current = payload.commentDispatchFn!;
-		userProfileDispatchRef.current = payload.userProfileDispatch!;
-		setCurrentComment(payload.comment || null);
-		setCurrentPost(payload.post || null);
+	const showModal = (settings: ModalPayload) => {
+		setModalPayload(settings);
 	};
-
 	const hideModal = () => {
-		setModalType(null);
-		setCurrentComment(null);
-		setCurrentPost(null);
-
-		commentDispatchFnRef.current = null;
-		userProfileDispatchRef.current = null;
+		setModalPayload(null);
 	};
 
 	useEffect(() => {
-		if (modalType) {
+		if (modalPayload && modalPayload?.type) {
 			document.body.classList.add("!overflow-hidden");
 		} else {
 			document.body.classList.remove("!overflow-hidden");
 		}
-	}, [modalType]);
+	}, [modalPayload]);
 
 	return (
-		<ModalContext.Provider value={{ modalType, showModal, hideModal }}>
+		<ModalContext.Provider value={{ showModal, hideModal }}>
 			{children}
-			{modalType === "POST_OPTIONS" && <PostOptionsModal post={currentPost!} />}
-			{modalType === "COMMENT_OPTIONS" && (
+
+			{modalPayload?.type === ModalType.POST_OPTIONS && (
+				<PostOptionsModal post={modalPayload.post} />
+			)}
+
+			{modalPayload?.type === ModalType.COMMENT_OPTIONS && (
 				<CommentOptionsModal
-					commentDispatch={commentDispatchFnRef.current!}
-					comment={currentComment!}
+					commentDispatch={modalPayload.commentDispatchFn}
+					comment={modalPayload.comment}
 				/>
 			)}
 
-			{modalType === "PROFILE_IMAGE_EDITOR" && (
-				<ProfileEditor userProfileDispatch={userProfileDispatchRef.current!} />
+			{modalPayload?.type === ModalType.PROFILE_IMAGE_EDITOR && (
+				<ProfileEditor userProfileDispatch={modalPayload.userProfileDispatch} />
 			)}
 		</ModalContext.Provider>
 	);

@@ -12,7 +12,7 @@ import { formatDate, numberFormatter } from "../utils/utils";
 import CommentForm from "./CommentFrom";
 import VerifiedIcon from "../icons/VerifiedIcon";
 import SettingHorizontal from "../icons/SettingHorizontal";
-import { useModal } from "../context/ModalProvider";
+import { ModalType, useModal } from "../context/ModalProvider";
 import { PhotonParserRenderer } from "./PhotonTextParser";
 import HeartStatic from "../icons/HeartStatic";
 interface Props {
@@ -104,7 +104,8 @@ const Post: React.FC<Props> = ({ post }) => {
 				<div>
 					<SettingHorizontal
 						onClick={() =>
-							showModal("POST_OPTIONS", {
+							showModal({
+								type: ModalType.POST_OPTIONS,
 								post,
 							})
 						}
