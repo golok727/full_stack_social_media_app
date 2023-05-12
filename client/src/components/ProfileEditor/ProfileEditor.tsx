@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useModal } from "../../context/ModalProvider";
+import useAuth from "../../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Close from "../../icons/Close";
 import FileChooser from "../FileChooser";
 import EditorCanvas from "./EditorCanvas";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import useAuth from "../../hooks/useAuth";
 
 type ProfileEditorProps = {
 	userProfileDispatch: React.Dispatch<React.SetStateAction<UserProfile | null>>;

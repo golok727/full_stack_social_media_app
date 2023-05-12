@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import PostOptionsModal from "../components/PostOptionsModal";
+import React, { useContext, useEffect, useState } from "react";
 import CommentOptionsModal from "../components/CommentOptionsModal";
-import { CommentActions } from "../reducers/CommentsReducer";
-import ProfileEditor from "../components/ProfileEditor/ProfileEditor";
 import GenderChooserModal from "../components/GenderChooserModal";
+import PostOptionsModal from "../components/PostOptionsModal";
+import ProfileEditor from "../components/ProfileEditor/ProfileEditor";
 import { AccountState } from "../pages/EditAccount";
+import { CommentActions } from "../reducers/CommentsReducer";
 
 // type ModalType = "POST_OPTIONS" | "COMMENT_OPTIONS" | "PROFILE_IMAGE_EDITOR";
 export enum ModalType {
@@ -70,6 +70,23 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 		} else {
 			document.body.classList.remove("!overflow-hidden");
 		}
+
+		const handleCloseOnEscape = (e: KeyboardEvent) => {
+			if (e.key === "Escape") hideModal();
+		};
+		const handlePopState = () => {
+			hideModal();
+		};
+
+		if (modalPayload) {
+			document.addEventListener("keyup", handleCloseOnEscape);
+			window.addEventListener("popstate", handlePopState);
+		}
+
+		return () => {
+			document.removeEventListener("keydown", handleCloseOnEscape);
+			window.removeEventListener("popstate", handlePopState);
+		};
 	}, [modalPayload]);
 
 	return (
