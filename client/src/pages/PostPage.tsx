@@ -125,14 +125,14 @@ const PostPage = () => {
 		<div className="pt-20 flex justify-center items-center min-h-screen text-white container mx-auto max-w-2xl">
 			{!isLoading ? (
 				post ? (
-					<div className="flex md:min-h-[40em] min-h-[30em] md:max-h-[40em] flex-col md:flex-row border-[1px] rounded-md border-gray-700 overflow-hidden">
+					<div className="flex m-2 lg:m-0 md:min-h-[40em] min-h-[30em] mb-4 lg:mb-0 lg:max-h-[40em] flex-col lg:flex-row border-[2px] rounded-md border-gray-700 overflow-hidden">
 						<div
-							className="relative aspect md:h-[40em] h-[27em] md:max-w-2xl"
+							className="relative aspect-square lg:h-[40em] h-[27em] md:max-w-2xl"
 							onDoubleClick={() => handleDoubleClickLike()}
 						>
 							<img
 								src={post.image}
-								className="h-full object-cover"
+								className="h-full w-full object-contain"
 								alt={post.title}
 							/>
 							{heartAnimate && (
@@ -169,18 +169,19 @@ const PostPage = () => {
 							</header>
 
 							{/* Comments Renderer */}
+							<div className="flex-1">
+								<CommentsRenderer
+									commentsState={commentsState}
+									post={post}
+									// Fns
 
-							<CommentsRenderer
-								commentsState={commentsState}
-								post={post}
-								// Fns
-
-								setReplyToUserName={setReplyToUserName}
-								focusInputRef={focusInputRef}
-								setReplyToId={setReplyTo}
-								setParentCommentId={setParentCommentId}
-								dispatch={dispatch}
-							/>
+									setReplyToUserName={setReplyToUserName}
+									focusInputRef={focusInputRef}
+									setReplyToId={setReplyTo}
+									setParentCommentId={setParentCommentId}
+									dispatch={dispatch}
+								/>
+							</div>
 
 							{/* Footer */}
 							<footer className="block py-2 px-3">

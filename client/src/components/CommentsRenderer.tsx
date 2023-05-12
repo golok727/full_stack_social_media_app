@@ -70,7 +70,7 @@ const CommentsRenderer: React.FC<Props> = ({
 	}, []);
 
 	return (
-		<section className="hidden md:block overflow-y-auto h-full px-3">
+		<section className="max-h-[300px] md:block overflow-y-auto lg:max-h-full px-3">
 			{/* Description */}
 			<header>
 				<div className="py-2 flex gap-2">

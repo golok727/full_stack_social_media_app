@@ -19,9 +19,10 @@ const useRefreshToken = () => {
 			if (error.response.status >= 400 && error.response.status < 500) {
 				console.log("Error");
 				logout();
-
 				throw new Error("Token refresh failed");
 			}
+			if (error.response.status >= 500)
+				return Promise.reject("Connection To server TimeOut");
 		}
 	};
 
