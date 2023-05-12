@@ -53,7 +53,7 @@ const Posts = () => {
 	}, []);
 
 	return (
-		<div className="container mx-auto max-w-6xl pt-20 pb-10">
+		<div className="container mx-auto max-w-3xl py-20">
 			<div className="flex flex-col items-center gap-4">
 				{homePosts.length === 0 ? (
 					<div>

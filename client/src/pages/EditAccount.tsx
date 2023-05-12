@@ -181,7 +181,7 @@ const EditAccount = () => {
 			{isUserProfileDataLoading ? (
 				<SpinnerLoader />
 			) : (
-				<div className="border-[1px] border-neutral-700 rounded-sm px-5 py-3">
+				<div className="md:border-[1px] border-neutral-700 rounded-sm px-5 py-3 w-full">
 					<header className="flex w-full gap-10 py-3">
 						<EditProfileImageRound
 							onClick={() =>

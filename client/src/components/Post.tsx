@@ -64,7 +64,7 @@ const Post: React.FC<Props> = ({ post }) => {
 	};
 
 	return (
-		<div className="text-white border-[1px] border-neutral-700 px-3 py-2 rounded ">
+		<div className="text-white border-[1px] border-neutral-700 px-3 py-2 mx-2 md:mx-0 rounded">
 			<header className="flex py-3 border-b-neutral-600 border-b-2 mb-4 justify-between items-center">
 				<div className="flex items-center gap-2">
 					<div className="avatar cursor-pointer">
@@ -116,7 +116,7 @@ const Post: React.FC<Props> = ({ post }) => {
 			<section>
 				<div
 					onDoubleClick={() => handleDoubleClickLike()}
-					className="relative md:w-[500px] w-[400px]  rounded-md bg-gradient-to-r cursor-pointer from-slate-900 to to-slate-950 background-animate"
+					className="relative md:w-[500px] w-full rounded-md bg-gradient-to-r cursor-pointer from-slate-900 to to-slate-950 background-animate"
 					style={{
 						overflow: "hidden",
 						height: "auto",
@@ -125,7 +125,7 @@ const Post: React.FC<Props> = ({ post }) => {
 				>
 					<img
 						style={{
-							// aspectRatio: "",
+							// aspectRatio: "3/4",
 							width: "100%",
 							objectFit: "cover",
 						}}
