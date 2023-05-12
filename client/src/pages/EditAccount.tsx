@@ -181,7 +181,7 @@ const EditAccount = () => {
 			{isUserProfileDataLoading ? (
 				<SpinnerLoader />
 			) : (
-				<div className="md:border-[1px] border-neutral-700 rounded-sm px-5 py-3 w-full">
+				<div className="md:border-[1px] border-neutral-700 rounded-sm px-5 py-3">
 					<header className="flex w-full gap-10 py-3">
 						<EditProfileImageRound
 							onClick={() =>
@@ -201,29 +201,29 @@ const EditAccount = () => {
 						</div>
 					</header>
 
+					{editStatus.isUpdated && (
+						<div className="flex items-center border-[1px] border-purple-500 rounded-full py-1 px-3 max-w-fit mb-2">
+							<CheckIcon
+								strokeWidth={3}
+								className="inline-block text-purple-600 w-5 mr-2"
+							/>{" "}
+							<span className="fon text-purple-600">Updated</span>
+						</div>
+					)}
+
 					<section>
 						<form
 							onSubmit={handleUpdateUserProfile}
-							className="flex flex-col items-center"
+							className="grid gap-2 md:grid-cols-2"
 						>
-							{editStatus.isUpdated && (
-								<div className="flex items-center border-[1px] border-purple-500 rounded-full py-1 px-3">
-									<CheckIcon
-										strokeWidth={3}
-										className="inline-block text-purple-600 w-5 mr-2"
-									/>{" "}
-									<span className="fon text-purple-600">Updated</span>
-								</div>
-							)}
-
 							{/* Bio */}
-							<div className="flex flex-col justify-start mb-5 gap-3">
+							<div className="flex flex-col justify-start mb-5 gap-3 md:col-span-2">
 								<label className="font-bold capitalize" htmlFor="bio">
 									Bio
 								</label>
 								<textarea
 									onChange={handleOnChange}
-									className="p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1 w-[400px]"
+									className="p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
 									name=""
 									id="bio"
 									value={accountState.bio}
@@ -237,7 +237,7 @@ const EditAccount = () => {
 								<input
 									type="text"
 									readOnly={true}
-									className="hover:text-gray-500 hover:border-gray-600  p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1 w-[400px]"
+									className="hover:text-gray-500 hover:border-gray-600  p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
 									name=""
 									id="gender"
 									onClick={() =>
@@ -258,7 +258,7 @@ const EditAccount = () => {
 									// readOnly={userProfile?.birth_date !== null}
 									readOnly={true}
 									type="date"
-									className="hover:text-gray-500  hover:border-gray-600 p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1 w-[400px]"
+									className="hover:text-gray-500  hover:border-gray-600 p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
 									name=""
 									id="dob"
 									value={userProfile?.birth_date || ""}
@@ -290,7 +290,7 @@ const EditAccount = () => {
 								</select>
 							</div>
 
-							<div className="mt-10">
+							<div className="mt-2 place-self-center md:col-span-2">
 								<input
 									disabled={editStatus.isUpdating}
 									className="py-2 px-3 bg-purple-600 font-bold cursor-pointer rounded-lg disabled:cursor-not-allowed"
