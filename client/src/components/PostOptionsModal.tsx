@@ -1,10 +1,10 @@
-import React from "react";
+import React, { MouseEventHandler, useState } from "react";
 import Close from "../icons/Close";
 import { useModal } from "../context/ModalProvider";
 import useAuth from "../hooks/useAuth";
 import CpuChip from "../icons/CpuChip";
 import Report from "../icons/Report";
-import { useNavigate } from "react-router-dom";
+import { UNSAFE_DataRouterStateContext, useNavigate } from "react-router-dom";
 interface Props {
 	post: PostType;
 }
@@ -12,10 +12,10 @@ interface Props {
 const PostOptionsModal: React.FC<Props> = ({ post }) => {
 	const { hideModal } = useModal();
 	const { auth } = useAuth();
+	const navigate = useNavigate();
 	const stopPropagation = (event: React.MouseEvent) => {
 		event.stopPropagation();
 	};
-	const navigate = useNavigate();
 
 	const handleAboutThisAccount = () => {
 		navigate("/" + post.user.username);
@@ -33,9 +33,7 @@ const PostOptionsModal: React.FC<Props> = ({ post }) => {
 			>
 				{post.user.id === auth.user?.id && (
 					<>
-						<button className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
-							Delete
-						</button>
+						<DeleteButton onConfirm={() => {}} />
 
 						<button className="w-full py-3 px-2 hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700">
 							Edit
@@ -84,6 +82,44 @@ const PostOptionsModal: React.FC<Props> = ({ post }) => {
 				</button>
 			</div>
 		</div>
+	);
+};
+
+export const DeleteButton = ({
+	onConfirm,
+}: {
+	onConfirm: MouseEventHandler<HTMLButtonElement>;
+}) => {
+	const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+	return (
+		<>
+			{!showDeleteConfirmation && (
+				<button
+					onClick={() => setShowDeleteConfirmation(true)}
+					className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700"
+				>
+					Delete
+				</button>
+			)}
+
+			{showDeleteConfirmation && (
+				<div className="flex">
+					<button
+						onClick={onConfirm}
+						className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700 border-r-[1px] border-r-gray-700"
+					>
+						Confirm
+					</button>
+
+					<button
+						onClick={() => setShowDeleteConfirmation(false)}
+						className="w-full py-3 px-2 text-green-400 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700"
+					>
+						Go Back
+					</button>
+				</div>
+			)}
+		</>
 	);
 };
 

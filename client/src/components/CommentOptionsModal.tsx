@@ -10,6 +10,7 @@ import {
 	CommentActions,
 } from "../reducers/CommentsReducer";
 import { useApp } from "../context/AppProvider";
+import { DeleteButton } from "./PostOptionsModal";
 
 interface Props {
 	comment: CommentType;
@@ -21,7 +22,6 @@ const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 	// const { appDispatch } = useApp();
 
 	const axiosPrivate = useAxiosPrivate();
-	const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 	const stopPropagation = (event: React.MouseEvent) => {
 		event.stopPropagation();
 	};
@@ -76,32 +76,7 @@ const CommentOptionsModal: React.FC<Props> = ({ comment, commentDispatch }) => {
 				{(auth.user?.id === comment.post_user_id ||
 					comment.user_id === auth.user?.id) && (
 					<>
-						{!showDeleteConfirmation && (
-							<button
-								onClick={() => setShowDeleteConfirmation(true)}
-								className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700"
-							>
-								Delete
-							</button>
-						)}
-
-						{showDeleteConfirmation && (
-							<div className="flex">
-								<button
-									onClick={() => handleDeleteComment()}
-									className="w-full py-3 px-2 text-red-500 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700 border-r-[1px] border-r-gray-700"
-								>
-									Confirm
-								</button>
-
-								<button
-									onClick={() => setShowDeleteConfirmation(false)}
-									className="w-full py-3 px-2 text-green-400 font-bold hover:bg-neutral-800 transition-colors border-b-[1px] border-b-gray-700"
-								>
-									Go Back
-								</button>
-							</div>
-						)}
+						<DeleteButton onConfirm={handleDeleteComment} />
 					</>
 				)}
 
