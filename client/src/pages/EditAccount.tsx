@@ -47,6 +47,8 @@ export interface AccountState {
 	bio: string;
 	gender: Gender;
 	accountType: AccountType | null;
+	first_name: string;
+	last_name: string;
 }
 
 const EditAccount = () => {
@@ -64,11 +66,14 @@ const EditAccount = () => {
 		useState(true);
 	//
 	const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+	const [bioLetterCount, setBioLetterCount] = useState(0);
 
 	const [accountState, setAccountState] = useState<AccountState>({
 		bio: "",
 		gender: "Prefer Not To Say",
 		accountType: null,
+		first_name: "",
+		last_name: "",
 	});
 
 	const handleOnChange = (
@@ -131,6 +136,7 @@ const EditAccount = () => {
 			isUpdating: false,
 			isUpdated: false,
 		}));
+		setBioLetterCount(() => accountState.bio.length);
 	}, [accountState]);
 
 	useEffect(() => {
@@ -147,7 +153,7 @@ const EditAccount = () => {
 						signal: controller.signal,
 					}
 				);
-
+				console.log(res.data);
 				if (isMounted) {
 					setUserProfile((prev) => ({ ...prev, ...res.data }));
 					setAccountState((prev) => ({
@@ -155,6 +161,8 @@ const EditAccount = () => {
 						bio: res.data.bio || "",
 						gender: res.data.gender || "",
 						accountType: res.data.account_type,
+						first_name: res.data.user.first_name,
+						last_name: res.data.user.last_name,
 					}));
 				}
 
@@ -201,43 +209,102 @@ const EditAccount = () => {
 						</div>
 					</header>
 
-					{editStatus.isUpdated && (
-						<div className="flex items-center border-[1px] border-purple-500 rounded-full py-1 px-3 max-w-fit mb-2">
-							<CheckIcon
-								strokeWidth={3}
-								className="inline-block text-purple-600 w-5 mr-2"
-							/>{" "}
-							<span className="fon text-purple-600">Updated</span>
-						</div>
-					)}
+					<div
+						className={`flex items-center border-[1px] border-purple-500 rounded-full py-1 px-3 max-w-fit mb-3 opacity-0 ${
+							editStatus.isUpdated && "opacity-100"
+						} transition-opacity duration-200`}
+					>
+						<CheckIcon
+							strokeWidth={3}
+							className="inline-block text-gray-200 w-5 mr-2"
+						/>{" "}
+						<span className="fon text-gray-200">Updated</span>
+					</div>
 
 					<section>
 						<form
 							onSubmit={handleUpdateUserProfile}
-							className="grid gap-2 md:grid-cols-2"
+							className="grid gap-3 md:grid-cols-2 text-gray-200"
 						>
 							{/* Bio */}
-							<div className="flex flex-col justify-start mb-5 gap-3 md:col-span-2">
-								<label className="font-bold capitalize" htmlFor="bio">
+							<div className="flex flex-col justify-start md:col-span-2 max-h-[30ch] gap-2 ">
+								<label
+									className="font-bold capitalize text-gray-200"
+									htmlFor="bio"
+								>
 									Bio
 								</label>
+
 								<textarea
 									onChange={handleOnChange}
-									className="p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
-									name=""
+									className="p-2 bg-transparent border-[1px] border-neutral-700 rounded"
+									name="bio"
 									id="bio"
 									value={accountState.bio}
 								></textarea>
+
+								<div className="font-bold text-xs bg-zinc-800 text-green-300 w-max py-1 px-3 rounded-full">
+									<span
+										className={`${bioLetterCount >= 125 && "text-red-500"}`}
+									>
+										{bioLetterCount}
+									</span>
+									<span> / 125</span>
+								</div>
 							</div>
+
 							{/* Gender */}
 							<div className="flex flex-col  justify-start mb-5 gap-3">
-								<label className="font-bold capitalize" htmlFor="gender">
+								<label
+									className="font-bold capitalize text-gray-200"
+									htmlFor="gender"
+								>
+									First Name
+								</label>
+								<input
+									type="text"
+									readOnly
+									// onChange={handleOnChange}
+									className="hover:text-gray-200 hover:border-gray-200  p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
+									placeholder="First Name"
+									name=""
+									id="first_name"
+									value={accountState.first_name}
+								></input>
+							</div>
+
+							<div className="flex flex-col  justify-start mb-5 gap-3">
+								<label
+									className="font-bold capitalize text-gray-200"
+									htmlFor="gender"
+								>
+									Last Name
+								</label>
+								<input
+									readOnly
+									// onChange={handleOnChange}
+									type="text"
+									className="hover:text-gray-200 hover:border-gray-200  p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
+									name="last_name"
+									placeholder="Last Name"
+									id="last_name"
+									value={accountState.last_name}
+								></input>
+							</div>
+							{/* End */}
+
+							{/* Gender */}
+							<div className="flex flex-col  justify-start mb-5 gap-3">
+								<label
+									className="font-bold capitalize text-gray-200"
+									htmlFor="gender"
+								>
 									Gender
 								</label>
 								<input
 									type="text"
 									readOnly={true}
-									className="hover:text-gray-500 hover:border-gray-600  p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
+									className="hover:text-gray-200 hover:border-gray-200  p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
 									name=""
 									id="gender"
 									onClick={() =>
@@ -251,14 +318,17 @@ const EditAccount = () => {
 								></input>
 							</div>
 							<div className="flex flex-col justify-start mb-5 gap-3">
-								<label className="font-bold capitalize" htmlFor="dob">
+								<label
+									className="font-bold capitalize text-gray-200"
+									htmlFor="dob"
+								>
 									DOB
 								</label>
 								<input
 									// readOnly={userProfile?.birth_date !== null}
 									readOnly={true}
 									type="date"
-									className="hover:text-gray-500  hover:border-gray-600 p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
+									className="hover:text-gray-200  hover:border-gray-200 p-2 bg-transparent border-[1px] border-neutral-700 rounded flex-1"
 									name=""
 									id="dob"
 									value={userProfile?.birth_date || ""}
@@ -266,7 +336,10 @@ const EditAccount = () => {
 							</div>
 
 							<div className="flex flex-col justify-start mb-5 gap-3">
-								<label className="font-bold capitalize" htmlFor="bio">
+								<label
+									className="font-bold capitalize text-gray-200"
+									htmlFor="bio"
+								>
 									Account Type
 								</label>
 
@@ -293,7 +366,7 @@ const EditAccount = () => {
 							<div className="mt-2 place-self-center md:col-span-2">
 								<input
 									disabled={editStatus.isUpdating}
-									className="py-2 px-3 bg-purple-600 font-bold cursor-pointer rounded-lg disabled:cursor-not-allowed"
+									className="py-2 px-3 bg-violet-700 font-bold cursor-pointer rounded-lg disabled:cursor-not-allowed hover:bg-violet-900"
 									type="submit"
 									value={editStatus.isUpdating ? "Updating..." : "Save"}
 								/>
