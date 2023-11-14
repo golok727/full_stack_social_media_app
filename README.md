@@ -1,5 +1,9 @@
-# full_stack_social_media_app
-A Full stack posts App with Django and React ....
+# A Social Media App
+A photo sharing app made with React and Django
+
+- Make Posts (images)
+- Share Comments
+- Custom Profile Editor
 
 
 ## Dev Mode
