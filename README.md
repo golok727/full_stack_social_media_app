@@ -22,5 +22,7 @@ npm run dev
 
 # Overview Video
 
-Uploading Photon ShowCase (1) (1).mp4…
+
+https://github.com/golok727/full_stack_social_media_app/assets/123532141/96a49e86-4a01-4735-8566-d31b63cfa78a
+
 
